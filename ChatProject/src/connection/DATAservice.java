@@ -48,10 +48,10 @@ public class DATAservice implements Runnable {
 
 	private static void sendData(InetAddress dest, JSONObject data) {
 		try {
-			String msg = (String)data.get("data");
-			
+			String msg = (String) data.get("data");
+
 			Controller.mainWindow.log("[DATA] Trying to send " + msg);
-			
+
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(dest);
 
@@ -63,7 +63,7 @@ public class DATAservice implements Runnable {
 			out.println(data.toJSONString());
 
 			Controller.mainWindow.log("[DATA] Successfully send!");
-			
+
 			// terminate connection
 			out.close();
 			sock.close();
@@ -82,8 +82,8 @@ public class DATAservice implements Runnable {
 	@Override
 	public void run() {
 		try {
-			 Controller.mainWindow.log("[Thread] Start listening for incoming data.");
-			
+			Controller.mainWindow.log("[Thread] Start listening for incoming data.");
+
 			ssock = new ServerSocket(DATA_PORT);
 			waitingChecker wc = new waitingChecker();
 			Thread t = new Thread(wc);
@@ -95,7 +95,7 @@ public class DATAservice implements Runnable {
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
 				JSONObject json = JSONservice.getJson(input);
-				
+
 				Controller.mainWindow.log("Received Data: " + json.toJSONString());
 
 				if ((long) json.get("type") == DATA_ID) {
@@ -131,11 +131,11 @@ public class DATAservice implements Runnable {
 
 	private static class waitingChecker implements Runnable {
 		private static final long RREQ_TIMEOUT = 3;
-		
+
 		private boolean shutdown = false;
 		// list for packets waiting for routing.
 		private static HashMap<JSONObject, Long> waiting = new HashMap<>();
-		
+
 		public static void addWaitingMsg(JSONObject json) {
 			Controller.mainWindow.log("[WAIT] Data packet added to waiting queue.");
 			waiting.put(json, System.nanoTime());
@@ -144,7 +144,7 @@ public class DATAservice implements Runnable {
 		@Override
 		public void run() {
 			Controller.mainWindow.log("[Thread] start checking waiting data packets.");
-			
+
 			while (!shutdown) {
 				try {
 					for (JSONObject j : waiting.keySet()) {
@@ -152,8 +152,7 @@ public class DATAservice implements Runnable {
 						if (ForwardingTableService.hasEntry(destIP)) {
 							DATAservice.sendData(destIP, j);
 							waiting.remove(j);
-						}
-						if (waiting.get(j) + RREQ_TIMEOUT * 1000000000 < System.nanoTime()) {
+						} else if (waiting.get(j) + RREQ_TIMEOUT * 1000000000 < System.nanoTime()) {
 							DATAservice.sendData(destIP, j);
 							waiting.remove(j);
 						}
