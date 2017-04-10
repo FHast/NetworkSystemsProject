@@ -7,6 +7,8 @@ import connection.tables.ForwardingTableService;
 import connection.tables.ReverseTableService;
 
 public class Controller {
+	
+	private boolean shutdown = false;
 
 	public Controller() {
 		// start threads
@@ -24,6 +26,10 @@ public class Controller {
 		
 		Thread rtable = new Thread(new ReverseTableService());
 		rtable.start();
+		
+		while (!shutdown) {
+			
+		}
 	}
 	
 	public void sendMessage(int device, String message) {
@@ -35,5 +41,9 @@ public class Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) {
+		Controller c = new Controller();
 	}
 }
