@@ -29,7 +29,6 @@ public class RREQservice extends Observable implements Runnable {
 	// former received RREQs
 	private static ArrayList<JSONObject> rcvdRREQs = new ArrayList<>();
 	// my information
-	private static int mySeq = 0;
 	private static int myBroadcastID = 0;
 
 	static {
@@ -48,7 +47,7 @@ public class RREQservice extends Observable implements Runnable {
 		if (!ForwardingTableService.hasEntry(destIP)) {
 			// send a new RREQ
 			myBroadcastID++;
-			JSONObject rreq = JSONservice.composeRREQ(myIP, mySeq, myBroadcastID, destIP, 0, 0);
+			JSONObject rreq = JSONservice.composeRREQ(myIP, Controller.mySeq(), myBroadcastID, destIP, 0, 0);
 			sendRREQ(rreq);
 		}
 	}
@@ -117,7 +116,7 @@ public class RREQservice extends Observable implements Runnable {
 						// Am I the RREQ destination?
 						if (destIP.equals(myIP)) {
 							// send RREP
-							RREPservice.sendRREP(neighbor, sourceIP, myIP, mySeq, 0);
+							RREPservice.sendRREP(neighbor, sourceIP, myIP, Controller.mySeq(), 0);
 
 						} else {
 							// Do I know a good enough route?

@@ -65,12 +65,12 @@ public class JSONservice {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject composeRERR(long destCount, InetAddress unreachableDest, long destSeq) {
+	public static JSONObject composeRERR(InetAddress sourceIP, long sourceSeq, InetAddress[] unreachable) {
 		JSONObject rerr = new JSONObject();
 		rerr.put("type", RERRservice.RERR_ID);
-		rerr.put("destCount", destCount);
-		rerr.put("unreachableDest", unreachableDest);
-		rerr.put("destSeq", unreachableDest); 
+		rerr.put("sourceip", sourceIP.getHostAddress());
+		rerr.put("sourceseq", sourceSeq);
+		rerr.put("unreachable",	unreachable);
 		return rerr;
 	}
 }

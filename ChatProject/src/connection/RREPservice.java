@@ -94,7 +94,8 @@ public class RREPservice implements Runnable {
 			while (!shutdown) {
 				// wait for some incoming RREP connection
 				Socket sock = ssock.accept();
-				Controller.mainWindow.log("[RREP] connection accepted");
+				
+				Controller.mainWindow.log("[RREP] Connection accepted");
 				
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
