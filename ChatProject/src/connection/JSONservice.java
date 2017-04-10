@@ -59,7 +59,7 @@ public class JSONservice {
 		rerr.put("type", RERRservice.RERR_ID);
 		rerr.put("destCount", destCount);
 		rerr.put("unreachableDest", unreachableDest);
-		rerr.put("destSeq", unreachableDest);
+		rerr.put("destSeq", unreachableDest); 
 		return rerr;
 	}
 }
