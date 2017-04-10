@@ -106,14 +106,11 @@ public class RREPservice implements Runnable {
 				if ((long) json.get("type") == RREP_ID) {
 
 					// extract data
-					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceid"));
+					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 					long sourceSeq = (long) json.get("sourceseq");
 					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 					long hopcount = (long) json.get("hopcount");
 					hopcount++;
-
-					Controller.mainWindow.log(sock.getInetAddress().toString());
-					Controller.mainWindow.log(sourceIP.toString());
 					
 					// Am I the destination?
 					if (destIP.equals(myIP)) {
