@@ -7,12 +7,12 @@ public class RTableEntry {
 	private static final int offset = 5;
 
 	public InetAddress sourceAddress;
-	public int sourceSequenceNumber;
+	public long sourceSequenceNumber;
 	public InetAddress nextHopAddress;
-	public int hopsToSource;
+	public long hopsToSource;
 	public LocalTime lifetime;
 
-	public RTableEntry(InetAddress source, InetAddress nextHop, int sourceSeq, int hopCount) {
+	public RTableEntry(InetAddress source, InetAddress nextHop, long sourceSeq, long hopCount) {
 		sourceAddress = source;
 		sourceSequenceNumber = sourceSeq;
 		nextHopAddress = nextHop;

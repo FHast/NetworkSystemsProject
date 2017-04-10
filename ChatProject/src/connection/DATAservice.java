@@ -28,7 +28,7 @@ import connection.tables.NoEntryException;
  */
 public class DATAservice implements Runnable {
 	private static boolean shutdown = false;
-	private static InetAddress myIP;
+	private static InetAddress myIP = Controller.myIP;
 
 	public static final int DATA_PORT = 2000;
 	public static final int DATA_ID = 150;
@@ -39,15 +39,6 @@ public class DATAservice implements Runnable {
 	// incoming data traffic
 	private ServerSocket ssock;
 
-	static {
-		try {
-			myIP = InetAddress.getLocalHost();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	public static void sendText(InetAddress destIP, String msg) {
 		JSONObject data = JSONservice.composeDataText(myIP, destIP, msg);
 		sendData(destIP, data);
@@ -55,6 +46,8 @@ public class DATAservice implements Runnable {
 
 	private static void sendData(InetAddress dest, JSONObject data) {
 		try {
+			System.out.println("Trying to send data... " + data.toJSONString());
+			
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(dest);
 
@@ -98,10 +91,10 @@ public class DATAservice implements Runnable {
 				
 				System.out.println("Received Data: " + json.toJSONString());
 
-				if ((int) json.get("type") == DATA_ID) {
+				if ((long) json.get("type") == DATA_ID) {
 					// this is a data packet
 					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-					if (destIP == myIP) {
+					if (destIP.equals(myIP)) {
 						// this data packet is for me
 
 						// TODO

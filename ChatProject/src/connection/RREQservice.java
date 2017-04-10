@@ -24,7 +24,7 @@ public class RREQservice extends Observable implements Runnable {
 	public static final int RREQ_ID = 151;
 	// Socket
 	private static MulticastSocket msock;
-	private static InetAddress myIP;
+	private static InetAddress myIP = Controller.myIP;
 	private static InetAddress group;
 	// former received RREQs
 	private static ArrayList<JSONObject> rcvdRREQs = new ArrayList<>();
@@ -34,7 +34,6 @@ public class RREQservice extends Observable implements Runnable {
 
 	static {
 		try {
-			myIP = InetAddress.getLocalHost();
 			group = InetAddress.getByName(RREQ_TRAFFIC_ADDRESS);
 			msock = new MulticastSocket(RREQ_TRAFFIC_PORT);
 			msock.joinGroup(group);
@@ -56,7 +55,7 @@ public class RREQservice extends Observable implements Runnable {
 
 	private static void sendRREQ(JSONObject json) {
 		String msg = json.toJSONString();
-		System.out.println("[CommunicationService] Sending: " + msg);
+		System.out.println("[RREQ] Sending");
 
 		try {
 			DatagramPacket d = new DatagramPacket(msg.getBytes(), msg.length(), group, RREQ_TRAFFIC_PORT);
@@ -72,7 +71,7 @@ public class RREQservice extends Observable implements Runnable {
 
 	private static boolean receivedBefore(JSONObject json) {
 		String sourceIP = (String) json.get("sourceip");
-		int broadcastID = (int) (json.get("broadcastid"));
+		long broadcastID = (long) (json.get("broadcastid"));
 
 		for (JSONObject j : rcvdRREQs) {
 			String currentIP = (String) j.get("sourceip");
@@ -90,33 +89,34 @@ public class RREQservice extends Observable implements Runnable {
 	public void run() {
 		try {
 			System.out.println("[Thread] Start listening for incoming RREQ packets.");
-			
+
 			// listen for RREQs
 			while (!shutdown) {
 				// receive packet
-				byte[] buffer = new byte[1000];
+				byte[] buffer = new byte[250];
 				DatagramPacket p = new DatagramPacket(buffer, buffer.length);
 				msock.receive(p);
 
 				// extract Data
-				String msg = p.getData().toString();
+				String msg = new String(p.getData());
+				System.out.println("[RREQ] Received " + msg);
 				JSONObject json = JSONservice.getJson(msg);
 
 				// right protocol?
-				if ((int) json.get("type") == RREQ_ID) {
+				if ((long) json.get("type") == RREQ_ID) {
 					InetAddress neighbor = p.getAddress();
 					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
-					int sourceSeq = (int) (json.get("sourceseq"));
+					long sourceSeq = (long) (json.get("sourceseq"));
 					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-					int destSeq = (int) (json.get("destseq"));
-					int hopcount = (int) (json.get("hopcount"));
+					long destSeq = (long) (json.get("destseq"));
+					long hopcount = (long) (json.get("hopcount"));
 
 					// Did i receive this RREQ before?
-					if (receivedBefore(json)) {
+					if (receivedBefore(json) || (myIP.equals(sourceIP))) {
 						// ignore packet
 					} else {
 						// Am I the RREQ destination?
-						if (destIP == myIP) {
+						if (destIP.equals(myIP)) {
 							// send RREP
 							RREPservice.sendRREP(neighbor, sourceIP, myIP, mySeq, 0);
 

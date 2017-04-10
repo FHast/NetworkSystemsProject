@@ -9,7 +9,7 @@ public class ForwardingTableService implements Runnable {
 	private static boolean shutdown = false;
 	private static ArrayList<FTableEntry> forwardingTable = new ArrayList<>();
 
-	public static void addEntry(InetAddress dest, InetAddress nextHop, int destSeq, int hopCount) {
+	public static void addEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
 		forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
 	}
 

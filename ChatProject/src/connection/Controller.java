@@ -8,6 +8,16 @@ import connection.tables.ReverseTableService;
 
 public class Controller {
 	
+	public static InetAddress myIP;
+	static {
+		try {
+			myIP = InetAddress.getByName("192.168.5.1");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	private boolean shutdown = false;
 
 	public Controller() {
@@ -26,6 +36,8 @@ public class Controller {
 		
 		Thread rtable = new Thread(new ReverseTableService());
 		rtable.start();
+		
+		sendMessage(2, "test message");
 		
 		while (!shutdown) {
 			

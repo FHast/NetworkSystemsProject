@@ -9,7 +9,7 @@ public class ReverseTableService implements Runnable {
 	private static boolean shutdown = false;
 	private static ArrayList<RTableEntry> reverseTable = new ArrayList<>();
 
-	public static void addEntry(InetAddress source, InetAddress nextHop, int sourceSeq, int hopCount) {
+	public static void addEntry(InetAddress source, InetAddress nextHop, long sourceSeq, long hopCount) {
 		reverseTable.add(new RTableEntry(source, nextHop, sourceSeq, hopCount));
 	}
 

@@ -8,7 +8,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
@@ -25,24 +24,21 @@ public class RREPservice implements Runnable {
 	public static final int RREP_TRAFFIC_PORT = 2002;
 	public static final int RREP_ID = 152;
 
-	private static InetAddress myIP;
+	private static InetAddress myIP = Controller.myIP;
 	private static ServerSocket ssock;
 	// former received RREPs
 	private static ArrayList<JSONObject> rcvdSSEPs = new ArrayList<>();
 
 	static {
 		try {
-			myIP = InetAddress.getLocalHost();
 			ssock = new ServerSocket(RREP_TRAFFIC_PORT);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void sendRREP(InetAddress nextHop, InetAddress dest, InetAddress source, int sourceseq,
-			int hopcount) {
+	public static void sendRREP(InetAddress nextHop, InetAddress dest, InetAddress source, long sourceseq,
+			long hopcount) {
 		
 		JSONObject rrep = JSONservice.composeRREP(dest, source, sourceseq, hopcount);
 		String msg = rrep.toJSONString();
@@ -68,7 +64,7 @@ public class RREPservice implements Runnable {
 				InetAddress currentDestIP = InetAddress.getByName((String) j.get("destip"));
 				int currentHopcount = (int) j.get("hopcount");
 				int currentSourceSeq = (int) j.get("sourceseq");
-				if (currentDestIP == destIP) {
+				if (currentDestIP.equals(destIP)) {
 					contains = true;
 					// Already a RREP received for this destination, check seq#
 					// and hopcount
@@ -106,7 +102,7 @@ public class RREPservice implements Runnable {
 					int hopcount = (int) json.get("hopcount");
 
 					// Am I the destination?
-					if (destIP == myIP) {
+					if (destIP.equals(myIP)) {
 						ForwardingTableService.addEntry(sourceIP, sock.getInetAddress(), sourceSeq, hopcount);
 					} else if (isUpdate(json)) { // Is this RREP new?
 						RTableEntry re = ReverseTableService.getEntry(destIP);

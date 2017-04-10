@@ -8,11 +8,11 @@ public class FTableEntry {
 	
 	public InetAddress destinationAddress;
 	public InetAddress nextHopAddress;
-	public int destinationSequenceNumber;
+	public long destinationSequenceNumber;
 	public LocalTime lifetime;
-	public int hopcount;
+	public long hopcount;
 
-	public FTableEntry(InetAddress dest, InetAddress nextHop, int destSeq, int hopCount) {
+	public FTableEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
 		destinationAddress = dest;
 		nextHopAddress = nextHop;
 		destinationSequenceNumber = destSeq;
