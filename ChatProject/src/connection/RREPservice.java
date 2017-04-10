@@ -40,6 +40,8 @@ public class RREPservice implements Runnable {
 	public static void sendRREP(InetAddress nextHop, InetAddress dest, InetAddress source, long sourceseq,
 			long hopcount) {
 		
+		System.out.println("[RREP] Sending");
+		
 		JSONObject rrep = JSONservice.composeRREP(dest, source, sourceseq, hopcount);
 		String msg = rrep.toJSONString();
 		byte[] pkt = msg.getBytes();
@@ -87,10 +89,13 @@ public class RREPservice implements Runnable {
 			
 			while (!shutdown) {
 				// wait for some incoming RREP connection
-				Socket sock = ssock.accept();
+				Socket sock = ssock.accept();			
+				
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
 				JSONObject json = JSONservice.getJson(input);
+				
+				System.out.println("[RREP] Received " + input);
 
 				// right protocol?
 				if ((int) json.get("type") == RREP_ID) {

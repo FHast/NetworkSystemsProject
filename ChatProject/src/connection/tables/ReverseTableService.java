@@ -10,6 +10,7 @@ public class ReverseTableService implements Runnable {
 	private static ArrayList<RTableEntry> reverseTable = new ArrayList<>();
 
 	public static void addEntry(InetAddress source, InetAddress nextHop, long sourceSeq, long hopCount) {
+		System.out.println("[RTable] Add Entry");
 		reverseTable.add(new RTableEntry(source, nextHop, sourceSeq, hopCount));
 	}
 
