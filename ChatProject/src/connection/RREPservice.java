@@ -87,6 +87,8 @@ public class RREPservice implements Runnable {
 	@Override
 	public void run() {
 		try {
+			System.out.println("[Thread] Start listening for incoming RREP packets.");
+			
 			while (!shutdown) {
 				// wait for some incoming RREP connection
 				Socket sock = ssock.accept();

@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -25,22 +26,20 @@ import connection.tables.NoEntryException;
  * @author gereon
  *
  */
-public class Peer implements Runnable {
-	private boolean shutdown = false;
-	private InetAddress myIP;
+public class DATAservice implements Runnable {
+	private static boolean shutdown = false;
+	private static InetAddress myIP;
 
 	public static final int DATA_PORT = 2000;
 	public static final int DATA_ID = 150;
 	public static final int DATA_TYPE_TEXT = 1;
 	public static final int DATA_TYPE_IMAGE = 2;
-	// list for packets waiting for routing.
-	private ArrayList<JSONObject> waiting = new ArrayList<>();
 	// list for packets needing acks. TODO
 
 	// incoming data traffic
 	private ServerSocket ssock;
 
-	public Peer() {
+	static {
 		try {
 			myIP = InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
@@ -49,12 +48,12 @@ public class Peer implements Runnable {
 
 	}
 
-	public void sendText(InetAddress destIP, String msg) {
+	public static void sendText(InetAddress destIP, String msg) {
 		JSONObject data = JSONservice.composeDataText(myIP, destIP, msg);
 		sendData(destIP, data);
 	}
 
-	private void sendData(InetAddress dest, JSONObject data) {
+	private static void sendData(InetAddress dest, JSONObject data) {
 		try {
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(dest);
@@ -73,7 +72,7 @@ public class Peer implements Runnable {
 			// no forwarding entry... initiate routing process...
 			RREQservice.findRoute(dest);
 			// waiting for routing...
-			waiting.add(data);
+			waitingChecker.addWaitingMsg(data);
 		} catch (IOException e) {
 			System.err.println("Data connection failed.");
 			e.printStackTrace();
@@ -83,7 +82,12 @@ public class Peer implements Runnable {
 	@Override
 	public void run() {
 		try {
+			 System.out.println("[Thread] Start listening for incoming data.");
+			
 			ssock = new ServerSocket(DATA_PORT);
+			waitingChecker wc = new waitingChecker();
+			Thread t = new Thread(wc);
+			t.start();
 
 			while (!shutdown) {
 				// listen for incoming connections
@@ -91,8 +95,22 @@ public class Peer implements Runnable {
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
 				JSONObject json = JSONservice.getJson(input);
+				
+				System.out.println("Received Data: " + json.toJSONString());
 
-				// TODO
+				if ((int) json.get("type") == DATA_ID) {
+					// this is a data packet
+					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
+					if (destIP == myIP) {
+						// this data packet is for me
+
+						// TODO
+
+					} else {
+						// send data further
+						sendData(destIP, json);
+					}
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -104,5 +122,41 @@ public class Peer implements Runnable {
 
 	public void shutdown() {
 		shutdown = true;
+	}
+
+	private static class waitingChecker implements Runnable {
+		private boolean shutdown = false;
+		// list for packets waiting for routing.
+		private static ArrayList<JSONObject> waiting = new ArrayList<>();
+		
+		public static void addWaitingMsg(JSONObject json) {
+			waiting.add(json);
+		}
+
+		@Override
+		public void run() {
+			System.out.println("[Thread] start checking waiting data packets.");
+			
+			while (!shutdown) {
+
+				try {
+					for (JSONObject j : waiting) {
+						InetAddress destIP = InetAddress.getByName((String) j.get("destip"));
+						if (ForwardingTableService.hasEntry(destIP)) {
+							waiting.remove(j);
+							DATAservice.sendData(destIP, j);
+						}
+					}
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				} catch (ConcurrentModificationException e) {
+					// nothing
+				}
+			}
+		}
+
+		public void shutdown() {
+			shutdown = true;
+		}
 	}
 }
