@@ -16,7 +16,7 @@ public class ReverseTableService implements Runnable {
 
 	public static boolean hasEntry(InetAddress dest) {
 		for (RTableEntry e : reverseTable) {
-			if (e.sourceAddress == dest) {
+			if (e.sourceAddress.equals(dest)) {
 				return true;
 			}
 		}
@@ -25,7 +25,7 @@ public class ReverseTableService implements Runnable {
 
 	public static RTableEntry getEntry(InetAddress dest) throws NoEntryException {
 		for (RTableEntry e : reverseTable) {
-			if (e.sourceAddress == dest) {
+			if (e.sourceAddress.equals(dest)) {
 				return e;
 			}
 		}

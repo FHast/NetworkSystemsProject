@@ -16,7 +16,9 @@ public class ForwardingTableService implements Runnable {
 
 	public static boolean hasEntry(InetAddress dest) {
 		for (FTableEntry e : forwardingTable) {
-			if (e.destinationAddress == dest) {
+			//System.out.println(e.destinationAddress);
+			//System.out.println(dest);
+			if (e.destinationAddress.equals(dest)) {
 				return true;
 			}
 		}
@@ -25,7 +27,7 @@ public class ForwardingTableService implements Runnable {
 
 	public static FTableEntry getEntry(InetAddress dest) throws NoEntryException {
 		for (FTableEntry e : forwardingTable) {
-			if (e.destinationAddress == dest) {
+			if (e.destinationAddress.equals(dest)) {
 				return e;
 			}
 		}
@@ -42,7 +44,8 @@ public class ForwardingTableService implements Runnable {
 			// Removing expired entries
 			try {
 				for (FTableEntry e : forwardingTable) {
-					if (e.lifetime.isAfter(LocalTime.now())) {
+					if (e.lifetime.isBefore(LocalTime.now())) {
+						System.out.println("[FTable] Entry removed");
 						forwardingTable.remove(e);
 					}
 				}

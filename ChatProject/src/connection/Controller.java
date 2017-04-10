@@ -1,7 +1,10 @@
 package connection;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 import connection.tables.ForwardingTableService;
 import connection.tables.ReverseTableService;
@@ -11,7 +14,7 @@ public class Controller {
 	public static InetAddress myIP;
 	static {
 		try {
-			myIP = InetAddress.getByName("192.168.5.1");
+			myIP = InetAddress.getByName(getAddress("192.168.5."));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -37,6 +40,7 @@ public class Controller {
 		Thread rtable = new Thread(new ReverseTableService());
 		rtable.start();
 		
+		System.out.println("MY IP: " + myIP);
 		sendMessage(2, "test message");
 		
 		while (!shutdown) {
@@ -53,6 +57,29 @@ public class Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static String getAddress(String firstPart) {
+		Enumeration e = null;
+		try {
+			e = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException exc) {
+			
+		}
+		while(e.hasMoreElements())
+		{
+		    NetworkInterface n = (NetworkInterface) e.nextElement();
+		    Enumeration ee = n.getInetAddresses();
+		    while (ee.hasMoreElements())
+		    {
+		        InetAddress i = (InetAddress) ee.nextElement();
+		        String address = i.getHostAddress();
+		        if (address.startsWith(firstPart)) {   	
+		        	 return address;
+		        }		       
+		    }
+		}
+		return null;
 	}
 	
 	public static void main(String[] args) {

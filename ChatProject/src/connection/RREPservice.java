@@ -103,14 +103,18 @@ public class RREPservice implements Runnable {
 				System.out.println("[RREP] Received " + input);
 
 				// right protocol?
-				if ((int) json.get("type") == RREP_ID) {
+				if ((long) json.get("type") == RREP_ID) {
 
 					// extract data
 					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceid"));
-					int sourceSeq = (int) json.get("sourceseq");
+					long sourceSeq = (long) json.get("sourceseq");
 					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-					int hopcount = (int) json.get("hopcount");
+					long hopcount = (long) json.get("hopcount");
+					hopcount++;
 
+					System.out.println(sock.getInetAddress());
+					System.out.println(sourceIP);
+					
 					// Am I the destination?
 					if (destIP.equals(myIP)) {
 						ForwardingTableService.addEntry(sourceIP, sock.getInetAddress(), sourceSeq, hopcount);

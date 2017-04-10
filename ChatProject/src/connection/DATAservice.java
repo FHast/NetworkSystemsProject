@@ -46,7 +46,9 @@ public class DATAservice implements Runnable {
 
 	private static void sendData(InetAddress dest, JSONObject data) {
 		try {
-			System.out.println("Trying to send data... " + data.toJSONString());
+			String msg = (String)data.get("data");
+			
+			System.out.println("[DATA] Trying to send " + msg);
 			
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(dest);
@@ -58,10 +60,13 @@ public class DATAservice implements Runnable {
 			// write data to output stream
 			out.println(data.toJSONString());
 
+			System.out.println("[DATA] Successfully send!");
+			
 			// terminate connection
 			out.close();
 			sock.close();
 		} catch (NoEntryException e) {
+			System.out.println("[DATA] No route, initiate routing...");
 			// no forwarding entry... initiate routing process...
 			RREQservice.findRoute(dest);
 			// waiting for routing...
@@ -123,6 +128,7 @@ public class DATAservice implements Runnable {
 		private static ArrayList<JSONObject> waiting = new ArrayList<>();
 		
 		public static void addWaitingMsg(JSONObject json) {
+			System.out.println("[WAIT] Data packet added to waiting queue.");
 			waiting.add(json);
 		}
 
@@ -131,13 +137,12 @@ public class DATAservice implements Runnable {
 			System.out.println("[Thread] start checking waiting data packets.");
 			
 			while (!shutdown) {
-
 				try {
 					for (JSONObject j : waiting) {
 						InetAddress destIP = InetAddress.getByName((String) j.get("destip"));
 						if (ForwardingTableService.hasEntry(destIP)) {
-							waiting.remove(j);
 							DATAservice.sendData(destIP, j);
+							waiting.remove(j);
 						}
 					}
 				} catch (UnknownHostException e) {

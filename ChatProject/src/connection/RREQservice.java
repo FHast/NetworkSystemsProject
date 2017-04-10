@@ -61,7 +61,6 @@ public class RREQservice extends Observable implements Runnable {
 			DatagramPacket d = new DatagramPacket(msg.getBytes(), msg.length(), group, RREQ_TRAFFIC_PORT);
 
 			msock.send(d);
-			System.out.println("Success.");
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
