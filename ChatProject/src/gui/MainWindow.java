@@ -46,17 +46,14 @@ public class MainWindow extends JFrame {
 	 */
 	public MainWindow(Controller c) {
 		// settings of the frame
-		setTitle("Ad-Hoc Chat");
+		setTitle("Ad-Hoc Chat "+c.myIP);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 661, 550);
+		setBounds(100, 100, 1000, 600);
 
 		contentPane = new JPanel();
 
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
-		
-		// just debugging
-		contacts.add(new Contact("test",1,new ArrayList<Message>()));
 
 		controller = c;
 
