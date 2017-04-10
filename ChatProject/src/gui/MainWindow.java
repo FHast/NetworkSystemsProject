@@ -180,4 +180,16 @@ public class MainWindow extends JFrame {
 	public void setOpenedContactWindow(boolean b) {
 		openedContactWindow = b;
 	}
+	
+	public void addMessage(int device, String text) {
+		for(Contact c : contacts) {
+			if (c.getDevice() == device) {
+				c.addMessage(false, text);
+				return;
+			}
+		}
+		ArrayList<Message> msg = new ArrayList<>();
+		msg.add(new Message(false,text));
+		contacts.add(new Contact("Unknown", device, msg));
+	}
 }
