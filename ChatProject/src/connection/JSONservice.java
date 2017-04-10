@@ -52,4 +52,14 @@ public class JSONservice {
 		data.put("data", message);
 		return data;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject composeRERR(int destCount, InetAddress unreachableDest, int destSeq) {
+		JSONObject rerr = new JSONObject();
+		rerr.put("type", RERRservice.RERR_ID);
+		rerr.put("destCount", destCount);
+		rerr.put("unreachableDest", unreachableDest);
+		rerr.put("destSeq", unreachableDest);
+		return rerr;
+	}
 }
