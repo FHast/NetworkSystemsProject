@@ -89,6 +89,8 @@ public class RREQservice extends Observable implements Runnable {
 	@Override
 	public void run() {
 		try {
+			System.out.println("[Thread] Start listening for incoming RREQ packets.");
+			
 			// listen for RREQs
 			while (!shutdown) {
 				// receive packet

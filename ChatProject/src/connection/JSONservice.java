@@ -43,12 +43,12 @@ public class JSONservice {
 	@SuppressWarnings("unchecked")
 	public static JSONObject composeDataText(InetAddress sourceIP, InetAddress destIP, String message) {
 		JSONObject data = new JSONObject();
-		data.put("type", Peer.DATA_ID);
+		data.put("type", DATAservice.DATA_ID);
 		data.put(sourceIP, sourceIP.getHostAddress());
 		data.put("destip", destIP.getHostAddress());
 		data.put("timestamp", LocalTime.now().toString());
 		data.put("ttl", 64);
-		data.put("datatype", Peer.DATA_TYPE_TEXT);
+		data.put("datatype", DATAservice.DATA_TYPE_TEXT);
 		data.put("data", message);
 		return data;
 	}
