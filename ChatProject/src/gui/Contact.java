@@ -1,22 +1,21 @@
 package gui;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class Contact {
 	
 	private String name;
-	private InetAddress ip;
+	private int device;
 	private ArrayList<Message> messages;
 	
-	public Contact(String name, InetAddress ip, ArrayList<Message> messages) {
+	public Contact(String name, int device, ArrayList<Message> messages) {
 		this.name = name;
-		this.ip = ip;
+		this.device = device;
 		this.messages = messages;
 	}
 	
-	public InetAddress getIP() {
-		return ip;
+	public int getDevice() {
+		return device;
 	}
 	
 	@Override

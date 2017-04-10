@@ -29,7 +29,7 @@ public class Controller {
 
 	public Controller() {
 
-		mainWindow = new MainWindow();
+		mainWindow = new MainWindow(this);
 		mainWindow.setVisible(true);
 
 		// start threads
@@ -50,7 +50,7 @@ public class Controller {
 
 		// Controller.mainWindow.log
 		Controller.mainWindow.log("MY IP: " + myIP);
-		sendMessage(2, "test message");
+		//sendMessage(2, "test message");
 
 		while (!shutdown) {
 

@@ -42,6 +42,7 @@ public class NewContactPopup extends JFrame {
 		txtName.setColumns(10);
 		
 		JButton btnFinish = new JButton("Finish");
+		getRootPane().setDefaultButton(btnFinish);
 		btnFinish.addActionListener(new ActionListener() {
 
 			@Override

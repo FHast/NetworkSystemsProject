@@ -21,6 +21,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import connection.Controller;
+
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L; // just so that eclipse
@@ -37,10 +39,12 @@ public class MainWindow extends JFrame {
 
 	private boolean openedContactWindow = false;
 
+	private Controller controller;
+
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {
+	public MainWindow(Controller c) {
 		// settings of the frame
 		setTitle("Ad-Hoc Chat");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,10 +54,8 @@ public class MainWindow extends JFrame {
 
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
-		
-		addContact("sadksad",1);
-		addContact("jnfkjnk",2);
-		addContact("fgjkk",4);
+
+		controller = c;
 
 		// Messages list
 		listMessages = new JList<>();
@@ -113,7 +115,7 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO actually sending a message
+				controller.sendMessage(listContacts.getSelectedValue().getDevice(),textFieldMessage.getText());
 				textFieldMessage.setText("");
 			}
 
@@ -158,8 +160,8 @@ public class MainWindow extends JFrame {
 	public void refreshContactList() {
 		Contact[] c = new Contact[contacts.size() + 2];
 		System.arraycopy(contacts.toArray(new Contact[0]), 0, c, 0, contacts.size());
-		c[c.length - 2] = new Contact("Log", null, new ArrayList<Message>());
-		c[c.length - 1] = new Contact("+", null, new ArrayList<Message>());
+		c[c.length - 2] = new Contact("Log", 0, new ArrayList<Message>());
+		c[c.length - 1] = new Contact("+", 0, new ArrayList<Message>());
 		listContacts.setListData(c);
 	}
 
@@ -172,13 +174,9 @@ public class MainWindow extends JFrame {
 	}
 
 	public void addContact(String name, int device) {
-		try {
-			contacts.add(new Contact(name, InetAddress.getByName("192.168.5." + device), new ArrayList<Message>()));
-		} catch (UnknownHostException e) {
-			setBottomLine("Error: Invalid device");
-		}
+		contacts.add(new Contact(name, device, new ArrayList<Message>()));
 	}
-	
+
 	public void setOpenedContactWindow(boolean b) {
 		openedContactWindow = b;
 	}
