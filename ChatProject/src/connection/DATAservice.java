@@ -8,8 +8,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+
+import javax.activation.DataSource;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -123,13 +125,15 @@ public class DATAservice implements Runnable {
 	}
 
 	private static class waitingChecker implements Runnable {
+		private static final long RREQ_TIMEOUT = 3;
+		
 		private boolean shutdown = false;
 		// list for packets waiting for routing.
-		private static ArrayList<JSONObject> waiting = new ArrayList<>();
+		private static HashMap<JSONObject, Long> waiting = new HashMap<>();
 		
 		public static void addWaitingMsg(JSONObject json) {
 			Controller.mainWindow.log("[WAIT] Data packet added to waiting queue.");
-			waiting.add(json);
+			waiting.put(json, System.nanoTime());
 		}
 
 		@Override
@@ -138,9 +142,13 @@ public class DATAservice implements Runnable {
 			
 			while (!shutdown) {
 				try {
-					for (JSONObject j : waiting) {
+					for (JSONObject j : waiting.keySet()) {
 						InetAddress destIP = InetAddress.getByName((String) j.get("destip"));
 						if (ForwardingTableService.hasEntry(destIP)) {
+							DATAservice.sendData(destIP, j);
+							waiting.remove(j);
+						}
+						if (waiting.get(j) + RREQ_TIMEOUT * 1000000000 < System.nanoTime()) {
 							DATAservice.sendData(destIP, j);
 							waiting.remove(j);
 						}
