@@ -3,11 +3,13 @@ package connection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
@@ -44,12 +46,14 @@ public class RREPservice implements Runnable {
 		
 		JSONObject rrep = JSONservice.composeRREP(dest, source, sourceseq, hopcount);
 		String msg = rrep.toJSONString();
-		byte[] pkt = msg.getBytes();
-		DatagramPacket p = new DatagramPacket(pkt, pkt.length, nextHop, RREP_TRAFFIC_PORT);
 		try {
-			DatagramSocket s = new DatagramSocket(RREP_TRAFFIC_PORT);
-			s.send(p);
-			s.close();
+			Socket sock = new Socket(dest.getHostAddress(), RREP_TRAFFIC_PORT);
+			PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
+			out.println(msg);
+			out.close();
+			sock.close();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -89,7 +93,8 @@ public class RREPservice implements Runnable {
 			
 			while (!shutdown) {
 				// wait for some incoming RREP connection
-				Socket sock = ssock.accept();			
+				Socket sock = ssock.accept();
+				System.out.println("[RREP] connection accepted");
 				
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
