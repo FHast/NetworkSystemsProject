@@ -58,6 +58,7 @@ public class Controller {
 	}
 
 	public static synchronized void incrementSeq() {
+		Controller.mainWindow.log("[Controller] Incrementing sequence number");
 		mySeq++;
 	}
 

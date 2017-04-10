@@ -27,6 +27,18 @@ public class ForwardingTableService implements Runnable {
 		return false;
 	}
 
+	public static void removeEntry(InetAddress dest) {
+		try {
+			for (FTableEntry e : forwardingTable) {
+				if (e.destinationAddress.equals(dest)) {
+					forwardingTable.remove(e);
+				}
+			}
+		} catch (ConcurrentModificationException e) {
+			// timeout
+		}
+	}
+
 	public static FTableEntry getEntry(InetAddress dest) throws NoEntryException {
 		for (FTableEntry e : forwardingTable) {
 			if (e.destinationAddress.equals(dest)) {
