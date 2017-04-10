@@ -106,7 +106,7 @@ public class DATAservice implements Runnable {
 
 						// TODO
 						if ((long) json.get("datatype") == DATA_TYPE_TEXT) {
-							int device = Integer.parseInt(((String) json.get("sourceip")).split(".")[3]);
+							int device = Integer.parseInt(((String) json.get("sourceip")).split("[.]")[3]);
 							Controller.mainWindow.addMessage(device, (String) json.get("data"));
 							Controller.mainWindow.refreshContactList();
 						}

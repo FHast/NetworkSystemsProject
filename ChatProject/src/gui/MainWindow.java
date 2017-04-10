@@ -54,18 +54,22 @@ public class MainWindow extends JFrame {
 
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
+		
+		// just debugging
+		contacts.add(new Contact("test",1,new ArrayList<Message>()));
 
 		controller = c;
 
 		// Messages list
 		listMessages = new JList<>();
 		listMessages.setEnabled(false);
+		
 		listMessages.setCellRenderer(new ListCellRenderer<Message>() {
 
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Message> list, Message value, int index,
 					boolean isSelected, boolean cellHasFocus) {
-				JLabel l = new JLabel(value.getText());
+				JLabel l = new JLabel(value.toString());
 
 				if (value.isSentBySelf()) {
 					l.setHorizontalAlignment(JLabel.RIGHT);
