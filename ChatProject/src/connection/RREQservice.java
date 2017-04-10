@@ -45,22 +45,16 @@ public class RREQservice extends Observable implements Runnable {
 		}
 	}
 
-	public void findRoute(int device, int seq) {
-		try {
-			String ip = "192.168.5." + device;
-			InetAddress destIP = InetAddress.getByName(ip);
-			if (!ForwardingTableService.hasEntry(destIP)) {
-				// send a new RREQ
-				myBroadcastID++;
-				JSONObject rreq = JSONservice.composeRREQ(myIP, mySeq, myBroadcastID, destIP, 0, 0);
-				sendRREQ(rreq);
-			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+	public static void findRoute(InetAddress destIP) {
+		if (!ForwardingTableService.hasEntry(destIP)) {
+			// send a new RREQ
+			myBroadcastID++;
+			JSONObject rreq = JSONservice.composeRREQ(myIP, mySeq, myBroadcastID, destIP, 0, 0);
+			sendRREQ(rreq);
 		}
 	}
 
-	private void sendRREQ(JSONObject json) {
+	private static void sendRREQ(JSONObject json) {
 		String msg = json.toJSONString();
 		System.out.println("[CommunicationService] Sending: " + msg);
 
@@ -76,7 +70,7 @@ public class RREQservice extends Observable implements Runnable {
 		}
 	}
 
-	private boolean receivedBefore(JSONObject json) {
+	private static boolean receivedBefore(JSONObject json) {
 		String sourceIP = (String) json.get("sourceip");
 		int broadcastID = (int) (json.get("broadcastid"));
 
