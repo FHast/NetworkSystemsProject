@@ -42,7 +42,7 @@ public class RREPservice implements Runnable {
 	public static void sendRREP(InetAddress nextHop, InetAddress dest, InetAddress source, long sourceseq,
 			long hopcount) {
 		
-		System.out.println("[RREP] Sending");
+		Controller.mainWindow.log("[RREP] Sending");
 		
 		JSONObject rrep = JSONservice.composeRREP(dest, source, sourceseq, hopcount);
 		String msg = rrep.toJSONString();
@@ -89,18 +89,18 @@ public class RREPservice implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("[Thread] Start listening for incoming RREP packets.");
+			Controller.mainWindow.log("[Thread] Start listening for incoming RREP packets.");
 			
 			while (!shutdown) {
 				// wait for some incoming RREP connection
 				Socket sock = ssock.accept();
-				System.out.println("[RREP] connection accepted");
+				Controller.mainWindow.log("[RREP] connection accepted");
 				
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
 				JSONObject json = JSONservice.getJson(input);
 				
-				System.out.println("[RREP] Received " + input);
+				Controller.mainWindow.log("[RREP] Received " + input);
 
 				// right protocol?
 				if ((long) json.get("type") == RREP_ID) {
@@ -112,8 +112,8 @@ public class RREPservice implements Runnable {
 					long hopcount = (long) json.get("hopcount");
 					hopcount++;
 
-					System.out.println(sock.getInetAddress());
-					System.out.println(sourceIP);
+					Controller.mainWindow.log(sock.getInetAddress().toString());
+					Controller.mainWindow.log(sourceIP.toString());
 					
 					// Am I the destination?
 					if (destIP.equals(myIP)) {

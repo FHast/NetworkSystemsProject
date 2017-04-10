@@ -5,12 +5,14 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import connection.Controller;
+
 public class ReverseTableService implements Runnable {
 	private static boolean shutdown = false;
 	private static ArrayList<RTableEntry> reverseTable = new ArrayList<>();
 
 	public static void addEntry(InetAddress source, InetAddress nextHop, long sourceSeq, long hopCount) {
-		System.out.println("[RTable] Add Entry");
+		Controller.mainWindow.log("[RTable] Add Entry");
 		reverseTable.add(new RTableEntry(source, nextHop, sourceSeq, hopCount));
 	}
 

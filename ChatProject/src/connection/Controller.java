@@ -6,8 +6,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 
+import javax.swing.JFrame;
+
 import connection.tables.ForwardingTableService;
 import connection.tables.ReverseTableService;
+import gui.MainWindow;
 
 public class Controller {
 	
@@ -22,8 +25,14 @@ public class Controller {
 	
 	
 	private boolean shutdown = false;
+	
+	public static MainWindow mainWindow;
 
 	public Controller() {
+		
+		mainWindow = new MainWindow();
+		mainWindow.setVisible(true);
+		
 		// start threads
 		Thread rreq = new Thread(new RREQservice());
 		rreq.start();
@@ -40,7 +49,8 @@ public class Controller {
 		Thread rtable = new Thread(new ReverseTableService());
 		rtable.start();
 		
-		System.out.println("MY IP: " + myIP);
+		// Controller.mainWindow.log
+		Controller.mainWindow.log("MY IP: " + myIP);
 		sendMessage(2, "test message");
 		
 		while (!shutdown) {

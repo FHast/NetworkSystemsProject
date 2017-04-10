@@ -55,7 +55,7 @@ public class RREQservice extends Observable implements Runnable {
 
 	private static void sendRREQ(JSONObject json) {
 		String msg = json.toJSONString();
-		System.out.println("[RREQ] Sending");
+		Controller.mainWindow.log("[RREQ] Sending");
 
 		try {
 			DatagramPacket d = new DatagramPacket(msg.getBytes(), msg.length(), group, RREQ_TRAFFIC_PORT);
@@ -87,7 +87,7 @@ public class RREQservice extends Observable implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("[Thread] Start listening for incoming RREQ packets.");
+			Controller.mainWindow.log("[Thread] Start listening for incoming RREQ packets.");
 
 			// listen for RREQs
 			while (!shutdown) {
@@ -98,7 +98,7 @@ public class RREQservice extends Observable implements Runnable {
 
 				// extract Data
 				String msg = new String(p.getData());
-				System.out.println("[RREQ] Received " + msg);
+				Controller.mainWindow.log("[RREQ] Received " + msg);
 				JSONObject json = JSONservice.getJson(msg);
 
 				// right protocol?

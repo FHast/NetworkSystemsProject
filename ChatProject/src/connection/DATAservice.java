@@ -48,7 +48,7 @@ public class DATAservice implements Runnable {
 		try {
 			String msg = (String)data.get("data");
 			
-			System.out.println("[DATA] Trying to send " + msg);
+			Controller.mainWindow.log("[DATA] Trying to send " + msg);
 			
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(dest);
@@ -60,13 +60,13 @@ public class DATAservice implements Runnable {
 			// write data to output stream
 			out.println(data.toJSONString());
 
-			System.out.println("[DATA] Successfully send!");
+			Controller.mainWindow.log("[DATA] Successfully send!");
 			
 			// terminate connection
 			out.close();
 			sock.close();
 		} catch (NoEntryException e) {
-			System.out.println("[DATA] No route, initiate routing...");
+			Controller.mainWindow.log("[DATA] No route, initiate routing...");
 			// no forwarding entry... initiate routing process...
 			RREQservice.findRoute(dest);
 			// waiting for routing...
@@ -80,7 +80,7 @@ public class DATAservice implements Runnable {
 	@Override
 	public void run() {
 		try {
-			 System.out.println("[Thread] Start listening for incoming data.");
+			 Controller.mainWindow.log("[Thread] Start listening for incoming data.");
 			
 			ssock = new ServerSocket(DATA_PORT);
 			waitingChecker wc = new waitingChecker();
@@ -94,7 +94,7 @@ public class DATAservice implements Runnable {
 				String input = in.readLine();
 				JSONObject json = JSONservice.getJson(input);
 				
-				System.out.println("Received Data: " + json.toJSONString());
+				Controller.mainWindow.log("Received Data: " + json.toJSONString());
 
 				if ((long) json.get("type") == DATA_ID) {
 					// this is a data packet
@@ -128,13 +128,13 @@ public class DATAservice implements Runnable {
 		private static ArrayList<JSONObject> waiting = new ArrayList<>();
 		
 		public static void addWaitingMsg(JSONObject json) {
-			System.out.println("[WAIT] Data packet added to waiting queue.");
+			Controller.mainWindow.log("[WAIT] Data packet added to waiting queue.");
 			waiting.add(json);
 		}
 
 		@Override
 		public void run() {
-			System.out.println("[Thread] start checking waiting data packets.");
+			Controller.mainWindow.log("[Thread] start checking waiting data packets.");
 			
 			while (!shutdown) {
 				try {

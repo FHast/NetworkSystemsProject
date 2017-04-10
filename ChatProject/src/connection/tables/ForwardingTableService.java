@@ -5,19 +5,21 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
+import connection.Controller;
+
 public class ForwardingTableService implements Runnable {
 	private static boolean shutdown = false;
 	private static ArrayList<FTableEntry> forwardingTable = new ArrayList<>();
 
 	public static void addEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
-		System.out.println("[FTable] Add Entry");
+		Controller.mainWindow.log("[FTable] Add Entry");
 		forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
 	}
 
 	public static boolean hasEntry(InetAddress dest) {
 		for (FTableEntry e : forwardingTable) {
-			//System.out.println(e.destinationAddress);
-			//System.out.println(dest);
+			//Controller.mainWindow.log(e.destinationAddress);
+			//Controller.mainWindow.log(dest);
 			if (e.destinationAddress.equals(dest)) {
 				return true;
 			}
@@ -45,7 +47,7 @@ public class ForwardingTableService implements Runnable {
 			try {
 				for (FTableEntry e : forwardingTable) {
 					if (e.lifetime.isBefore(LocalTime.now())) {
-						System.out.println("[FTable] Entry removed");
+						Controller.mainWindow.log("[FTable] Entry removed");
 						forwardingTable.remove(e);
 					}
 				}
