@@ -5,8 +5,11 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -21,6 +24,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import connection.DATAservice;
+
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L; // just so that eclipse
@@ -28,22 +33,14 @@ public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JTextField textFieldMessage;
 	private ArrayList<Message> logMessages;
+	private ArrayList<Contact> contacts;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainWindow frame = new MainWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JList<Message> listMessages;
+	private JList<Contact> listContacts;
+	private JButton btnSend;
+	private JLabel lblErrorMessage;
+
+	private boolean openedContactWindow = false;
 
 	/**
 	 * Create the frame.
@@ -57,9 +54,14 @@ public class MainWindow extends JFrame {
 		contentPane = new JPanel();
 
 		logMessages = new ArrayList<>();
+		contacts = new ArrayList<>();
+		
+		addContact("sadksad",1);
+		addContact("jnfkjnk",2);
+		addContact("fgjkk",4);
 
 		// Messages list
-		JList<Message> listMessages = new JList<>();
+		listMessages = new JList<>();
 		listMessages.setEnabled(false);
 		listMessages.setCellRenderer(new ListCellRenderer<Message>() {
 
@@ -81,26 +83,36 @@ public class MainWindow extends JFrame {
 		});
 
 		// Contact list
-		JList<Contact> listContacts = new JList<>();
-		listContacts.setListData(new Contact[] { new Contact("Log", null, new ArrayList<Message>()),
-				new Contact("+", null, new ArrayList<Message>()) });
+		listContacts = new JList<>();
+		refreshContactList();
+		MainWindow self = this;
 		listContacts.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
-				if (listContacts.getSelectedValue().toString().equals("Log")) {
-					listMessages.setListData(logMessages.toArray(new Message[0]));
-				} else if (listContacts.getSelectedValue().toString().equals("+")) {
-					// TODO show new contact popup
-				} else {
-					listMessages.setListData(listContacts.getSelectedValue().getMessagesRaw());
+
+				if (listContacts.getSelectedIndex() != -1) {
+					if (listContacts.getSelectedValue().toString().equals("Log")) {
+						listMessages.setListData(logMessages.toArray(new Message[0]));
+
+					} else if (listContacts.getSelectedValue().toString().equals("+")) {
+						listMessages.setListData(new Message[0]);
+
+						if (!openedContactWindow) {
+							NewContactPopup popup = new NewContactPopup(self);
+							popup.setVisible(true);
+							openedContactWindow = true;
+						}
+					} else {
+						listMessages.setListData(listContacts.getSelectedValue().getMessagesRaw());
+					}
 				}
 			}
 
 		});
 
 		// Send button
-		JButton btnSend = new JButton("Send");
+		btnSend = new JButton("Send");
 		getRootPane().setDefaultButton(btnSend);
 		btnSend.addActionListener(new ActionListener() {
 
@@ -117,7 +129,7 @@ public class MainWindow extends JFrame {
 		textFieldMessage.setColumns(10);
 
 		// Label for bottom line error message
-		JLabel lblErrorMessage = new JLabel("Connection established.");
+		lblErrorMessage = new JLabel("Connection established.");
 
 		// Layout
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -148,7 +160,31 @@ public class MainWindow extends JFrame {
 		setContentPane(contentPane);
 	}
 
+	public void refreshContactList() {
+		Contact[] c = new Contact[contacts.size() + 2];
+		System.arraycopy(contacts.toArray(new Contact[0]), 0, c, 0, contacts.size());
+		c[c.length - 2] = new Contact("Log", null, new ArrayList<Message>());
+		c[c.length - 1] = new Contact("+", null, new ArrayList<Message>());
+		listContacts.setListData(c);
+	}
+
 	public void log(String msg) {
-		logMessages.add(new Message(false,"[" + LocalTime.now() + "]" + msg));
+		logMessages.add(new Message(false, "[" + LocalTime.now() + "]" + msg));
+	}
+
+	public void setBottomLine(String txt) {
+		lblErrorMessage.setText(txt);
+	}
+
+	public void addContact(String name, int device) {
+		try {
+			contacts.add(new Contact(name, InetAddress.getByName("192.168.5." + device), new ArrayList<Message>()));
+		} catch (UnknownHostException e) {
+			setBottomLine("Error: Invalid device");
+		}
+	}
+	
+	public void setOpenedContactWindow(boolean b) {
+		openedContactWindow = b;
 	}
 }
