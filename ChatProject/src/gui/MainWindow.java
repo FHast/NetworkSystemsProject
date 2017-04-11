@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 
 import connection.Controller;
 import javax.swing.border.LineBorder;
+import javax.swing.ScrollPaneConstants;
 
 public class MainWindow extends JFrame {
 
@@ -137,6 +138,7 @@ public class MainWindow extends JFrame {
 		lblErrorMessage = new JLabel("Connection established.");
 
 		JScrollPane jsp = new JScrollPane(listMessages);
+		jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 		lblNamefield = new JLabel("");
 
