@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -118,6 +119,8 @@ public class DATAservice implements Runnable {
 					}
 				}
 			}
+		} catch(BindException e) {
+			// just silence it, it already caught by another thread
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

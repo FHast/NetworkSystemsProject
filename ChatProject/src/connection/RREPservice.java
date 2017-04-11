@@ -36,8 +36,8 @@ public class RREPservice implements Runnable {
 		try {
 			ssock = new ServerSocket(RREP_TRAFFIC_PORT);
 		} catch (IOException e) {
-			new StartPopup("Application already running", "Another instance of this application is already running.",
-					"Please close it first!").setVisible(true);
+			new StartPopup("Application already running", "Another instance of this application is ",
+					"already running. Please close it first!").setVisible(true);
 		}
 
 	}
