@@ -2,13 +2,12 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ScrollPane;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalTime;
 import java.util.ArrayList;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -20,14 +19,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import controller.Controller;
-
-import javax.swing.border.LineBorder;
-import javax.swing.ScrollPaneConstants;
-import java.awt.Toolkit;
 
 public class MainWindow extends JFrame {
 
@@ -130,7 +127,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textFieldMessage.getText();
-				if (!input.equals("")) {
+				if (!input.equals("") && listContacts.getSelectedIndex() != -1) {
 					controller.sendMessage(listContacts.getSelectedValue().getDevice(), input);
 					contacts.get(listContacts.getSelectedIndex()).addMessage(true, input);
 					textFieldMessage.setText("");
