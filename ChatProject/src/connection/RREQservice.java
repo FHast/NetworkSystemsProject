@@ -73,7 +73,7 @@ public class RREQservice extends Observable implements Runnable {
 
 		for (JSONObject j : rcvdRREQs) {
 			String currentIP = (String) j.get("sourceip");
-			int currentID = (int) (j.get("broadcastid"));
+			long currentID = (long) (j.get("broadcastid"));
 			if (currentIP.equals(sourceIP) && currentID == broadcastID) {
 				// source IP and broadcast ID identify a RREQ request
 				return true;
@@ -110,9 +110,13 @@ public class RREQservice extends Observable implements Runnable {
 					long hopcount = (long) (json.get("hopcount"));
 
 					// Did i receive this RREQ before?
+					System.out.println(receivedBefore(json));
+					System.out.println(myIP + " | " + sourceIP);
 					if (receivedBefore(json) || (myIP.equals(sourceIP))) {
 						// ignore packet
 					} else {
+						rcvdRREQs.add(json);
+						
 						// Am I the RREQ destination?
 						if (destIP.equals(myIP)) {
 							// send RREP

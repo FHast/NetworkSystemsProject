@@ -46,6 +46,7 @@ public class ReverseTableService implements Runnable {
 				for (RTableEntry e : reverseTable) {
 					if (e.lifetime.isAfter(LocalTime.now())) {
 						reverseTable.remove(e);
+						break;
 					}
 				}
 			} catch (ConcurrentModificationException e) {
