@@ -11,12 +11,14 @@ import java.security.PublicKey;
 import javax.crypto.Cipher;
 
 public class RSAservice {
-	public static String PRIVATE_KEY_FILE = "private_key";
-	public static String PUBLIC_KEY_FILE = "public_key";
+	
+	public static final String ALGORITHM = "RSA";
+	public static final String PRIVATE_KEY_FILE = "private_key";
+	public static final String PUBLIC_KEY_FILE = "public_key";
 
 	public static void generateKey() {
 		try {
-			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM);
 			keyGen.initialize(1024);
 			final KeyPair key = keyGen.generateKeyPair();
 
@@ -53,24 +55,24 @@ public class RSAservice {
 		return new File(PRIVATE_KEY_FILE).exists() && new File(PUBLIC_KEY_FILE).exists();
 	}
 
-	public static byte[] encrypt(String text, PublicKey key) {
+	public static String encrypt(String text, PublicKey key) {
 		byte[] cipherText = null;
 		try {
-			Cipher cipher = Cipher.getInstance("RSA");
+			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			cipherText = cipher.doFinal(text.getBytes());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return cipherText;
+		return new String(cipherText);
 	}
 
-	public static String decrypt(byte[] text, PrivateKey key) {
+	public static String decrypt(String text, PrivateKey key) {
 		byte[] decrypted = null;
 		try {
-			Cipher cipher = Cipher.getInstance("RSA");
+			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, key);
-			decrypted = cipher.doFinal(text);
+			decrypted = cipher.doFinal(text.getBytes());
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
