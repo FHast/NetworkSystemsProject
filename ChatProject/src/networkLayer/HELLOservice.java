@@ -90,7 +90,7 @@ public class HELLOservice extends Observable implements Runnable {
 				try {
 					for (InetAddress i : neighbours.keySet()) {
 						long then = neighbours.get(i);
-						long thenPlusTimeout = then + ((HELLO_LOSS + 1) * HELLO_INTERVAL) * 1000000;
+						long thenPlusTimeout = then + ((HELLO_LOSS + 1) * HELLO_INTERVAL * 1000000);
 						if (System.nanoTime() > thenPlusTimeout) {
 							// increase my sequence number
 							NetworkController.incrementSeq();

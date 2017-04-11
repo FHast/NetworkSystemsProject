@@ -162,9 +162,16 @@ public class NetworkController implements Observer {
 				// extract data
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 				long sourceSeq = (long) json.get("sourceseq");
+				
+				// get unreachable array
 				JSONArray array = (JSONArray) json.get("unreachable");
-				InetAddress[] unreachable = (InetAddress[]) array.toArray(new InetAddress[0]);
-
+				String[] strings = (String[])array.toArray(new String[0]);
+				InetAddress[] unreachable = new InetAddress[array.size()];
+				for (int i = 0; i < strings.length; i++) {
+					unreachable[i] = InetAddress.getByName(strings[i]);
+				}
+				
+				
 				// update ftable with source seq
 				if (ForwardingTableService.hasEntry(sourceIP)) {
 					try {
