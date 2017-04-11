@@ -25,6 +25,7 @@ public class StartPopup extends JFrame {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 325, 130);
+		setResizable(false);
 		contentPane = new JPanel();
 		
 		setTitle(title);

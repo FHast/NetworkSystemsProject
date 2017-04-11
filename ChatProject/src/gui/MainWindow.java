@@ -213,15 +213,18 @@ public class MainWindow extends JFrame {
 	}
 
 	public void addContact(String name, int device) {
-		boolean found = false;
+		Contact found = null;
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
-				found = true;
+				found = c;
 			}
 		}
 
-		if (!found) {
+		if (found == null) {
 			contacts.add(new Contact(name, device, new ArrayList<Message>()));
+		}
+		else {
+			setBottomLine("Contact already added: " + found.getName());
 		}
 	}
 
