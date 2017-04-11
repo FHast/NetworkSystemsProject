@@ -125,8 +125,8 @@ public class MainWindow extends JFrame {
 				if (!input.equals("") && listContacts.getSelectedIndex() != -1) {
 					controller.sendMessage(listContacts.getSelectedValue().getDevice(), input);
 					contacts.get(listContacts.getSelectedIndex()).addMessage(true, input);
-					textFieldMessage.setText("");
 				}
+				textFieldMessage.setText("");
 			}
 
 		});
