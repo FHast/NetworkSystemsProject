@@ -53,16 +53,24 @@ public class NetworkController implements Observer {
 	}
 
 	public NetworkController() {
-		Thread hello = new Thread(new HELLOservice());
+		HELLOservice helloservice = new HELLOservice();
+		helloservice.addObserver(this);
+		Thread hello = new Thread(helloservice);
 		hello.start();
-
-		Thread rerr = new Thread(new RERRservice());
+		
+		RERRservice rerrservice = new RERRservice();
+		rerrservice.addObserver(this);
+		Thread rerr = new Thread(rerrservice);
 		rerr.start();
 
-		Thread rreq = new Thread(new RREQservice());
+		RREQservice rreqservice = new RREQservice();
+		rreqservice.addObserver(this);
+		Thread rreq = new Thread(rreqservice);
 		rreq.start();
 
-		Thread rrep = new Thread(new RREPservice());
+		RREPservice rrepservice = new RREPservice();
+		rrepservice.addObserver(this);
+		Thread rrep = new Thread(rrepservice);
 		rrep.start();
 
 		Thread ftable = new Thread(new ForwardingTableService());
@@ -127,7 +135,7 @@ public class NetworkController implements Observer {
 			receivedHELLO((DatagramPacket) arg1);
 		} else if (arg0 instanceof RREQservice) {
 			receivedRREQ((DatagramPacket) arg1);
-		}
+		} 
 	}
 
 	private static void receivedHELLO(DatagramPacket p) {
@@ -234,7 +242,9 @@ public class NetworkController implements Observer {
 		try {
 			// extract Data
 			String msg = new String(p.getData());
+			
 			Controller.mainWindow.log("[RREQ] Received " + msg);
+			
 			JSONObject json = JSONservice.getJson(msg);
 
 			// right protocol?
@@ -286,6 +296,8 @@ public class NetworkController implements Observer {
 	}
 
 	public static void findRoute(InetAddress destIP) {
+		newLog("[Network] Finding route to: " + destIP.getHostAddress());
+		
 		if (!ForwardingTableService.hasEntry(destIP)) {
 			// send a new RREQ
 			myBroadcastID++;
@@ -364,5 +376,9 @@ public class NetworkController implements Observer {
 			}
 		}
 		return false;
+	}
+	
+	public static void newLog(String s) {
+		Controller.mainWindow.log(s);
 	}
 }

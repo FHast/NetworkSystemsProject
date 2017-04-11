@@ -31,6 +31,9 @@ public class RREQservice extends Observable implements Runnable {
 		try {
 			DatagramPacket d = new DatagramPacket(msg.getBytes(), msg.length(), group, RREQ_TRAFFIC_PORT);
 			msock.send(d);
+			
+			System.out.println("RREQ send");
+			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -47,6 +50,8 @@ public class RREQservice extends Observable implements Runnable {
 				byte[] buffer = new byte[250];
 				DatagramPacket p = new DatagramPacket(buffer, buffer.length);
 				msock.receive(p);
+				
+				System.out.println("RREQ received");
 
 				// notify observers
 				setChanged();

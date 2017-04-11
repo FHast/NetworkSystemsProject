@@ -12,7 +12,7 @@ public class ForwardingTableService implements Runnable {
 	private static ArrayList<FTableEntry> forwardingTable = new ArrayList<>();
 
 	public static void addEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
-		Controller.mainWindow.log("[FTable] Add Entry");
+		Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
 		forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
 	}
 

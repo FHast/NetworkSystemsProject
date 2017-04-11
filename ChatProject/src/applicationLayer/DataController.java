@@ -29,7 +29,9 @@ public class DataController implements Observer {
 
 	public DataController() {
 		// start threads
-		Thread data = new Thread(new DATAservice());
+		DATAservice dataservice = new DATAservice();
+		dataservice.addObserver(this);
+		Thread data = new Thread(dataservice);
 		data.start();
 
 		Thread waitingList = new Thread(new waitingChecker());
@@ -45,7 +47,9 @@ public class DataController implements Observer {
 		return NetworkController.getMyIP();
 	}
 
-	public static void sendMessage(InetAddress destIP, String message) {
+	public static void sendMessage(InetAddress destIP, String message) {	
+		newLog("[DATA] Trying to send: " + message);
+		
 		// data to send
 		JSONObject data = JSONservice.composeDataText(getMyIP(), destIP, message);
 		// send data
@@ -59,6 +63,9 @@ public class DataController implements Observer {
 			// next hop address
 			InetAddress nextHop = fe.nextHopAddress;
 			// send Data
+			
+			newLog("[DATA] Success. ");
+			
 			DATAservice.sendData(nextHop, data.toJSONString());
 		} catch (NoEntryException | IOException e) {
 			// initiate routing
