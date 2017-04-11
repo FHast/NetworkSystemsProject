@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -57,7 +58,7 @@ public class NetworkController implements Observer {
 		helloservice.addObserver(this);
 		Thread hello = new Thread(helloservice);
 		hello.start();
-		
+
 		RERRservice rerrservice = new RERRservice();
 		rerrservice.addObserver(this);
 		Thread rerr = new Thread(rerrservice);
@@ -135,15 +136,18 @@ public class NetworkController implements Observer {
 			receivedHELLO((DatagramPacket) arg1);
 		} else if (arg0 instanceof RREQservice) {
 			receivedRREQ((DatagramPacket) arg1);
-		} 
+		}
 	}
 
 	private static void receivedHELLO(DatagramPacket p) {
 		// add to list
 		InetAddress source = p.getAddress();
-		neighbours.put(source, System.nanoTime());
+		if (!source.equals(getMyIP())) {
+			neighbours.put(source, System.nanoTime());
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void receivedRERR(DatagramPacket p) {
 		try {
 			// extract Data
@@ -158,7 +162,8 @@ public class NetworkController implements Observer {
 				// extract data
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 				long sourceSeq = (long) json.get("sourceseq");
-				InetAddress[] unreachable = (InetAddress[]) json.get("unreachable");
+				JSONArray array = (JSONArray) json.get("unreachable");
+				InetAddress[] unreachable = (InetAddress[]) array.toArray(new InetAddress[0]);
 
 				// update ftable with source seq
 				if (ForwardingTableService.hasEntry(sourceIP)) {
@@ -242,9 +247,9 @@ public class NetworkController implements Observer {
 		try {
 			// extract Data
 			String msg = new String(p.getData());
-			
+
 			Controller.mainWindow.log("[RREQ] Received " + msg);
-			
+
 			JSONObject json = JSONservice.getJson(msg);
 
 			// right protocol?
@@ -297,7 +302,7 @@ public class NetworkController implements Observer {
 
 	public static void findRoute(InetAddress destIP) {
 		newLog("[Network] Finding route to: " + destIP.getHostAddress());
-		
+
 		if (!ForwardingTableService.hasEntry(destIP)) {
 			// send a new RREQ
 			myBroadcastID++;
@@ -377,7 +382,7 @@ public class NetworkController implements Observer {
 		}
 		return false;
 	}
-	
+
 	public static void newLog(String s) {
 		Controller.mainWindow.log(s);
 	}

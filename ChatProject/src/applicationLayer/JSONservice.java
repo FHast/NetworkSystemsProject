@@ -3,6 +3,7 @@ package applicationLayer;
 import java.net.InetAddress;
 import java.time.LocalTime;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -66,11 +67,17 @@ public class JSONservice {
 	
 	@SuppressWarnings("unchecked")
 	public static JSONObject composeRERR(InetAddress sourceIP, long sourceSeq, InetAddress[] unreachable) {
+		
+		JSONArray list = new JSONArray();
+		for (InetAddress i : unreachable) {
+			list.add(i.getHostAddress());
+		}
+		
 		JSONObject rerr = new JSONObject();
 		rerr.put("type", NetworkController.RERR_ID);
 		rerr.put("sourceip", sourceIP.getHostAddress());
 		rerr.put("sourceseq", sourceSeq);
-		rerr.put("unreachable",	unreachable);
+		rerr.put("unreachable",	list);
 		return rerr;
 	}
 }
