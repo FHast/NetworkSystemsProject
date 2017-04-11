@@ -86,33 +86,23 @@ public class RSA {
 	}
 
 	public static PublicKey getPublicKey() {
-		if (!isKeyPairGenerated()) {
-			return null;
-		}
-
 		PublicKey key = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PUBLIC_KEY_FILE));
 			key = (PublicKey) ois.readObject();
 			ois.close();
 		} catch (ClassNotFoundException | IOException e) {
-			// won't happen, since we already checked
 		}
 		return key;
 	}
 	
-	public static PrivateKey getPrivateKey() {
-		if (!isKeyPairGenerated()) {
-			return null;
-		}
-		
+	public static PrivateKey getPrivateKey() {		
 		PrivateKey key = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PRIVATE_KEY_FILE));
 			key = (PrivateKey) ois.readObject();
 			ois.close();
 		} catch (IOException | ClassNotFoundException e) {
-			// won't happen
 		}
 		
 		return key;
