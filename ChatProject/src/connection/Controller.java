@@ -1,6 +1,5 @@
 package connection;
 
-import java.net.BindException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -10,6 +9,7 @@ import java.util.Enumeration;
 import connection.tables.ForwardingTableService;
 import connection.tables.ReverseTableService;
 import gui.MainWindow;
+import gui.StartPopup;
 
 public class Controller {
 
@@ -32,6 +32,10 @@ public class Controller {
 
 		mainWindow = new MainWindow(this);
 		mainWindow.setVisible(true);
+		
+		if (myIP.toString().equals("localhost/127.0.0.1")){
+			new StartPopup("Not connected","You are currently not connected","to the Ad-Hoc network!").setVisible(true);
+		}
 
 		// start threads
 		Thread rreq = new Thread(new RREQservice());
