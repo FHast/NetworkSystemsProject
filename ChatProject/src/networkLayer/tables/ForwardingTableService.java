@@ -1,11 +1,11 @@
-package connection.tables;
+package networkLayer.tables;
 
 import java.net.InetAddress;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
-import connection.Controller;
+import controller.Controller;
 
 public class ForwardingTableService implements Runnable {
 	private static boolean shutdown = false;

@@ -23,9 +23,11 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import connection.Controller;
+import controller.Controller;
+
 import javax.swing.border.LineBorder;
 import javax.swing.ScrollPaneConstants;
+import java.awt.Toolkit;
 
 public class MainWindow extends JFrame {
 
@@ -48,9 +50,10 @@ public class MainWindow extends JFrame {
 	private NewContactPopup newContactFrame = new NewContactPopup(this);
 
 	public MainWindow(Controller c) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("/home/gereon/git/NetworkSystemsProject/ChatProject/chaticon.png"));
 		setResizable(false);
 		// settings of the frame
-		setTitle("Ad-Hoc Chat " + c.myIP);
+		setTitle("Ad-Hoc Chat " + Controller.getMyIP());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(50, 50, 1200, 526);
 
@@ -80,7 +83,7 @@ public class MainWindow extends JFrame {
 
 				if (value.isSentBySelf()) {
 					l.setHorizontalAlignment(JLabel.RIGHT);
-					l.setForeground(Color.RED);
+					l.setForeground(Color.GRAY);
 				} else {
 					l.setForeground(Color.BLUE);
 				}
@@ -144,6 +147,7 @@ public class MainWindow extends JFrame {
 		lblErrorMessage = new JLabel("Connection established.");
 
 		JScrollPane jsp = new JScrollPane(listMessages);
+		jsp.setAutoscrolls(true);
 		jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 		lblNamefield = new JLabel("");
@@ -231,6 +235,8 @@ public class MainWindow extends JFrame {
 	}
 
 	public void addMessage(int device, String text) {
+		int index = listContacts.getSelectedIndex();
+		
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				c.addMessage(false, text);
@@ -240,6 +246,8 @@ public class MainWindow extends JFrame {
 		ArrayList<Message> msg = new ArrayList<>();
 		msg.add(new Message(false, text));
 		contacts.add(new Contact("Unknown", device, msg));
+		
+		listContacts.setSelectedIndex(index);
 	}
 
 	public class RefreshMessageRunnable implements Runnable {

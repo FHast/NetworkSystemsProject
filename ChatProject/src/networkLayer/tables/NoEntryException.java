@@ -1,6 +1,6 @@
-package connection.tables;
+package networkLayer.tables;
 
-import connection.ConnectionException;
+import networkLayer.ConnectionException;
 
 public class NoEntryException extends ConnectionException {
 

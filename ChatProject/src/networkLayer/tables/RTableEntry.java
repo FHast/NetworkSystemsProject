@@ -1,4 +1,4 @@
-package connection.tables;
+package networkLayer.tables;
 
 import java.net.InetAddress;
 import java.time.LocalTime;

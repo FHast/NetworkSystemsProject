@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import connection.Controller;
+import controller.Controller;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;

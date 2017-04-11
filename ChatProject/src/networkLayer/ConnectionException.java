@@ -1,4 +1,4 @@
-package connection;
+package networkLayer;
 
 public class ConnectionException extends Exception {
 
