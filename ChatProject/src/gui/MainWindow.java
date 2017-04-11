@@ -70,7 +70,13 @@ public class MainWindow extends JFrame {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Message> list, Message value, int index,
 					boolean isSelected, boolean cellHasFocus) {
-				JLabel l = new JLabel(value.toString());
+				JLabel l;
+				if (value.equals(null)) {
+					l = new JLabel("");
+				} else {
+					l = new JLabel(value.toString());
+				}
+				
 
 				if (value.isSentBySelf()) {
 					l.setHorizontalAlignment(JLabel.RIGHT);
