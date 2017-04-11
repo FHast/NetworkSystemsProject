@@ -12,7 +12,7 @@ public class HELLOservice extends Observable implements Runnable {
 	private static final int HELLO_INTERVAL = 1000;
 	private static final int HELLO_LOSS = 2;
 	private static final int HELLO_PORT = 2003;
-	private static final String HELLO_TRAFFIC_ADDRESS = "128.0.0.2";
+	private static final String HELLO_TRAFFIC_ADDRESS = "228.0.0.2";
 
 	protected static InetAddress group;
 	protected static MulticastSocket msock;

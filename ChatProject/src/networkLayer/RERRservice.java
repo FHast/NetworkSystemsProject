@@ -9,7 +9,7 @@ import java.util.Observable;
 public class RERRservice extends Observable implements Runnable {
 	
 	public static final int RERR_PORT = 2004;
-	public static final String RERR_TRAFFIC_ADDRESS = "128.0.0.3";
+	public static final String RERR_TRAFFIC_ADDRESS = "228.0.0.3";
 
 	private static InetAddress group;
 	private static MulticastSocket msock;
