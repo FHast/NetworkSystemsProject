@@ -31,6 +31,10 @@ public class Contact {
 		return messages.toArray(new Message[0]);
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public void addMessage(boolean isSentBySelf, String text) {
 		messages.add(new Message(isSentBySelf,text));
 	}
