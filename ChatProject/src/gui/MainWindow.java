@@ -2,13 +2,11 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalTime;
 import java.util.ArrayList;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -20,12 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import connection.Controller;
-import javax.swing.border.LineBorder;
-import javax.swing.ScrollPaneConstants;
 
 public class MainWindow extends JFrame {
 
@@ -41,7 +39,6 @@ public class MainWindow extends JFrame {
 	private JButton btnSend;
 	private JLabel lblErrorMessage;
 	private JLabel lblNamefield;
-	private NewContactPopup popup;
 
 	private Controller controller;
 
@@ -94,8 +91,6 @@ public class MainWindow extends JFrame {
 		listContacts = new JList<>();
 		listContacts.setBorder(new LineBorder(Color.GRAY));
 		refreshContactList();
-		MainWindow self = this;
-		popup = new NewContactPopup(self);
 		listContacts.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
