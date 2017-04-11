@@ -57,7 +57,7 @@ public class NetworkController implements Observer {
 		HELLOservice helloservice = new HELLOservice();
 		helloservice.addObserver(this);
 		Thread hello = new Thread(helloservice);
-		hello.start();
+		//hello.start();
 
 		RERRservice rerrservice = new RERRservice();
 		rerrservice.addObserver(this);
