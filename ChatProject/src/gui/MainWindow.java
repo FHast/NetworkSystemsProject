@@ -38,6 +38,7 @@ public class MainWindow extends JFrame {
 	private JList<Contact> listContacts;
 	private JButton btnSend;
 	private JLabel lblErrorMessage;
+	private JLabel lblNamefield;
 
 	private boolean openedContactWindow = false;
 
@@ -47,10 +48,11 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow(Controller c) {
+		setResizable(false);
 		// settings of the frame
 		setTitle("Ad-Hoc Chat " + c.myIP);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(50, 50, 1200, 800);
+		setBounds(50, 50, 1200, 526);
 
 		contentPane = new JPanel();
 
@@ -93,9 +95,11 @@ public class MainWindow extends JFrame {
 
 				if (listContacts.getSelectedIndex() != -1) {
 					if (listContacts.getSelectedValue().toString().equals("Log")) {
+						lblNamefield.setText("System Log");
 						listMessages.setListData(logMessages.toArray(new Message[0]));
 
 					} else if (listContacts.getSelectedValue().toString().equals("+")) {
+						lblNamefield.setText("");
 						listMessages.setListData(new Message[0]);
 
 						if (!openedContactWindow) {
@@ -104,6 +108,7 @@ public class MainWindow extends JFrame {
 							openedContactWindow = true;
 						}
 					} else {
+						lblNamefield.setText(listContacts.getSelectedValue().getName());
 						listMessages.setListData(listContacts.getSelectedValue().getMessagesRaw());
 					}
 				}
@@ -118,9 +123,12 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.sendMessage(listContacts.getSelectedValue().getDevice(), textFieldMessage.getText());
-				contacts.get(listContacts.getSelectedIndex()).addMessage(true, textFieldMessage.getText());
-				textFieldMessage.setText("");
+				String input = textFieldMessage.getText();
+				if (!input.equals("")) {
+					controller.sendMessage(listContacts.getSelectedValue().getDevice(), input);
+					contacts.get(listContacts.getSelectedIndex()).addMessage(true, input);
+					textFieldMessage.setText("");
+				}
 			}
 
 		});
@@ -134,36 +142,45 @@ public class MainWindow extends JFrame {
 
 		JScrollPane jsp = new JScrollPane(listMessages);
 
+		lblNamefield = new JLabel("");
+
+		JLabel lblContacts = new JLabel("Contacts:");
+
 		// Layout
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(
-				Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(
-						gl_contentPane
-								.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-										.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237,
-												GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(ComponentPlacement.RELATED)
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
+						.createParallelGroup(Alignment.LEADING).addGroup(
+								gl_contentPane
+										.createSequentialGroup()
 										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-												.addGroup(Alignment.TRAILING,
-														gl_contentPane
-																.createSequentialGroup().addComponent(textFieldMessage,
-																		GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-																.addPreferredGap(ComponentPlacement.RELATED)
-																.addComponent(btnSend))
-												.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)))
-								.addComponent(lblErrorMessage))
-						.addContainerGap()));
+												.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(lblContacts))
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+												.addGroup(gl_contentPane.createSequentialGroup()
+														.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 845,
+																Short.MAX_VALUE)
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(btnSend))
+												.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)
+												.addComponent(lblNamefield, Alignment.LEADING)))
+						.addComponent(lblErrorMessage)).addContainerGap()));
 		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup().addContainerGap()
+				.createSequentialGroup()
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE).addComponent(lblNamefield)
+						.addComponent(lblContacts))
+				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE)
 						.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE))
 				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false).addComponent(textFieldMessage)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(textFieldMessage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnSend, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addPreferredGap(ComponentPlacement.RELATED, 79, Short.MAX_VALUE).addComponent(lblErrorMessage)
+				.addPreferredGap(ComponentPlacement.RELATED, 50, Short.MAX_VALUE).addComponent(lblErrorMessage)
 				.addContainerGap()));
 		contentPane.setLayout(gl_contentPane);
 		setContentPane(contentPane);
@@ -188,6 +205,7 @@ public class MainWindow extends JFrame {
 	}
 
 	public void log(String msg) {
+		setBottomLine(msg);
 		logMessages.add(new Message(false, "[" + LocalTime.now() + "]" + msg));
 	}
 

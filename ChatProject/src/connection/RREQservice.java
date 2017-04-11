@@ -110,8 +110,6 @@ public class RREQservice extends Observable implements Runnable {
 					long hopcount = (long) (json.get("hopcount"));
 
 					// Did i receive this RREQ before?
-					System.out.println(receivedBefore(json));
-					System.out.println(myIP + " | " + sourceIP);
 					if (receivedBefore(json) || (myIP.equals(sourceIP))) {
 						// ignore packet
 					} else {
