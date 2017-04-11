@@ -50,7 +50,7 @@ public class MainWindow extends JFrame {
 		// settings of the frame
 		setTitle("Ad-Hoc Chat " + c.myIP);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 600);
+		setBounds(50, 50, 1200, 800);
 		
 		contentPane = new JPanel();
 
