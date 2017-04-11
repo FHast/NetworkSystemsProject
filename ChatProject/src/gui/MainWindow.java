@@ -51,7 +51,7 @@ public class MainWindow extends JFrame {
 		setTitle("Ad-Hoc Chat " + c.myIP);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(50, 50, 1200, 800);
-		
+
 		contentPane = new JPanel();
 
 		logMessages = new ArrayList<>();
@@ -132,25 +132,33 @@ public class MainWindow extends JFrame {
 		// Label for bottom line error message
 		lblErrorMessage = new JLabel("Connection established.");
 
+		JScrollPane jsp = new JScrollPane(listMessages);
+
 		// Layout
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup().addContainerGap()
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-						.createSequentialGroup()
-						.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-										.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnSend))
-								.addComponent(listMessages, GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)))
-						.addComponent(lblErrorMessage))
-				.addContainerGap()));
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(
+				Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(
+						gl_contentPane
+								.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237,
+												GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+												.addGroup(Alignment.TRAILING,
+														gl_contentPane
+																.createSequentialGroup().addComponent(textFieldMessage,
+																		GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+																.addPreferredGap(ComponentPlacement.RELATED)
+																.addComponent(btnSend))
+												.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)))
+								.addComponent(lblErrorMessage))
+						.addContainerGap()));
 		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
 				.createSequentialGroup().addContainerGap()
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(listMessages, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE)
+						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE)
 						.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE))
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false).addComponent(textFieldMessage)
@@ -159,7 +167,7 @@ public class MainWindow extends JFrame {
 				.addContainerGap()));
 		contentPane.setLayout(gl_contentPane);
 		setContentPane(contentPane);
-		
+
 		// start thread that refreshes the messages
 		new Thread(new RefreshMessageRunnable()).start();
 	}
@@ -188,7 +196,16 @@ public class MainWindow extends JFrame {
 	}
 
 	public void addContact(String name, int device) {
-		contacts.add(new Contact(name, device, new ArrayList<Message>()));
+		boolean found = false;
+		for (Contact c : contacts) {
+			if (c.getDevice() == device) {
+				found = true;
+			}
+		}
+
+		if (!found) {
+			contacts.add(new Contact(name, device, new ArrayList<Message>()));
+		}
 	}
 
 	public void setOpenedContactWindow(boolean b) {
@@ -206,17 +223,17 @@ public class MainWindow extends JFrame {
 		msg.add(new Message(false, text));
 		contacts.add(new Contact("Unknown", device, msg));
 	}
-	
+
 	public class RefreshMessageRunnable implements Runnable {
 
 		@Override
 		public void run() {
-			while(true) {
+			while (true) {
 				Controller.mainWindow.refreshMessages();
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					
+
 				}
 			}
 		}
