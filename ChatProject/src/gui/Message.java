@@ -8,7 +8,7 @@ public class Message {
 	private String text;
 	private LocalTime timestamp;
 
-	public Message(boolean sentBySelf, String text/* , long timestamp */) {
+	public Message(boolean sentBySelf, String text) {
 		this.isSentBySelf = sentBySelf;
 		this.text = text;
 		timestamp = LocalTime.now();
