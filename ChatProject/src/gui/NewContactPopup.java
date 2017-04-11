@@ -25,7 +25,7 @@ public class NewContactPopup extends JFrame {
 	public NewContactPopup(MainWindow window) {
 		setTitle("New contact");
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 330, 226);
 		contentPane = new JPanel();
 
@@ -51,8 +51,9 @@ public class NewContactPopup extends JFrame {
 					try {
 						window.addContact(txtName.getText(), Integer.parseInt(txtDevice.getText()));
 						window.refreshContactList();
-						window.setOpenedContactWindow(false);
-						dispose();
+						txtName.setText("");
+						txtDevice.setText("");
+						setVisible(false);
 					} catch (NumberFormatException ex) {
 						txtName.setText("");
 						txtDevice.setText("");

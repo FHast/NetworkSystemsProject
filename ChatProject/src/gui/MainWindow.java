@@ -40,13 +40,10 @@ public class MainWindow extends JFrame {
 	private JLabel lblErrorMessage;
 	private JLabel lblNamefield;
 
-	private boolean openedContactWindow = false;
-
 	private Controller controller;
 
-	/**
-	 * Create the frame.
-	 */
+	private NewContactPopup newContactFrame = new NewContactPopup(this);
+
 	public MainWindow(Controller c) {
 		setResizable(false);
 		// settings of the frame
@@ -101,12 +98,7 @@ public class MainWindow extends JFrame {
 					} else if (listContacts.getSelectedValue().toString().equals("+")) {
 						lblNamefield.setText("");
 						listMessages.setListData(new Message[0]);
-
-						if (!openedContactWindow) {
-							NewContactPopup popup = new NewContactPopup(self);
-							popup.setVisible(true);
-							openedContactWindow = true;
-						}
+						newContactFrame.setVisible(true);
 					} else {
 						lblNamefield.setText(listContacts.getSelectedValue().getName());
 						listMessages.setListData(listContacts.getSelectedValue().getMessagesRaw());
@@ -223,14 +215,9 @@ public class MainWindow extends JFrame {
 
 		if (found == null) {
 			contacts.add(new Contact(name, device, new ArrayList<Message>()));
-		}
-		else {
+		} else {
 			setBottomLine("Contact already added: " + found.getName());
 		}
-	}
-
-	public void setOpenedContactWindow(boolean b) {
-		openedContactWindow = b;
 	}
 
 	public void addMessage(int device, String text) {
