@@ -19,6 +19,7 @@ import connection.tables.ForwardingTableService;
 import connection.tables.NoEntryException;
 import connection.tables.RTableEntry;
 import connection.tables.ReverseTableService;
+import gui.StartPopup;
 
 public class RREPservice implements Runnable {
 	private static boolean shutdown = false;
@@ -35,15 +36,17 @@ public class RREPservice implements Runnable {
 		try {
 			ssock = new ServerSocket(RREP_TRAFFIC_PORT);
 		} catch (IOException e) {
-			e.printStackTrace();
+			new StartPopup("Application already running", "Another instance of this application is already running.",
+					"Please close it first!").setVisible(true);
 		}
+
 	}
 
 	public static void sendRREP(InetAddress nextHop, InetAddress dest, InetAddress source, long sourceseq,
 			long hopcount) {
-		
+
 		Controller.mainWindow.log("[RREP] Sending");
-		
+
 		JSONObject rrep = JSONservice.composeRREP(dest, source, sourceseq, hopcount);
 		String msg = rrep.toJSONString();
 		try {
@@ -90,17 +93,17 @@ public class RREPservice implements Runnable {
 	public void run() {
 		try {
 			Controller.mainWindow.log("[Thread] Start listening for incoming RREP packets.");
-			
+
 			while (!shutdown) {
 				// wait for some incoming RREP connection
 				Socket sock = ssock.accept();
-				
+
 				Controller.mainWindow.log("[RREP] Connection accepted");
-				
+
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String input = in.readLine();
 				JSONObject json = JSONservice.getJson(input);
-				
+
 				Controller.mainWindow.log("[RREP] Received " + input);
 
 				// right protocol?
@@ -112,7 +115,7 @@ public class RREPservice implements Runnable {
 					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 					long hopcount = (long) json.get("hopcount");
 					hopcount++;
-					
+
 					// Am I the destination?
 					if (destIP.equals(myIP)) {
 						ForwardingTableService.addEntry(sourceIP, sock.getInetAddress(), sourceSeq, hopcount);

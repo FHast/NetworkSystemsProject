@@ -1,5 +1,6 @@
 package connection;
 
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -48,9 +49,7 @@ public class Controller {
 		Thread rtable = new Thread(new ReverseTableService());
 		rtable.start();
 
-		// Controller.mainWindow.log
 		Controller.mainWindow.log("MY IP: " + myIP);
-		//sendMessage(2, "test message");
 
 		while (!shutdown) {
 

@@ -19,6 +19,7 @@ import org.json.simple.parser.ParseException;
 import connection.tables.FTableEntry;
 import connection.tables.ForwardingTableService;
 import connection.tables.NoEntryException;
+import gui.StartPopup;
 
 /**
  * The class which sends and receives text over the sockets' in- &
