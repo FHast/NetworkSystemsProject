@@ -127,7 +127,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textFieldMessage.getText();
-				if (!input.equals("")) {
+				if (!input.equals("") && listContacts.getSelectedIndex() != -1) {
 					controller.sendMessage(listContacts.getSelectedValue().getDevice(), input);
 					contacts.get(listContacts.getSelectedIndex()).addMessage(true, input);
 					textFieldMessage.setText("");
