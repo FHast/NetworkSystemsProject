@@ -140,6 +140,8 @@ public class RREPservice implements Runnable {
 			e.printStackTrace();
 		} catch (NoEntryException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e) {
+			// do nothing, ssock wasnt created...
 		}
 	}
 

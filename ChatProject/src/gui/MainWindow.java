@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import connection.Controller;
+import javax.swing.border.LineBorder;
 
 public class MainWindow extends JFrame {
 
@@ -39,6 +40,7 @@ public class MainWindow extends JFrame {
 	private JButton btnSend;
 	private JLabel lblErrorMessage;
 	private JLabel lblNamefield;
+	private NewContactPopup popup;
 
 	private boolean openedContactWindow = false;
 
@@ -86,8 +88,10 @@ public class MainWindow extends JFrame {
 
 		// Contact list
 		listContacts = new JList<>();
+		listContacts.setBorder(new LineBorder(Color.GRAY));
 		refreshContactList();
 		MainWindow self = this;
+		popup = new NewContactPopup(self);
 		listContacts.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -102,11 +106,8 @@ public class MainWindow extends JFrame {
 						lblNamefield.setText("");
 						listMessages.setListData(new Message[0]);
 
-						if (!openedContactWindow) {
-							NewContactPopup popup = new NewContactPopup(self);
-							popup.setVisible(true);
-							openedContactWindow = true;
-						}
+						popup.setVisible(true);
+
 					} else {
 						lblNamefield.setText(listContacts.getSelectedValue().getName());
 						listMessages.setListData(listContacts.getSelectedValue().getMessagesRaw());
@@ -176,9 +177,7 @@ public class MainWindow extends JFrame {
 						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE)
 						.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE))
 				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(textFieldMessage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-								GroupLayout.PREFERRED_SIZE)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false).addComponent(textFieldMessage)
 						.addComponent(btnSend, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 				.addPreferredGap(ComponentPlacement.RELATED, 50, Short.MAX_VALUE).addComponent(lblErrorMessage)
 				.addContainerGap()));
