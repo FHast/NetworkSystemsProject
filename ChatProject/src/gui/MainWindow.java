@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetAddress;
@@ -15,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
@@ -46,10 +48,10 @@ public class MainWindow extends JFrame {
 	 */
 	public MainWindow(Controller c) {
 		// settings of the frame
-		setTitle("Ad-Hoc Chat "+c.myIP);
+		setTitle("Ad-Hoc Chat " + c.myIP);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
-
+		
 		contentPane = new JPanel();
 
 		logMessages = new ArrayList<>();
@@ -60,7 +62,7 @@ public class MainWindow extends JFrame {
 		// Messages list
 		listMessages = new JList<>();
 		listMessages.setEnabled(false);
-		
+
 		listMessages.setCellRenderer(new ListCellRenderer<Message>() {
 
 			@Override
@@ -116,7 +118,8 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.sendMessage(listContacts.getSelectedValue().getDevice(),textFieldMessage.getText());
+				controller.sendMessage(listContacts.getSelectedValue().getDevice(), textFieldMessage.getText());
+				contacts.get(listContacts.getSelectedIndex()).addMessage(true, textFieldMessage.getText());
 				textFieldMessage.setText("");
 			}
 
@@ -156,6 +159,9 @@ public class MainWindow extends JFrame {
 				.addContainerGap()));
 		contentPane.setLayout(gl_contentPane);
 		setContentPane(contentPane);
+		
+		// start thread that refreshes the messages
+		new Thread(new RefreshMessageRunnable()).start();
 	}
 
 	public void refreshContactList() {
@@ -164,6 +170,13 @@ public class MainWindow extends JFrame {
 		c[c.length - 2] = new Contact("Log", 0, new ArrayList<Message>());
 		c[c.length - 1] = new Contact("+", 0, new ArrayList<Message>());
 		listContacts.setListData(c);
+	}
+
+	public void refreshMessages() {
+		int selected = listContacts.getSelectedIndex();
+		if (selected != -1 && selected < contacts.size()) {
+			listMessages.setListData(contacts.get(selected).getMessagesRaw());
+		}
 	}
 
 	public void log(String msg) {
@@ -181,16 +194,32 @@ public class MainWindow extends JFrame {
 	public void setOpenedContactWindow(boolean b) {
 		openedContactWindow = b;
 	}
-	
+
 	public void addMessage(int device, String text) {
-		for(Contact c : contacts) {
+		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				c.addMessage(false, text);
 				return;
 			}
 		}
 		ArrayList<Message> msg = new ArrayList<>();
-		msg.add(new Message(false,text));
+		msg.add(new Message(false, text));
 		contacts.add(new Contact("Unknown", device, msg));
+	}
+	
+	public class RefreshMessageRunnable implements Runnable {
+
+		@Override
+		public void run() {
+			while(true) {
+				Controller.mainWindow.refreshMessages();
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					
+				}
+			}
+		}
+
 	}
 }
