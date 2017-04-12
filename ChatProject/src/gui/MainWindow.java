@@ -6,10 +6,15 @@ import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -60,10 +66,7 @@ public class MainWindow extends JFrame {
 
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
-		/*
-		 * contacts.add(new Contact("WrapTest",0,(ArrayList<Message>)
-		 * Arrays.asList(new Message[] { new Message(true, "sads" ) })));
-		 */
+
 		controller = c;
 
 		// Messages list
@@ -83,33 +86,66 @@ public class MainWindow extends JFrame {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Message> list, Message value, int index,
 					boolean isSelected, boolean cellHasFocus) {
-				// init
-				JTextArea t = new JTextArea(10, 10);
-				t.setLineWrap(true);
+				if (value.getType() == Message.TYPE_TEXT) {
+					// init
+					JTextArea t = new JTextArea(10, 10);
+					t.setLineWrap(true);
 
-				// formatting
-				if (value.isSentBySelf()) {
-					t.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-					t.setForeground(Color.GRAY);
-				} else {
-					t.setForeground(Color.BLUE);
+					// formatting
+					if (value.isSentBySelf()) {
+						t.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+						t.setForeground(Color.GRAY);
+					} else {
+						t.setForeground(Color.BLUE);
+					}
+
+					// set text
+					if (value.equals(null)) {
+						t.setText("");
+					} else {
+						t.setText(value.toString());
+					}
+
+					// Dimension d = t.getPreferredSize();
+					// t.setPreferredSize(new Dimension((2 * d.width) / 3,
+					// d.height));
+					t.setRows(countLines(t) + 1);
+
+					// t.setWrapStyleWord(true); // wraps words only instead of
+					// characters
+
+					return t;
+				} else if (value.getType() == Message.TYPE_IMAGE) {
+
+					JLabel l = null;
+					try {
+						// create empty label with the Image as the icon
+						BufferedImage img = ImageIO.read(new File(value.getText()));
+						l = new JLabel(new ImageIcon(img));
+						
+						// positioning
+						if (value.isSentBySelf()) {
+							l.setHorizontalAlignment(SwingConstants.RIGHT);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return l;
 				}
-				
-				// set text
-				if (value.equals(null)) {
-					t.setText("");
-				} else {
-					t.setText(value.toString());
+				else {
+					JLabel l = new JLabel("[FILE]" + value.getText());
+					
+					// formatting
+					if (value.isSentBySelf()) {
+						l.setHorizontalAlignment(SwingConstants.RIGHT);
+						l.setForeground(Color.GRAY);
+					}
+					else {
+						l.setForeground(Color.BLUE);
+					}
+					
+					return l;
 				}
-
-				//Dimension d = t.getPreferredSize();
-				//t.setPreferredSize(new Dimension((2 * d.width) / 3, d.height));
-				t.setRows(countLines(t) + 1);
-
-				// t.setWrapStyleWord(true); // wraps words only instead of
-				// characters
-
-				return t;
 			}
 
 		});
