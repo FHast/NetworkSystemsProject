@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,16 +23,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 import applicationLayer.FileService;
 import controller.Controller;
@@ -93,25 +88,24 @@ public class MainWindow extends JFrame {
 					boolean isSelected, boolean cellHasFocus) {
 				if (value.getType() == Message.TYPE_TEXT) {
 					// init
-					JTextArea t = new JTextArea(10,10);
-					
+					JTextArea t = new JTextArea(10, 10);
+
 					// formatting
 					if (value.isSentBySelf()) {
 						t.setForeground(Color.GRAY);
 					} else {
 						t.setForeground(Color.BLUE);
 					}
-										
+
 					t.setLineWrap(true);
-					
+
 					// set text
 					t.setText(value.toString());
-					
-					t.setRows(countLines(t) + 1);
 
+					t.setRows(countLines(t));
 
-					// t.setWrapStyleWord(true); // wraps words only instead of
-					// characters
+					// wraps words only instead ofcharacters
+					t.setWrapStyleWord(true);
 
 					return t;
 				} else if (value.getType() == Message.TYPE_IMAGE) {
@@ -122,10 +116,6 @@ public class MainWindow extends JFrame {
 						BufferedImage img = ImageIO.read(new File(value.getText()));
 						l = new JLabel(new ImageIcon(img));
 
-						// positioning
-						if (value.isSentBySelf()) {
-							l.setHorizontalAlignment(SwingConstants.RIGHT);
-						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -135,7 +125,6 @@ public class MainWindow extends JFrame {
 
 					// formatting
 					if (value.isSentBySelf()) {
-						l.setHorizontalAlignment(SwingConstants.RIGHT);
 						l.setForeground(Color.GRAY);
 					} else {
 						l.setForeground(Color.BLUE);
