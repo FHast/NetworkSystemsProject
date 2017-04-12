@@ -56,12 +56,12 @@ public class MainWindow extends JFrame {
 	private Contact currentSelectedContact = null;
 
 	private NewContactPopup newContactFrame = new NewContactPopup(this);
-	private JMenuItem menuItemRename;
 	private JMenuItem menuItemDelete;
 	private JCheckBoxMenuItem menuItemBlock;
 	private JMenu optionsMenu;
 	private JMenuItem menuItemNewContact;
 	private JMenuBar menubar;
+	private JMenuItem menuItemRename;
 
 	public MainWindow(Controller c) {
 		setResizable(false);
@@ -250,6 +250,14 @@ public class MainWindow extends JFrame {
 		optionsMenu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 
 		menuItemNewContact = new JMenuItem("New Contact");
+		menuItemNewContact.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("clicked");
+				labelContactname.setText("");
+				currentSelectedContact = null;
+				newContactFrame.setVisible(true);
+			}
+		});
 		menuItemNewContact.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		optionsMenu.add(menuItemNewContact);
 
