@@ -41,11 +41,12 @@ public class FileService {
 	}
 
 	public static String getAppendix(String url) {
-		return url.split("[.]")[1];
+		String[] split = url.split("[.]");
+		return split[split.length-1];
 	}
 
 	public static String getName(String url) {
-		return url.split("[.]")[0];
+		return url.replaceAll("[.]"+getAppendix(url), "");
 	}
 
 	public static String fileToString(String name, String appendix) {
