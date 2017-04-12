@@ -50,12 +50,12 @@ public class Message {
 		String hours= "";
 
 		if (hour < 10) {
-			hours = "0" + hours;
+			hours = "0" + hour;
 		} else {
-			minutes = "" + minute;
+			hours = "" + hour;
 		}
 
-		return hours + ": " + minutes + " | " + text;
+		return hours + ":" + minutes + " | " + text;
 	}
 
 }
