@@ -37,7 +37,7 @@ public class Message {
 	}
 
 	public String toString() {
-		return "[" + timestamp + "] " + text;
+		return timestamp.getHour() + ":" + timestamp.getMinute() + " | " + text;
 	}
 
 }
