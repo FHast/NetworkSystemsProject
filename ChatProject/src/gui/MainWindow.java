@@ -217,7 +217,13 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				final JFileChooser fc = new JFileChooser();
-				System.out.print(fc.showOpenDialog(null));
+				fc.showOpenDialog(null);
+				File file = fc.getSelectedFile();
+				System.out.print(file.getName());
+				
+				int device = currentSelectedContact.getDevice();
+				
+				controller.sendFile(device, file);
 			}
 
 		});
