@@ -77,7 +77,7 @@ public class ForwardingTableService implements Runnable {
 						forwardingTable.remove(e);
 					}
 				}
-			} catch (ConcurrentModificationException e) {
+			} catch (ConcurrentModificationException | NullPointerException e) {
 				// nothing
 			}
 		}
