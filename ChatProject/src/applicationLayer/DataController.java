@@ -83,12 +83,14 @@ public class DataController implements Observer {
 		try {
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(destIP);
+			// renew entry
+			ForwardingTableService.renewEntry(destIP);
 			// next hop address
 			InetAddress nextHop = fe.nextHopAddress;
 			// add to the needAck list
 			needAck.put(data, HashService.simpleHash(data.toJSONString()));
 			// send Data
-
+			
 			newLog("[DATA] Success. ");
 
 			DATAservice.sendData(nextHop, data.toJSONString());

@@ -13,18 +13,26 @@ public class ForwardingTableService implements Runnable {
 
 	public static void addEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
 		Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
+		removeEntry(dest);
 		forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
 	}
 
 	public static boolean hasEntry(InetAddress dest) {
 		for (FTableEntry e : forwardingTable) {
-			// Controller.mainWindow.log(e.destinationAddress);
-			// Controller.mainWindow.log(dest);
 			if (e.destinationAddress.equals(dest)) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public static void renewEntry(InetAddress dest) {
+		try {
+			FTableEntry fe = getEntry(dest);
+			fe.lifetime = LocalTime.now().plusSeconds(FTableEntry.OFFSET);
+		} catch (NoEntryException e) {
+			e.printStackTrace();
+		};
 	}
 
 	public static void removeEntry(InetAddress dest) {
