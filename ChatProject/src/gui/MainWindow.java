@@ -32,6 +32,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import applicationLayer.FileService;
 import controller.Controller;
 
 public class MainWindow extends JFrame {
@@ -218,10 +219,16 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				final JFileChooser fc = new JFileChooser();
 				fc.showOpenDialog(null);
-				File file = fc.getSelectedFile();
-				System.out.print(file.getName());
 				
 				int device = currentSelectedContact.getDevice();
+				File file = fc.getSelectedFile();
+				String a = FileService.getAppendix(file.getPath());
+				
+				if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
+					currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE);
+				} else {
+					currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE);
+				}
 				
 				controller.sendFile(device, file);
 			}

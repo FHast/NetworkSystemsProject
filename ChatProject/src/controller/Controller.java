@@ -41,6 +41,7 @@ public class Controller {
 	}
 
 	public static void receivedFile(int device, String path) {
+		System.out.println(path);
 		String a = FileService.getAppendix(path);
 		if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
 			Controller.mainWindow.addMessage(device, path, Message.TYPE_IMAGE);
