@@ -92,7 +92,7 @@ public class DataController implements Observer {
 			
 			String hash = HashService.simpleHash(toBeAcknowledged.toJSONString());
 			// to json
-			JSONObject data = JSONservice.composeDataText(getMyIP(), destIP, hash);
+			JSONObject data = JSONservice.composeDataAck(getMyIP(), destIP, hash);
 			// look for Forwarding table entry
 			FTableEntry fe = ForwardingTableService.getEntry(destIP);
 			// send
