@@ -54,11 +54,15 @@ public class JSONservice {
 	}
 
 	public static JSONObject composeDataText(InetAddress sourceIP, InetAddress destIP, String message) {
-		return composeData(sourceIP, destIP, message, DataController.DATA_TYPE_TEXT);
+		return composeData(sourceIP, destIP, message, ""+DataController.DATA_TYPE_TEXT);
 	}
 
 	public static JSONObject composeDataAck(InetAddress sourceIP, InetAddress destIP, String message) {
-		return composeData(sourceIP, destIP, message, DataController.DATA_TYPE_ACK);
+		return composeData(sourceIP, destIP, message, ""+DataController.DATA_TYPE_ACK);
+	}
+	
+	public static JSONObject composeDataFile(InetAddress sourceIP, InetAddress destIP, String data, String appendix) {
+		return composeData(sourceIP, destIP, data, appendix);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,7 +82,7 @@ public class JSONservice {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static JSONObject composeData(InetAddress sourceIP, InetAddress destIP, String message, int type) {
+	private static JSONObject composeData(InetAddress sourceIP, InetAddress destIP, String message, String type) {
 		JSONObject data = new JSONObject();
 		data.put("type", DataController.DATA_ID);
 		data.put("sourceip", sourceIP.getHostAddress());

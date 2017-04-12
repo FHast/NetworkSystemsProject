@@ -1,15 +1,16 @@
 package applicationLayer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.time.LocalTime;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-
-import javax.activation.DataSource;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -64,6 +65,21 @@ public class DataController implements Observer {
 		// send data
 		sendData(destIP, data);
 	}
+	
+	public static void sendFile(InetAddress destIP, File file) {
+		newLog("[DATA] Trying to send: " + file.getName() + " / " + file.getPath());
+		
+		// get data
+		String url = file.getPath();
+		String name = FileService.getName(url);
+		String appendix = FileService.getAppendix(url);
+		String data = FileService.fileToString(url);
+		// get json
+		JSONObject json = JSONservice.composeDataFile(getMyIP(), destIP, data, appendix);
+		// send data
+		sendData(destIP, json);
+		
+	}
 
 	private static void sendData(InetAddress destIP, JSONObject data) {
 		try {
@@ -114,16 +130,32 @@ public class DataController implements Observer {
 				if (destIP.equals(getMyIP())) {
 					// this data packet is for me
 
-					if ((long) json.get("datatype") == DATA_TYPE_ACK) {
+					if (((String)json.get("datatype")).equals(""+DATA_TYPE_ACK)) {
 						String hash = (String) json.get("data");
 						// manage ack
 						receivedACK(hash);
 
 					} else {
 						// distinguish different data
-						if ((long) json.get("datatype") == DATA_TYPE_TEXT) {
-							int device = Integer.parseInt(((String) json.get("sourceip")).split("[.]")[3]);
+						int device = Integer.parseInt(((String) json.get("sourceip")).split("[.]")[3]);
+						if (((String)json.get("datatype")).equals(""+DATA_TYPE_TEXT)) {
+							// send to controller
 							Controller.receivedMessage(device, (String) json.get("data"));
+						} else {
+							try {
+							String appendix = (String)json.get("datatype");
+							String data = (String)json.get("data");
+							// get file
+							String path = FileService.stringToFile(data, appendix);
+							
+							newLog("[DATA] Received file (" + appendix + ") created: " + path);
+							
+							// send to controller
+							Controller.receivedFile(device, path);
+							
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
 						}
 
 						// send ack

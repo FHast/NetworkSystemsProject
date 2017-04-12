@@ -3,12 +3,15 @@ package applicationLayer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 
 public class FileService {
+	private static final String root = "received/";
+	
 	public static String fileToString(String url) {
 		try {
 			File file = new File(url);
@@ -18,22 +21,23 @@ public class FileService {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static void stringToFile(String data, String filetype) {
+	public static String stringToFile(String data, String filetype) throws FileNotFoundException {
 		try {
-			String s = "" + new Random().nextInt();
-			File file = new File(s + "." + filetype);
+			String s = LocalDateTime.now().toString();
+			File file = new File("root" + s + "." + filetype);
 			byte[] encoded = data.getBytes();
 			byte[] decoded = Base64.getDecoder().decode(encoded);
 			FileUtils.writeByteArrayToFile(file, decoded);
+			return file.getAbsolutePath();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		throw new FileNotFoundException();
 	}
 
 	public static String getAppendix(String url) {

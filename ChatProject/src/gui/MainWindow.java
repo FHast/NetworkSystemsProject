@@ -187,7 +187,7 @@ public class MainWindow extends JFrame {
 				String input = textFieldMessage.getText();
 				if (!input.equals("") && currentSelectedContact != null && currentSelectedContact.getDevice() != 0) {
 					controller.sendMessage(currentSelectedContact.getDevice(), input);
-					currentSelectedContact.addMessage(true, input);
+					currentSelectedContact.addMessage(true, input, Message.TYPE_TEXT);
 					textFieldMessage.setText("");
 				}
 			}
@@ -314,18 +314,20 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	public void addMessage(int device, String text) {
+	public void addMessage(int device, String text, int type) {
+		// current index
 		int index = listContacts.getSelectedIndex();
 
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
-				c.addMessage(false, text);
+				c.addMessage(false, text, type);
 				return;
 			}
 		}
 		ArrayList<Message> msg = new ArrayList<>();
-		msg.add(new Message(false, text));
-		contacts.add(new Contact("Unknown", device, msg));
+		Contact c = new Contact("Unknown", device, msg);
+		c.addMessage(false, text, type);
+		contacts.add(c);
 
 		listContacts.setSelectedIndex(index);
 	}
