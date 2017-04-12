@@ -55,7 +55,7 @@ public class NewContactPopup extends JFrame {
 
 		JButton btnFinish = new JButton("Create");
 		btnFinish.setBackground(new Color(0, 153, 255));
-		btnFinish.setBounds(237, 158, 76, 23);
+		btnFinish.setBounds(212, 158, 101, 23);
 		getRootPane().setDefaultButton(btnFinish);
 		btnFinish.addActionListener(new ActionListener() {
 
