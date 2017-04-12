@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -172,7 +173,18 @@ public class MainWindow extends JFrame {
 
 		JLabel lblContacts = new JLabel("Contacts:");
 		
-		JButton btnNewButton = new JButton("Select File");
+		
+		// Select File button
+		JButton btnSelFi = new JButton("Select File");
+		btnSelFi.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				final JFileChooser fc = new JFileChooser();
+				System.out.print(fc.showOpenDialog(null));
+			}
+
+		});
 
 		// Layout
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -191,7 +203,7 @@ public class MainWindow extends JFrame {
 									.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-										.addComponent(btnNewButton)
+										.addComponent(btnSelFi)
 										.addComponent(btnSend, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)))
 								.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 927, Short.MAX_VALUE)
 								.addComponent(lblNamefield, Alignment.LEADING)))
@@ -213,7 +225,7 @@ public class MainWindow extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(btnSend)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNewButton))
+							.addComponent(btnSelFi))
 						.addComponent(textFieldMessage))
 					.addGap(84)
 					.addComponent(lblErrorMessage)
