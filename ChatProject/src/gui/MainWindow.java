@@ -252,7 +252,6 @@ public class MainWindow extends JFrame {
 		menuItemNewContact = new JMenuItem("New Contact");
 		menuItemNewContact.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("clicked");
 				labelContactname.setText("");
 				currentSelectedContact = null;
 				newContactFrame.setVisible(true);
