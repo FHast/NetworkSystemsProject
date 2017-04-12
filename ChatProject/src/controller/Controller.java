@@ -22,7 +22,7 @@ public class Controller {
 		new DataController();
 
 		Controller.mainWindow.log("MY IP: " + getMyIP().getHostAddress());
-
+		
 		while (!shutdown) {
 
 		}
