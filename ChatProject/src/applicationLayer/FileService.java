@@ -8,7 +8,7 @@ import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 
-public class ImageService {
+public class FileService {
 	public static String fileToString(String url) {
 		try {
 			File file = new File(url);
