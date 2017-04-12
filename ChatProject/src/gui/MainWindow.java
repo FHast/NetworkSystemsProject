@@ -40,9 +40,9 @@ public class MainWindow extends JFrame {
 	private JButton btnSend;
 	private JLabel lblErrorMessage;
 	private JLabel lblNamefield;
-	private NewContactPopup popup;
 
 	private Controller controller;
+	private Contact currentSelectedContact = null;
 
 	private NewContactPopup newContactFrame = new NewContactPopup(this);
 
@@ -94,8 +94,6 @@ public class MainWindow extends JFrame {
 		listContacts = new JList<>();
 		listContacts.setBorder(new LineBorder(Color.GRAY));
 		refreshContactList();
-		MainWindow self = this;
-		popup = new NewContactPopup(self);
 		listContacts.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -104,15 +102,14 @@ public class MainWindow extends JFrame {
 				if (listContacts.getSelectedIndex() != -1) {
 					if (listContacts.getSelectedValue().toString().equals("Log")) {
 						lblNamefield.setText("System Log");
-						listMessages.setListData(logMessages.toArray(new Message[0]));
-
+						currentSelectedContact = new Contact("System Log",0,logMessages);
 					} else if (listContacts.getSelectedValue().toString().equals("+")) {
 						lblNamefield.setText("");
-						listMessages.setListData(new Message[0]);
+						currentSelectedContact = null;
 						newContactFrame.setVisible(true);
 					} else {
 						lblNamefield.setText(listContacts.getSelectedValue().getName());
-						listMessages.setListData(listContacts.getSelectedValue().getMessagesRaw());
+						currentSelectedContact = listContacts.getSelectedValue();
 					}
 				}
 			}
@@ -201,9 +198,11 @@ public class MainWindow extends JFrame {
 	}
 
 	public void refreshMessages() {
-		int selected = listContacts.getSelectedIndex();
-		if (selected != -1 && selected < contacts.size()) {
-			listMessages.setListData(contacts.get(selected).getMessagesRaw());
+		if (currentSelectedContact == null) {
+			listMessages.setListData(new Message[0]);
+		}
+		else {
+			listMessages.setListData(currentSelectedContact.getMessagesRaw());
 		}
 	}
 
