@@ -1,0 +1,10 @@
+telnet smtp.utwente.nl 25
+HELO mylaptop.utwente.nl
+MAIL FROM: <email>
+RCPT TO: <email>
+DATA
+Subject: <subject>
+
+<text>
+.
+
