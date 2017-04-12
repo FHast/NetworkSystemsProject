@@ -37,11 +37,7 @@ public class Message {
 	}
 
 	public String toString() {
-		if (!isSentBySelf) {
-			return "[" + timestamp + "] " + text;
-		} else {
-			return text + " [" + timestamp + "]";
-		}
+		return "[" + timestamp + "] " + text;
 	}
 
 }

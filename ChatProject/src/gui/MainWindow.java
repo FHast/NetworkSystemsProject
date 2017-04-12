@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
@@ -31,6 +32,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import applicationLayer.FileService;
 import controller.Controller;
@@ -90,28 +93,22 @@ public class MainWindow extends JFrame {
 					boolean isSelected, boolean cellHasFocus) {
 				if (value.getType() == Message.TYPE_TEXT) {
 					// init
-					JTextArea t = new JTextArea(10, 10);
-					t.setLineWrap(true);
-
+					JTextArea t = new JTextArea(10,10);
+					
 					// formatting
 					if (value.isSentBySelf()) {
-						t.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 						t.setForeground(Color.GRAY);
 					} else {
 						t.setForeground(Color.BLUE);
 					}
-
+										
+					t.setLineWrap(true);
+					
 					// set text
-					if (value.equals(null)) {
-						t.setText("");
-					} else {
-						t.setText(value.toString());
-					}
-
-					// Dimension d = t.getPreferredSize();
-					// t.setPreferredSize(new Dimension((2 * d.width) / 3,
-					// d.height));
+					t.setText(value.toString());
+					
 					t.setRows(countLines(t) + 1);
+
 
 					// t.setWrapStyleWord(true); // wraps words only instead of
 					// characters
@@ -124,7 +121,7 @@ public class MainWindow extends JFrame {
 						// create empty label with the Image as the icon
 						BufferedImage img = ImageIO.read(new File(value.getText()));
 						l = new JLabel(new ImageIcon(img));
-						
+
 						// positioning
 						if (value.isSentBySelf()) {
 							l.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -133,19 +130,17 @@ public class MainWindow extends JFrame {
 						e.printStackTrace();
 					}
 					return l;
-				}
-				else {
+				} else {
 					JLabel l = new JLabel("[FILE]" + value.getText());
-					
+
 					// formatting
 					if (value.isSentBySelf()) {
 						l.setHorizontalAlignment(SwingConstants.RIGHT);
 						l.setForeground(Color.GRAY);
-					}
-					else {
+					} else {
 						l.setForeground(Color.BLUE);
 					}
-					
+
 					return l;
 				}
 			}
@@ -209,8 +204,7 @@ public class MainWindow extends JFrame {
 		lblNamefield = new JLabel("");
 
 		JLabel lblContacts = new JLabel("Contacts:");
-		
-		
+
 		// Select File button
 		JButton btnSelFi = new JButton("Select File");
 		btnSelFi.addActionListener(new ActionListener() {
@@ -219,17 +213,17 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				final JFileChooser fc = new JFileChooser();
 				fc.showOpenDialog(null);
-				
+
 				int device = currentSelectedContact.getDevice();
 				File file = fc.getSelectedFile();
 				String a = FileService.getAppendix(file.getPath());
-				
+
 				if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
 					currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE);
 				} else {
 					currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE);
 				}
-				
+
 				controller.sendFile(device, file);
 			}
 
@@ -237,49 +231,39 @@ public class MainWindow extends JFrame {
 
 		// Layout
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblContacts))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-										.addComponent(btnSelFi)
-										.addComponent(btnSend, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)))
-								.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 927, Short.MAX_VALUE)
-								.addComponent(lblNamefield, Alignment.LEADING)))
-						.addComponent(lblErrorMessage))
-					.addContainerGap())
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNamefield)
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
+						.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
+								.createSequentialGroup()
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237,
+												GroupLayout.PREFERRED_SIZE)
+										.addComponent(lblContacts))
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING).addGroup(gl_contentPane
+										.createSequentialGroup()
+										.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+												.addComponent(btnSelFi).addComponent(btnSend,
+														GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)))
+										.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 927, Short.MAX_VALUE)
+										.addComponent(lblNamefield, Alignment.LEADING)))
+						.addComponent(lblErrorMessage)).addContainerGap()));
+		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
+				.createSequentialGroup()
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE).addComponent(lblNamefield)
 						.addComponent(lblContacts))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE)
 						.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(btnSend)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnSelFi))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(gl_contentPane.createSequentialGroup().addComponent(btnSend)
+								.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnSelFi))
 						.addComponent(textFieldMessage))
-					.addGap(84)
-					.addComponent(lblErrorMessage)
-					.addContainerGap())
-		);
+				.addGap(84).addComponent(lblErrorMessage).addContainerGap()));
 		contentPane.setLayout(gl_contentPane);
 		setContentPane(contentPane);
 
