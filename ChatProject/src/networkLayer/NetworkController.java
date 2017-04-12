@@ -228,8 +228,10 @@ public class NetworkController implements Observer {
 					ForwardingTableService.addEntry(sourceIP, sock.getInetAddress(), sourceSeq, hopcount);
 				} else if (isRREPNew(json)) { // Is this RREP new?
 					RTableEntry re = ReverseTableService.getEntry(destIP);
-					// add forwarding entry
+					// add forwarding entry to RREP source
 					ForwardingTableService.addEntry(sourceIP, sock.getInetAddress(), sourceSeq, hopcount);
+					// add forwarding entry to RREQ source
+					ForwardingTableService.addEntry(re.sourceAddress, re.nextHopAddress, re.sourceSequenceNumber, re.hopsToSource);
 					// continues reversePath
 					sendRREP(re.nextHopAddress, destIP, sourceIP, sourceSeq, hopcount);
 				}
@@ -276,9 +278,10 @@ public class NetworkController implements Observer {
 
 					// Am I the RREQ destination?
 					if (destIP.equals(myIP)) {
+						// add ftable entry
+						ForwardingTableService.addEntry(sourceIP, neighbor, sourceSeq, hopcount);
 						// send RREP
 						sendRREP(neighbor, sourceIP, myIP, NetworkController.getSeq(), 0);
-
 					} else {
 						// Do I know a good enough route?
 						if (ForwardingTableService.hasEntry(destIP)
