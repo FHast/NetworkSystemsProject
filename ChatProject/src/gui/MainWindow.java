@@ -2,11 +2,18 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -16,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
@@ -23,6 +31,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.Utilities;
+import javax.swing.text.View;
 
 import controller.Controller;
 
@@ -47,7 +57,8 @@ public class MainWindow extends JFrame {
 	private NewContactPopup newContactFrame = new NewContactPopup(this);
 
 	public MainWindow(Controller c) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("/home/gereon/git/NetworkSystemsProject/ChatProject/chaticon.png"));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage("/home/gereon/git/NetworkSystemsProject/ChatProject/chaticon.png"));
 		setResizable(false);
 		// settings of the frame
 		setTitle("Ad-Hoc Chat " + Controller.getMyIP());
@@ -58,7 +69,10 @@ public class MainWindow extends JFrame {
 
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
-
+		/*
+		 * contacts.add(new Contact("WrapTest",0,(ArrayList<Message>)
+		 * Arrays.asList(new Message[] { new Message(true, "sads" ) })));
+		 */
 		controller = c;
 
 		// Messages list
@@ -67,25 +81,44 @@ public class MainWindow extends JFrame {
 
 		listMessages.setCellRenderer(new ListCellRenderer<Message>() {
 
+			public int countLines(JTextArea t) {
+				int i = (int) (t.getText().length() / t.getPreferredSize().getWidth());
+				if (t.getText().length() % t.getPreferredSize().getWidth() != 0) {
+					i++;
+				}
+				return i;
+			}
+
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Message> list, Message value, int index,
 					boolean isSelected, boolean cellHasFocus) {
-				JLabel l;
-				if (value.equals(null)) {
-					l = new JLabel("");
+				// init
+				JTextArea t = new JTextArea(10, 10);
+				t.setLineWrap(true);
+
+				// formatting
+				if (value.isSentBySelf()) {
+					t.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+					t.setForeground(Color.GRAY);
 				} else {
-					l = new JLabel(value.toString());
+					t.setForeground(Color.BLUE);
 				}
 				
-
-				if (value.isSentBySelf()) {
-					l.setHorizontalAlignment(JLabel.RIGHT);
-					l.setForeground(Color.GRAY);
+				// set text
+				if (value.equals(null)) {
+					t.setText("");
 				} else {
-					l.setForeground(Color.BLUE);
+					t.setText(value.toString());
 				}
 
-				return l;
+				//Dimension d = t.getPreferredSize();
+				//t.setPreferredSize(new Dimension((2 * d.width) / 3, d.height));
+				t.setRows(countLines(t) + 1);
+
+				// t.setWrapStyleWord(true); // wraps words only instead of
+				// characters
+
+				return t;
 			}
 
 		});
@@ -102,7 +135,7 @@ public class MainWindow extends JFrame {
 				if (listContacts.getSelectedIndex() != -1) {
 					if (listContacts.getSelectedValue().toString().equals("Log")) {
 						lblNamefield.setText("System Log");
-						currentSelectedContact = new Contact("System Log",0,logMessages);
+						currentSelectedContact = new Contact("System Log", 0, logMessages);
 					} else if (listContacts.getSelectedValue().toString().equals("+")) {
 						lblNamefield.setText("");
 						currentSelectedContact = null;
@@ -200,8 +233,7 @@ public class MainWindow extends JFrame {
 	public void refreshMessages() {
 		if (currentSelectedContact == null) {
 			listMessages.setListData(new Message[0]);
-		}
-		else {
+		} else {
 			listMessages.setListData(currentSelectedContact.getMessagesRaw());
 		}
 	}
@@ -232,7 +264,7 @@ public class MainWindow extends JFrame {
 
 	public void addMessage(int device, String text) {
 		int index = listContacts.getSelectedIndex();
-		
+
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				c.addMessage(false, text);
@@ -242,7 +274,7 @@ public class MainWindow extends JFrame {
 		ArrayList<Message> msg = new ArrayList<>();
 		msg.add(new Message(false, text));
 		contacts.add(new Contact("Unknown", device, msg));
-		
+
 		listContacts.setSelectedIndex(index);
 	}
 
