@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
 import java.time.LocalTime;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class DataController implements Observer {
 
 		Thread waitingList = new Thread(new waitingChecker());
 		waitingList.start();
-		
+
 		Thread ack = new Thread(new ackChecker());
 		ack.start();
 
@@ -65,20 +64,19 @@ public class DataController implements Observer {
 		// send data
 		sendData(destIP, data);
 	}
-	
+
 	public static void sendFile(InetAddress destIP, File file) {
 		newLog("[DATA] Trying to send: " + file.getName() + " / " + file.getPath());
-		
+
 		// get data
 		String url = file.getPath();
-		String name = FileService.getName(url);
 		String appendix = FileService.getAppendix(url);
 		String data = FileService.fileToString(url);
 		// get json
 		JSONObject json = JSONservice.composeDataFile(getMyIP(), destIP, data, appendix);
 		// send data
 		sendData(destIP, json);
-		
+
 	}
 
 	private static void sendData(InetAddress destIP, JSONObject data) {
@@ -98,14 +96,14 @@ public class DataController implements Observer {
 			// initiate routing
 			NetworkController.findRoute(destIP);
 			// let message wait
-			waitingChecker.addWaitingMsg(data);
+			waiting.put(data, System.nanoTime());
 		}
 	}
 
 	private static void sendAck(InetAddress destIP, JSONObject toBeAcknowledged) {
 		try {
-			DataController.newLog("[ACK] Acknowledging: " + (String)toBeAcknowledged.get("data"));
-			
+			DataController.newLog("[ACK] Acknowledging: " + (String) toBeAcknowledged.get("data"));
+
 			String hash = HashService.simpleHash(toBeAcknowledged.toJSONString());
 			// to json
 			JSONObject data = JSONservice.composeDataAck(getMyIP(), destIP, hash);
@@ -130,7 +128,7 @@ public class DataController implements Observer {
 				if (destIP.equals(getMyIP())) {
 					// this data packet is for me
 
-					if (((String)json.get("datatype")).equals(""+DATA_TYPE_ACK)) {
+					if (((String) json.get("datatype")).equals("" + DATA_TYPE_ACK)) {
 						String hash = (String) json.get("data");
 						// manage ack
 						receivedACK(hash);
@@ -138,21 +136,21 @@ public class DataController implements Observer {
 					} else {
 						// distinguish different data
 						int device = Integer.parseInt(((String) json.get("sourceip")).split("[.]")[3]);
-						if (((String)json.get("datatype")).equals(""+DATA_TYPE_TEXT)) {
+						if (((String) json.get("datatype")).equals("" + DATA_TYPE_TEXT)) {
 							// send to controller
 							Controller.receivedMessage(device, (String) json.get("data"));
 						} else {
 							try {
-							String appendix = (String)json.get("datatype");
-							String data = (String)json.get("data");
-							// get file
-							String path = FileService.stringToFile(data, appendix);
-							
-							newLog("[DATA] Received file (" + appendix + ") created: " + path);
-							
-							// send to controller
-							Controller.receivedFile(device, path);
-							
+								String appendix = (String) json.get("datatype");
+								String data = (String) json.get("data");
+								// get file
+								String path = FileService.stringToFile(data, appendix);
+
+								newLog("[DATA] Received file (" + appendix + ") created: " + path);
+
+								// send to controller
+								Controller.receivedFile(device, path);
+
 							} catch (FileNotFoundException e) {
 								e.printStackTrace();
 							}
@@ -173,13 +171,17 @@ public class DataController implements Observer {
 	}
 
 	public static void receivedACK(String hash) {
-		for (JSONObject j : needAck.keySet()) {
-			if (needAck.get(j).equals(hash)) {
-				DataController.newLog("[ACK] message acknowledged: " + (String) j.get("data"));
+		try {
+			for (JSONObject j : needAck.keySet()) {
+				if (needAck.get(j).equals(hash)) {
+					DataController.newLog("[ACK] message acknowledged: " + (String) j.get("data"));
 
-				// acknowledged
-				needAck.remove(j);
+					// acknowledged
+					needAck.remove(j);
+				}
 			}
+		} catch (ConcurrentModificationException e) {
+			// nothing
 		}
 	}
 
@@ -226,26 +228,27 @@ public class DataController implements Observer {
 	private static class waitingChecker implements Runnable {
 		private static final long RREQ_TIMEOUT = 3;
 
-		public static void addWaitingMsg(JSONObject json) {
-			waiting.put(json, System.nanoTime());
-		}
-
 		@Override
 		public void run() {
 			while (true) {
 				try {
 					for (JSONObject j : waiting.keySet()) {
+						// get dest
 						InetAddress destIP = InetAddress.getByName((String) j.get("destip"));
+						// check if route available
 						if (ForwardingTableService.hasEntry(destIP)
 								|| (waiting.get(j) + RREQ_TIMEOUT * 1000000000 < System.nanoTime())) {
-							sendData(destIP, j);
 							waiting.remove(j);
+							sendData(destIP, j);
 						}
 					}
+					Thread.sleep(100);
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
-				} catch (ConcurrentModificationException e) {
+				} catch (ConcurrentModificationException | NullPointerException e) {
 					// nothing
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		}
