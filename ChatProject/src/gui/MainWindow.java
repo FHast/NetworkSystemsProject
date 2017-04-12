@@ -171,41 +171,54 @@ public class MainWindow extends JFrame {
 		lblNamefield = new JLabel("");
 
 		JLabel lblContacts = new JLabel("Contacts:");
+		
+		JButton btnNewButton = new JButton("Select File");
 
 		// Layout
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup().addContainerGap().addGroup(gl_contentPane
-						.createParallelGroup(Alignment.LEADING).addGroup(
-								gl_contentPane
-										.createSequentialGroup()
-										.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-												.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237,
-														GroupLayout.PREFERRED_SIZE)
-												.addComponent(lblContacts))
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-												.addGroup(gl_contentPane.createSequentialGroup()
-														.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 845,
-																Short.MAX_VALUE)
-														.addPreferredGap(ComponentPlacement.RELATED)
-														.addComponent(btnSend))
-												.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)
-												.addComponent(lblNamefield, Alignment.LEADING)))
-						.addComponent(lblErrorMessage)).addContainerGap()));
-		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup()
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE).addComponent(lblNamefield)
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 237, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblContacts))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(textFieldMessage, GroupLayout.DEFAULT_SIZE, 813, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+										.addComponent(btnNewButton)
+										.addComponent(btnSend, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(jsp, GroupLayout.DEFAULT_SIZE, 927, Short.MAX_VALUE)
+								.addComponent(lblNamefield, Alignment.LEADING)))
+						.addComponent(lblErrorMessage))
+					.addContainerGap())
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNamefield)
 						.addComponent(lblContacts))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(jsp, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE)
 						.addComponent(listContacts, GroupLayout.PREFERRED_SIZE, 368, GroupLayout.PREFERRED_SIZE))
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false).addComponent(textFieldMessage)
-						.addComponent(btnSend, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addPreferredGap(ComponentPlacement.RELATED, 50, Short.MAX_VALUE).addComponent(lblErrorMessage)
-				.addContainerGap()));
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(btnSend)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnNewButton))
+						.addComponent(textFieldMessage))
+					.addGap(84)
+					.addComponent(lblErrorMessage)
+					.addContainerGap())
+		);
 		contentPane.setLayout(gl_contentPane);
 		setContentPane(contentPane);
 
