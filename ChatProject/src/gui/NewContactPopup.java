@@ -26,7 +26,7 @@ public class NewContactPopup extends JFrame {
 	 * Create the frame.
 	 */
 	public NewContactPopup(MainWindow window) {
-		setType(Type.POPUP);
+		setType(Type.UTILITY);
 		setAlwaysOnTop(true);
 		setTitle("New contact");
 		setResizable(false);

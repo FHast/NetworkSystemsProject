@@ -52,4 +52,8 @@ public class FileService {
 	public static String fileToString(String name, String appendix) {
 		return fileToString(name + "." + appendix);
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(fileToString("json-simple-1.1.1.jar"));
+	}
 }
