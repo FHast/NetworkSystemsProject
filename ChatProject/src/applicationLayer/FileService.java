@@ -28,7 +28,7 @@ public class FileService {
 
 	public static String stringToFile(String data, String filetype) throws FileNotFoundException {
 		try {
-			String s = LocalDateTime.now().toString();
+			String s = LocalDateTime.now().toString().split("[.]")[0];
 			File file = new File(root + s + "." + filetype);
 			byte[] encoded = data.getBytes();
 			byte[] decoded = Base64.getDecoder().decode(encoded);

@@ -11,6 +11,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Window.Type;
 
 public class NewContactPopup extends JFrame {
 
@@ -23,25 +26,36 @@ public class NewContactPopup extends JFrame {
 	 * Create the frame.
 	 */
 	public NewContactPopup(MainWindow window) {
+		setType(Type.POPUP);
+		setAlwaysOnTop(true);
 		setTitle("New contact");
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(100, 100, 330, 226);
+		setBounds(100, 100, 330, 224);
 		contentPane = new JPanel();
 
 		JLabel lblTop = new JLabel("Please enter the contact details!");
+		lblTop.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblTop.setBounds(10, 11, 304, 14);
 
 		JLabel lblDevice = new JLabel("Device:");
+		lblDevice.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblDevice.setBounds(10, 36, 304, 14);
 
 		txtDevice = new JTextField();
+		txtDevice.setBounds(10, 56, 304, 20);
 		txtDevice.setColumns(10);
 
 		JLabel lblName = new JLabel("Name:");
+		lblName.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblName.setBounds(10, 82, 304, 14);
 
 		txtName = new JTextField();
+		txtName.setBounds(10, 102, 304, 20);
 		txtName.setColumns(10);
 
-		JButton btnFinish = new JButton("Finish");
+		JButton btnFinish = new JButton("Create");
+		btnFinish.setBackground(new Color(0, 153, 255));
+		btnFinish.setBounds(237, 158, 76, 23);
 		getRootPane().setDefaultButton(btnFinish);
 		btnFinish.addActionListener(new ActionListener() {
 
@@ -68,45 +82,17 @@ public class NewContactPopup extends JFrame {
 		});
 		
 		lblErrorMsg = new JLabel("");
-
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-							.addComponent(lblTop)
-							.addComponent(lblDevice)
-							.addComponent(lblName)
-							.addComponent(txtDevice, GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-							.addComponent(txtName))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(btnFinish)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblErrorMsg)))
-					.addContainerGap(19, Short.MAX_VALUE))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblTop)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(lblDevice)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtDevice, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblName)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(txtName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnFinish)
-						.addComponent(lblErrorMsg))
-					.addContainerGap(25, Short.MAX_VALUE))
-		);
-		contentPane.setLayout(gl_contentPane);
+		lblErrorMsg.setForeground(new Color(204, 51, 51));
+		lblErrorMsg.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblErrorMsg.setBounds(10, 133, 304, 14);
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		contentPane.add(lblTop);
+		contentPane.add(lblDevice);
+		contentPane.add(lblName);
+		contentPane.add(txtDevice);
+		contentPane.add(txtName);
+		contentPane.add(btnFinish);
+		contentPane.add(lblErrorMsg);
 	}
 }
