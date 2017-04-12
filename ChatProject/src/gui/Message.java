@@ -37,7 +37,25 @@ public class Message {
 	}
 
 	public String toString() {
-		return timestamp.getHour() + ":" + timestamp.getMinute() + " | " + text;
+		int minute = timestamp.getMinute();
+		String minutes = "";
+
+		if (minute < 10) {
+			minutes = "0" + minute;
+		} else {
+			minutes = "" + minute;
+		}
+
+		int hour = timestamp.getHour();
+		String hours= "";
+
+		if (hour < 10) {
+			hours = "0" + hours;
+		} else {
+			minutes = "" + minute;
+		}
+
+		return hours + ": " + minutes + " | " + text;
 	}
 
 }

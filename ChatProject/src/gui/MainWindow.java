@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -47,6 +48,7 @@ public class MainWindow extends JFrame {
 	private JButton btnSend;
 	private JLabel lblErrorMessage;
 	private JLabel lblNamefield;
+	private JScrollPane jsp;
 
 	private Controller controller;
 	private Contact currentSelectedContact = null;
@@ -86,51 +88,55 @@ public class MainWindow extends JFrame {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Message> list, Message value, int index,
 					boolean isSelected, boolean cellHasFocus) {
-				if (value.getType() == Message.TYPE_TEXT) {
-					// init
-					JTextArea t = new JTextArea(10, 10);
+				if (value != null) {
+					if (value.getType() == Message.TYPE_TEXT) {
+						// init
+						JTextArea t = new JTextArea(10, 10);
 
-					// formatting
-					if (value.isSentBySelf()) {
-						t.setForeground(Color.GRAY);
+						// formatting
+						if (value.isSentBySelf()) {
+							t.setForeground(Color.GRAY);
+						} else {
+							t.setForeground(Color.BLUE);
+						}
+
+						t.setLineWrap(true);
+
+						// set text
+						t.setText(value.toString());
+
+						t.setRows(countLines(t));
+
+						// wraps words only instead ofcharacters
+						t.setWrapStyleWord(true);
+
+						return t;
+					} else if (value.getType() == Message.TYPE_IMAGE) {
+
+						JLabel l = null;
+						try {
+							// create empty label with the Image as the icon
+							BufferedImage img = ImageIO.read(new File(value.getText()));
+							l = new JLabel(new ImageIcon(img));
+
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						return l;
 					} else {
-						t.setForeground(Color.BLUE);
+						JLabel l = new JLabel("[FILE]" + value.getText());
+
+						// formatting
+						if (value.isSentBySelf()) {
+							l.setForeground(Color.GRAY);
+						} else {
+							l.setForeground(Color.BLUE);
+						}
+
+						return l;
 					}
-
-					t.setLineWrap(true);
-
-					// set text
-					t.setText(value.toString());
-
-					t.setRows(countLines(t));
-
-					// wraps words only instead ofcharacters
-					t.setWrapStyleWord(true);
-
-					return t;
-				} else if (value.getType() == Message.TYPE_IMAGE) {
-
-					JLabel l = null;
-					try {
-						// create empty label with the Image as the icon
-						BufferedImage img = ImageIO.read(new File(value.getText()));
-						l = new JLabel(new ImageIcon(img));
-
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					return l;
 				} else {
-					JLabel l = new JLabel("[FILE]" + value.getText());
-
-					// formatting
-					if (value.isSentBySelf()) {
-						l.setForeground(Color.GRAY);
-					} else {
-						l.setForeground(Color.BLUE);
-					}
-
-					return l;
+					return new JLabel("hehe");
 				}
 			}
 
@@ -186,7 +192,7 @@ public class MainWindow extends JFrame {
 		// Label for bottom line error message
 		lblErrorMessage = new JLabel("Connection established.");
 
-		JScrollPane jsp = new JScrollPane(listMessages);
+		jsp = new JScrollPane(listMessages);
 		jsp.setAutoscrolls(true);
 		jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -318,14 +324,20 @@ public class MainWindow extends JFrame {
 		listContacts.setSelectedIndex(index);
 	}
 
+	public void refreshScrollbar() {
+		JScrollBar vertical = jsp.getVerticalScrollBar();
+		vertical.setValue(vertical.getMaximum());
+	}
+
 	public class RefreshMessageRunnable implements Runnable {
 
 		@Override
 		public void run() {
 			while (true) {
 				Controller.mainWindow.refreshMessages();
+				// refreshScrollbar();
 				try {
-					Thread.sleep(200);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 
 				}
