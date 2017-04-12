@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="commons-codec-1.10/commons-codec-1.10-test-sources.jar"/>
 	<classpathentry kind="lib" path="commons-codec-1.10/commons-codec-1.10-tests.jar"/>
 	<classpathentry kind="lib" path="commons-codec-1.10/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="commons-io-2.5/commons-io-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
