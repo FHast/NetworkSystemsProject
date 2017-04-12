@@ -208,7 +208,7 @@ public class MainWindow extends JFrame {
 
 	public void log(String msg) {
 		setBottomLine(msg);
-		logMessages.add(new Message(false, "[" + LocalTime.now() + "]" + msg));
+		logMessages.add(new Message(false, msg));
 	}
 
 	public void setBottomLine(String txt) {
