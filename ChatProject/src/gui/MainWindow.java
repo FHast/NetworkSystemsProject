@@ -154,7 +154,6 @@ public class MainWindow extends JFrame {
 		listContacts = new JList<>();
 		listContacts.setBounds(10, 31, 237, 368);
 		listContacts.setBorder(new LineBorder(Color.GRAY));
-		refreshContactList();
 		listContacts.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
@@ -353,11 +352,7 @@ public class MainWindow extends JFrame {
 	}
 
 	public void refreshContactList() {
-		Contact[] c = new Contact[contacts.size() + 2];
-		System.arraycopy(contacts.toArray(new Contact[0]), 0, c, 0, contacts.size());
-		c[c.length - 2] = new Contact("Log", 0, new ArrayList<Message>());
-		c[c.length - 1] = new Contact("+", 0, new ArrayList<Message>());
-		listContacts.setListData(c);
+		listContacts.setListData(contacts.toArray(new Contact[0]));
 	}
 
 	public void refreshMessages() {
@@ -390,6 +385,15 @@ public class MainWindow extends JFrame {
 		} else {
 			setBottomLine("Contact already added: " + found.getName());
 		}
+	}
+	
+	public void renameContact(String newName, int device) {
+		for(Contact c : contacts) {
+			if (c.getDevice() == device) {
+				c.setName(newName);
+			}
+		}
+		refreshContactList();
 	}
 
 	public void addMessage(int device, String text, int type) {

@@ -17,6 +17,7 @@ public class NewContactPopup extends JFrame {
 	private JTextField txtDevice;
 	private JTextField txtName;
 	private JLabel lblErrorMsg;
+	private boolean rename = false;
 
 	/**
 	 * Create the frame.
@@ -59,7 +60,11 @@ public class NewContactPopup extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (!txtName.getText().equals("") && !txtDevice.getText().equals("")) {
 					try {
-						window.addContact(txtName.getText(), Integer.parseInt(txtDevice.getText()));
+						if (rename) {
+							window.renameContact(txtName.getText(), Integer.parseInt(txtDevice.getText()));
+						} else {
+							window.addContact(txtName.getText(), Integer.parseInt(txtDevice.getText()));
+						}
 						window.refreshContactList();
 						txtName.setText("");
 						txtDevice.setText("");
@@ -69,19 +74,18 @@ public class NewContactPopup extends JFrame {
 						txtDevice.setText("");
 						lblErrorMsg.setText("Please enter a number!");
 					}
-				}
-				else {
-					lblErrorMsg.setText("You have to enter something..");
+				} else {
+					lblErrorMsg.setText("You have to enter something.");
 				}
 			}
 
 		});
-		
+
 		lblErrorMsg = new JLabel("");
 		lblErrorMsg.setForeground(new Color(204, 51, 51));
 		lblErrorMsg.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblErrorMsg.setBounds(10, 133, 304, 14);
-		
+
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(lblTop);
@@ -92,20 +96,20 @@ public class NewContactPopup extends JFrame {
 		contentPane.add(btnFinish);
 		contentPane.add(lblErrorMsg);
 	}
-	
+
 	public void setRename(boolean rename) {
+		this.rename = rename;
 		if (rename) {
 			txtDevice.setEnabled(false);
-		}
-		else {
+		} else {
 			txtDevice.setEnabled(true);
 		}
 	}
-	
+
 	public void setDevice(String device) {
 		txtDevice.setText(device);
 	}
-	
+
 	public void setName(String name) {
 		txtName.setText(name);
 	}
