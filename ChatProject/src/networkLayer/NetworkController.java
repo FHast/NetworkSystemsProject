@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.security.auth.login.LoginException;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -82,6 +84,8 @@ public class NetworkController implements Observer {
 		Unicast u = new Unicast();
 		u.addObserver(this);
 		new Thread(m).start();
+
+		newLog("[Thread] Network Layer started.");
 	}
 
 	public static void newLog(String s) {
@@ -93,12 +97,15 @@ public class NetworkController implements Observer {
 	private static void receivedHELLO(JSONObject json) {
 		try {
 			InetAddress source = InetAddress.getByName((String) json.get("sourceip"));
-			// print to log
-			if (!neighbours.containsKey(source)) {
-				newLog("[HELLO] Detected new neighbour: " + source.getHostAddress());
+			// dont add yourself...
+			if (!source.equals(myIP)) {
+				// print to log
+				if (!neighbours.containsKey(source)) {
+					newLog("[HELLO] Detected new neighbour: " + source.getHostAddress());
+				}
+				// refresh entry
+				neighbours.put(source, LocalTime.now().plusSeconds((HELLO_LOSS + 1) * HELLO_INTERVAL));
 			}
-			// refresh entry
-			neighbours.put(source, LocalTime.now().plusSeconds((HELLO_LOSS + 1) * HELLO_INTERVAL));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -125,9 +132,12 @@ public class NetworkController implements Observer {
 			if (!RREQreceivedBefore(json)) {
 				// remember json
 				receivedRREQList.add(json);
+				// extract data
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 				long hopCount = (long) json.get("hopcount");
+				// log entry 
+				newLog("[RREQ] Received: " + sourceIP.getHostName() + " -> " + destIP.getHostName());
 
 				// from me?
 				if (!myIP.equals(sourceIP)) {
@@ -160,6 +170,8 @@ public class NetworkController implements Observer {
 
 	private static void findRoute(InetAddress dest) {
 		if (!ForwardingTableService.hasEntry(dest)) {
+			// log entry
+			newLog("[RREQ] Finding route to: " + dest.getHostAddress());			
 			// increment broadcastID
 			broadcastID++;
 			// get json
@@ -203,6 +215,8 @@ public class NetworkController implements Observer {
 	}
 
 	private static void sendRERR(InetAddress failedLink) {
+		// log entry
+		newLog("[RERR] Send");
 		// get unreachable nodes
 		InetAddress[] unreachable = ForwardingTableService.getNodes(failedLink);
 		// remove from ftable
@@ -222,7 +236,8 @@ public class NetworkController implements Observer {
 			InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 			InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 			long hopCount = (long) json.get("hopcount");
-
+			// log entry
+			newLog("[RREP] Received: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
 			// add forwarding to RREP source
 			ForwardingTableService.addEntry(sourceIP, neighbour, hopCount);
 			// need to pass further?
@@ -245,6 +260,9 @@ public class NetworkController implements Observer {
 	}
 
 	private static void sendRREP(InetAddress dest, long hopCount) {
+		// log entry 
+		newLog("[RREP] Send to: " + dest.getHostAddress());
+		// get json
 		JSONObject json = JSONservice.composeRREP(dest, myIP, hopCount);
 		try {
 			sendUnicastJson(ForwardingTableService.getEntry(dest).nextHopAddress, json);
@@ -525,7 +543,7 @@ public class NetworkController implements Observer {
 					}
 
 				} catch (ConcurrentModificationException e) {
-					e.printStackTrace();
+					// nothing
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				} catch (NoEntryException e) {
