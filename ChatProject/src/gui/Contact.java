@@ -34,6 +34,10 @@ public class Contact {
 	public String getName() {
 		return name;
 	}
+	
+	public void setName(String n) {
+		name = n;
+	}
 
 	public void addMessage(boolean isSentBySelf, String text, int type) {
 		switch (type) {

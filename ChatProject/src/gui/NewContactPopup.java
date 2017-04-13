@@ -81,6 +81,7 @@ public class NewContactPopup extends JFrame {
 		lblErrorMsg.setForeground(new Color(204, 51, 51));
 		lblErrorMsg.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblErrorMsg.setBounds(10, 133, 304, 14);
+		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(lblTop);
@@ -90,5 +91,22 @@ public class NewContactPopup extends JFrame {
 		contentPane.add(txtName);
 		contentPane.add(btnFinish);
 		contentPane.add(lblErrorMsg);
+	}
+	
+	public void setRename(boolean rename) {
+		if (rename) {
+			txtDevice.setEnabled(false);
+		}
+		else {
+			txtDevice.setEnabled(true);
+		}
+	}
+	
+	public void setDevice(String device) {
+		txtDevice.setText(device);
+	}
+	
+	public void setName(String name) {
+		txtName.setText(name);
 	}
 }

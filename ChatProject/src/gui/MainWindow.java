@@ -61,6 +61,7 @@ public class MainWindow extends JFrame {
 	private JMenuItem menuItemNewContact;
 	private JMenuBar menubar;
 	private JMenuItem menuItemRename;
+	private JMenuItem menuItemLog;
 
 	public MainWindow(Controller c) {
 		setResizable(false);
@@ -248,28 +249,74 @@ public class MainWindow extends JFrame {
 		menubar.add(optionsMenu);
 		optionsMenu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 
+		// MenuItem New Contact
 		menuItemNewContact = new JMenuItem("New Contact");
 		menuItemNewContact.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				labelContactname.setText("");
 				currentSelectedContact = null;
+
+				newContactFrame.setDevice("");
+				newContactFrame.setName("");
+				newContactFrame.setRename(false);
 				newContactFrame.setVisible(true);
 			}
 		});
 		menuItemNewContact.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		menuItemNewContact.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				labelContactname.setText("");
+				currentSelectedContact = null;
+				newContactFrame.setVisible(true);
+			}
+
+		});
 		optionsMenu.add(menuItemNewContact);
 
+		// MenuItem Rename
 		menuItemRename = new JMenuItem("Rename");
 		optionsMenu.add(menuItemRename);
 		menuItemRename.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		menuItemRename.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!listContacts.isSelectionEmpty()) {
+					newContactFrame.setRename(true);
+					newContactFrame.setDevice(String.valueOf(listContacts.getSelectedValue().getDevice()));
+					newContactFrame.setName("");
+					newContactFrame.setVisible(true);
+				}
+			}
+
+		});
+
+		// MenuItem Delete
 		menuItemDelete = new JMenuItem("Delete");
 		optionsMenu.add(menuItemDelete);
 		menuItemDelete.setFont(new Font("Tahoma", Font.PLAIN, 13));
 
+		// MenuItem Block
 		menuItemBlock = new JCheckBoxMenuItem("Block");
 		optionsMenu.add(menuItemBlock);
 		menuItemBlock.setFont(new Font("Tahoma", Font.PLAIN, 13));
+
+		// MenuItem Log
+		menuItemLog = new JMenuItem("Show log");
+		menuItemLog.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		menuItemLog.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				labelContactname.setText("System Log");
+				currentSelectedContact = new Contact("System Log", 0, logMessages);
+			}
+
+		});
+		optionsMenu.add(menuItemLog);
+
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(listContacts);
