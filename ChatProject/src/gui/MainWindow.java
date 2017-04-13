@@ -309,7 +309,7 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				labelContactname.setText("System Log");
 				currentSelectedContact = new Contact("System Log", 0, logMessages);
-				listContacts.setSelectedIndex(-1);
+				listContacts.clearSelection();
 			}
 
 		});
