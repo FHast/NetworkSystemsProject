@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.time.LocalTime;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Observable;
 
 public class HELLOservice extends Observable implements Runnable {
-	private static final int HELLO_INTERVAL = 1000;
-	private static final int HELLO_LOSS = 3;
+	public static final int HELLO_INTERVAL = 1;
+	public static final int HELLO_LOSS = 3;
 	private static final int HELLO_PORT = 2003;
 	private static final String HELLO_TRAFFIC_ADDRESS = "228.0.0.2";
 
@@ -50,7 +51,7 @@ public class HELLOservice extends Observable implements Runnable {
 			}
 			// wait
 			try {
-				Thread.sleep(HELLO_INTERVAL);
+				Thread.sleep(HELLO_INTERVAL*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -86,18 +87,18 @@ public class HELLOservice extends Observable implements Runnable {
 		@Override
 		public void run() {
 			while (true) {
-				HashMap<InetAddress, Long> neighbours = NetworkController.getNeighbours();
+				HashMap<InetAddress, LocalTime> neighbours = NetworkController.getNeighbours();
 				try {
 					for (InetAddress i : neighbours.keySet()) {
-						long then = neighbours.get(i);
-						long thenPlusTimeout = then + ((HELLO_LOSS + 1) * HELLO_INTERVAL * 1000000);
-						if (System.nanoTime() > thenPlusTimeout) {
+						LocalTime expire = neighbours.get(i);
+						if (expire.isBefore(LocalTime.now())) {
 							// increase my sequence number
 							NetworkController.incrementSeq();
 							// Entry expired! send RERR
 							NetworkController.sendRERR(i);
 							// remove from list
 							neighbours.remove(i);
+							System.out.println("lost neighbour: " + i.getHostAddress());
 						}
 					}
 				} catch (ConcurrentModificationException e) {
