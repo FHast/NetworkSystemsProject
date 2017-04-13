@@ -35,6 +35,8 @@ import javax.swing.event.ListSelectionListener;
 
 import applicationLayer.FileService;
 import controller.Controller;
+import networkLayer.tables.FTableEntry;
+import networkLayer.tables.ForwardingTableService;
 
 public class MainWindow extends JFrame {
 
@@ -342,7 +344,24 @@ public class MainWindow extends JFrame {
 		});
 		menuItemOpenFolder.setFont(new Font("Dialog", Font.PLAIN, 13));
 		optionsMenu.add(menuItemOpenFolder);
+		
+		// debug
+		JMenuItem showFT = new JMenuItem("Add FT to log");
+		showFT.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				log("====================");
+				log("Current forwarding Table:");
+				for(FTableEntry ex : ForwardingTableService.getEntries()) {
+					log(ex.destinationAddress.toString() + " -> " + ex.nextHopAddress.toString());
+				}
+				log("====================");
+			}
+			
+		});
+		optionsMenu.add(showFT);
+		
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(listContacts);

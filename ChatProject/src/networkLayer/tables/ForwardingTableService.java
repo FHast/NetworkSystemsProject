@@ -73,6 +73,10 @@ public class ForwardingTableService implements Runnable {
 	public void shutdown() {
 		shutdown = true;
 	}
+	
+	public static ArrayList<FTableEntry> getEntries() {
+		return forwardingTable;
+	}
 
 	@Override
 	public void run() {
