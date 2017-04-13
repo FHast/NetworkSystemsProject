@@ -79,10 +79,10 @@ public class ForwardingTableService implements Runnable {
 		while (!shutdown) {
 			// Removing expired entries
 			try {
-				for (FTableEntry e : forwardingTable) {
-					if (e.lifetime.isBefore(LocalTime.now()) || e.hopcount >= 100000) {
+				for (int i = 0; i < forwardingTable.size(); i++) {
+					if (forwardingTable.get(i).lifetime.isBefore(LocalTime.now()) || forwardingTable.get(i).hopcount >= 100000) {
 						Controller.mainWindow.log("[FTable] Entry removed");
-						forwardingTable.remove(e);
+						forwardingTable.remove(forwardingTable.get(i));
 					}
 				}
 			} catch (ConcurrentModificationException | NullPointerException e) {

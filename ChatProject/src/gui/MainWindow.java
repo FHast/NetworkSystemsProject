@@ -326,6 +326,14 @@ public class MainWindow extends JFrame {
 					Desktop.getDesktop().open(new File("received"));
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					File file = new File("received");
+					file.mkdir();
+					try {
+						Desktop.getDesktop().open(new File("received"));
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
