@@ -321,11 +321,6 @@ public class MainWindow extends JFrame {
 		});
 		optionsMenu.add(menuItemLog);
 
-		// MenuItem Block
-		menuItemBlock = new JCheckBoxMenuItem("Block");
-		optionsMenu.add(menuItemBlock);
-		menuItemBlock.setFont(new Font("Tahoma", Font.PLAIN, 13));
-
 		// MenuItem Open Folder
 		menuItemOpenFolder = new JMenuItem("Open \"received\" Folder");
 		menuItemOpenFolder.addActionListener(new ActionListener() {
