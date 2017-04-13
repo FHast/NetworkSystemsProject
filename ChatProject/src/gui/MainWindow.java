@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,6 +63,7 @@ public class MainWindow extends JFrame {
 	private JMenuBar menubar;
 	private JMenuItem menuItemRename;
 	private JMenuItem menuItemLog;
+	private JMenuItem menuItemOpenFolder;
 
 	public MainWindow(Controller c) {
 		setResizable(false);
@@ -298,25 +300,38 @@ public class MainWindow extends JFrame {
 		menuItemDelete = new JMenuItem("Delete");
 		optionsMenu.add(menuItemDelete);
 		menuItemDelete.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		
+				// MenuItem Log
+				menuItemLog = new JMenuItem("Show log");
+				menuItemLog.setFont(new Font("Tahoma", Font.PLAIN, 13));
+				menuItemLog.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						labelContactname.setText("System Log");
+						currentSelectedContact = new Contact("System Log", 0, logMessages);
+					}
+
+				});
+				optionsMenu.add(menuItemLog);
 
 		// MenuItem Block
 		menuItemBlock = new JCheckBoxMenuItem("Block");
 		optionsMenu.add(menuItemBlock);
 		menuItemBlock.setFont(new Font("Tahoma", Font.PLAIN, 13));
-
-		// MenuItem Log
-		menuItemLog = new JMenuItem("Show log");
-		menuItemLog.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		menuItemLog.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				labelContactname.setText("System Log");
-				currentSelectedContact = new Contact("System Log", 0, logMessages);
+		
+		menuItemOpenFolder = new JMenuItem("Open \"received\" Folder");
+		menuItemOpenFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().open(new File("received"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-
 		});
-		optionsMenu.add(menuItemLog);
+		menuItemOpenFolder.setFont(new Font("Dialog", Font.PLAIN, 13));
+		optionsMenu.add(menuItemOpenFolder);
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);

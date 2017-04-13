@@ -1,5 +1,6 @@
 package applicationLayer;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import org.apache.commons.io.FileUtils;
 
 public class FileService {
 	private static final String root = "received/";
-	
+
 	public static String fileToString(String url) {
 		try {
 			File file = new File(url);
@@ -41,18 +42,19 @@ public class FileService {
 
 	public static String getAppendix(String url) {
 		String[] split = url.split("[.]");
-		return split[split.length-1];
+		return split[split.length - 1];
 	}
 
 	public static String getName(String url) {
-		return url.replaceAll("[.]"+getAppendix(url), "");
+		return url.replaceAll("[.]" + getAppendix(url), "");
 	}
 
 	public static String fileToString(String name, String appendix) {
 		return fileToString(name + "." + appendix);
 	}
-	
+
 	public static void main(String[] args) {
-		System.out.println(fileToString("json-simple-1.1.1.jar"));
+		// Desktop.getDesktop().open(new File("received"));
+		// System.out.println(fileToString("json-simple-1.1.1.jar"));
 	}
 }
