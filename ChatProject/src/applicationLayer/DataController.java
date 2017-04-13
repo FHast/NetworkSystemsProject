@@ -114,7 +114,7 @@ public class DataController implements Observer {
 			// send
 			DATAservice.sendData(fe.nextHopAddress, data.toJSONString());
 		} catch (IOException | NoEntryException e) {
-			e.printStackTrace();
+			NetworkController.findRoute(destIP);
 		}
 	}
 
