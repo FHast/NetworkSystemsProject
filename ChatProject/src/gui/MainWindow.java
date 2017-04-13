@@ -177,6 +177,7 @@ public class MainWindow extends JFrame {
 
 		// Send button
 		buttonSend = new JButton("Send");
+		buttonSend.setForeground(Color.DARK_GRAY);
 		buttonSend.setBackground(new Color(0, 153, 255));
 		buttonSend.setBounds(1076, 405, 108, 23);
 		getRootPane().setDefaultButton(buttonSend);
