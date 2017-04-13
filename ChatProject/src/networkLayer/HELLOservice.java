@@ -51,7 +51,7 @@ public class HELLOservice extends Observable implements Runnable {
 			}
 			// wait
 			try {
-				Thread.sleep(HELLO_INTERVAL);
+				Thread.sleep(HELLO_INTERVAL*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
