@@ -10,13 +10,13 @@ import controller.Controller;
 public class ForwardingTableService implements Runnable {
 	private static ArrayList<FTableEntry> forwardingTable = new ArrayList<>();
 
-	public static void addEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
+	public static void addEntry(InetAddress dest, InetAddress nextHop, long hopCount) {
 
 		if (hasEntry(dest)) {
 			renewEntry(dest);
 		} else {
 			Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
-			forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
+			forwardingTable.add(new FTableEntry(dest, nextHop, hopCount));
 		}
 	}
 
@@ -88,8 +88,7 @@ public class ForwardingTableService implements Runnable {
 			// Removing expired entries
 			try {
 				for (int i = 0; i < forwardingTable.size(); i++) {
-					if (forwardingTable.get(i).lifetime.isBefore(LocalTime.now())
-							|| forwardingTable.get(i).hopcount >= 100000) {
+					if (forwardingTable.get(i).lifetime.isBefore(LocalTime.now())) {
 
 						removeEntry(forwardingTable.get(i).destinationAddress);
 					}

@@ -8,14 +8,12 @@ public class FTableEntry {
 	
 	public InetAddress destinationAddress;
 	public InetAddress nextHopAddress;
-	public long destinationSequenceNumber;
 	public LocalTime lifetime;
 	public long hopcount;
 
-	public FTableEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
+	public FTableEntry(InetAddress dest, InetAddress nextHop, long hopCount) {
 		destinationAddress = dest;
 		nextHopAddress = nextHop;
-		destinationSequenceNumber = destSeq;
 		lifetime = LocalTime.now().plusSeconds(OFFSET);
 		hopcount = hopCount;
 	}

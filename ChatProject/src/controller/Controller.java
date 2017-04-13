@@ -32,7 +32,7 @@ public class Controller {
 	}
 	
 	public static InetAddress getMyIP() {
-		return NetworkController.getMyIP();
+		return NetworkController.myIP;
 	}
 	
 	public static void receivedMessage(int device, String s) {
