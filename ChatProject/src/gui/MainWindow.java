@@ -265,16 +265,6 @@ public class MainWindow extends JFrame {
 			}
 		});
 		menuItemNewContact.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		menuItemNewContact.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				labelContactname.setText("");
-				currentSelectedContact = null;
-				newContactFrame.setVisible(true);
-			}
-
-		});
 		optionsMenu.add(menuItemNewContact);
 
 		// MenuItem Rename
@@ -330,11 +320,6 @@ public class MainWindow extends JFrame {
 
 		});
 		optionsMenu.add(menuItemLog);
-
-		// MenuItem Block
-		menuItemBlock = new JCheckBoxMenuItem("Block");
-		optionsMenu.add(menuItemBlock);
-		menuItemBlock.setFont(new Font("Tahoma", Font.PLAIN, 13));
 
 		// MenuItem Open Folder
 		menuItemOpenFolder = new JMenuItem("Open \"received\" Folder");
