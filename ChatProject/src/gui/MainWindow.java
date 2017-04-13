@@ -291,6 +291,9 @@ public class MainWindow extends JFrame {
 					newContactFrame.setName("");
 					newContactFrame.setVisible(true);
 				}
+				else {
+					setBottomLine("Please select a contact first!");
+				}
 			}
 
 		});
@@ -299,6 +302,19 @@ public class MainWindow extends JFrame {
 		menuItemDelete = new JMenuItem("Delete");
 		optionsMenu.add(menuItemDelete);
 		menuItemDelete.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		menuItemDelete.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!listContacts.isSelectionEmpty()) {
+					deleteContact( listContacts.getSelectedValue().getDevice() );
+				}
+				else {
+					setBottomLine("Please select a contact first!");
+				}
+			}
+			
+		});
 
 		// MenuItem Log
 		menuItemLog = new JMenuItem("Show log");
@@ -320,6 +336,7 @@ public class MainWindow extends JFrame {
 		optionsMenu.add(menuItemBlock);
 		menuItemBlock.setFont(new Font("Tahoma", Font.PLAIN, 13));
 
+		// MenuItem Open Folder
 		menuItemOpenFolder = new JMenuItem("Open \"received\" Folder");
 		menuItemOpenFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -402,6 +419,17 @@ public class MainWindow extends JFrame {
 				c.setName(newName);
 			}
 		}
+		refreshContactList();
+	}
+	
+	public void deleteContact(int device) {
+		ArrayList<Contact> newList = new ArrayList<>();
+		for(Contact c : contacts) {
+			if (c.getDevice() != device) {
+				newList.add(c);
+			}
+		}
+		contacts = newList;
 		refreshContactList();
 	}
 
