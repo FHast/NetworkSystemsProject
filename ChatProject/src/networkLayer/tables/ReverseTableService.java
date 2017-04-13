@@ -8,12 +8,13 @@ import java.util.ConcurrentModificationException;
 import controller.Controller;
 
 public class ReverseTableService implements Runnable {
-	private static boolean shutdown = false;
 	private static ArrayList<RTableEntry> reverseTable = new ArrayList<>();
 
 	public static void addEntry(InetAddress source, InetAddress nextHop, long sourceSeq, long hopCount) {
 		Controller.mainWindow.log("[RTable] Add Entry");
-		reverseTable.add(new RTableEntry(source, nextHop, sourceSeq, hopCount));
+		if (!hasEntry(source)) {
+			reverseTable.add(new RTableEntry(source, nextHop, sourceSeq, hopCount));
+		}
 	}
 
 	public static boolean hasEntry(InetAddress dest) {
@@ -34,13 +35,9 @@ public class ReverseTableService implements Runnable {
 		throw new NoEntryException();
 	}
 
-	public void shutdown() {
-		shutdown = true;
-	}
-
 	@Override
 	public void run() {
-		while (!shutdown) {
+		while (true) {
 			// Removing expired entries
 			try {
 				for (RTableEntry e : reverseTable) {

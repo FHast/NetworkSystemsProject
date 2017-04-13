@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.time.LocalTime;
 
 public class FTableEntry {
-	public static final int OFFSET = 10;
+	public static final int OFFSET = 5;
 	
 	public InetAddress destinationAddress;
 	public InetAddress nextHopAddress;

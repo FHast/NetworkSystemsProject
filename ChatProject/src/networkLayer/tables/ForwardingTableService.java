@@ -8,13 +8,16 @@ import java.util.ConcurrentModificationException;
 import controller.Controller;
 
 public class ForwardingTableService implements Runnable {
-	private static boolean shutdown = false;
 	private static ArrayList<FTableEntry> forwardingTable = new ArrayList<>();
 
 	public static void addEntry(InetAddress dest, InetAddress nextHop, long destSeq, long hopCount) {
-		Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
-		removeEntry(dest);
-		forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
+
+		if (hasEntry(dest)) {
+			renewEntry(dest);
+		} else {
+			Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
+			forwardingTable.add(new FTableEntry(dest, nextHop, destSeq, hopCount));
+		}
 	}
 
 	public static boolean hasEntry(InetAddress dest) {
@@ -25,22 +28,27 @@ public class ForwardingTableService implements Runnable {
 		}
 		return false;
 	}
-	
+
 	public static void renewEntry(InetAddress dest) {
 		try {
 			FTableEntry fe = getEntry(dest);
 			fe.lifetime = LocalTime.now().plusSeconds(FTableEntry.OFFSET);
 		} catch (NoEntryException e) {
 			e.printStackTrace();
-		};
+		}
+		;
 	}
 
 	public static void removeEntry(InetAddress dest) {
 		try {
-			for (FTableEntry e : forwardingTable) {
-				if (e.destinationAddress.equals(dest)) {
-					forwardingTable.remove(e);
+			FTableEntry fe = null;
+			for (FTableEntry current : forwardingTable) {
+				if (current.destinationAddress.equals(dest)) {
+					fe = current;
 				}
+			}
+			if (fe != null) {
+				forwardingTable.remove(fe);
 			}
 		} catch (ConcurrentModificationException e) {
 			// timeout
@@ -70,27 +78,24 @@ public class ForwardingTableService implements Runnable {
 		return result;
 	}
 
-	public void shutdown() {
-		shutdown = true;
-	}
-	
 	public static ArrayList<FTableEntry> getEntries() {
 		return forwardingTable;
 	}
 
 	@Override
 	public void run() {
-		while (!shutdown) {
+		while (true) {
 			// Removing expired entries
 			try {
 				for (int i = 0; i < forwardingTable.size(); i++) {
-					if (forwardingTable.get(i).lifetime.isBefore(LocalTime.now()) || forwardingTable.get(i).hopcount >= 100000) {
-						Controller.mainWindow.log("[FTable] Entry removed");
-						forwardingTable.remove(forwardingTable.get(i));
+					if (forwardingTable.get(i).lifetime.isBefore(LocalTime.now())
+							|| forwardingTable.get(i).hopcount >= 100000) {
+
+						removeEntry(forwardingTable.get(i).destinationAddress);
 					}
 				}
 			} catch (ConcurrentModificationException | NullPointerException e) {
-				// nothing
+				e.printStackTrace();
 			}
 		}
 	}
