@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import controller.Controller;
+import java.awt.Window.Type;
+import java.awt.Color;
 
 public class StartPopup extends JFrame {
 
@@ -20,6 +22,7 @@ public class StartPopup extends JFrame {
 	
 
 	public StartPopup(String title, String t1, String t2) {
+		setType(Type.UTILITY);
 		
 		Controller.mainWindow.setVisible(false);
 		
@@ -30,41 +33,23 @@ public class StartPopup extends JFrame {
 		
 		setTitle(title);
 		JLabel lblText1 = new JLabel(t1);
+		lblText1.setBounds(12, 12, 295, 20);
 		JLabel lblText2 = new JLabel(t2);
+		lblText2.setBounds(12, 33, 295, 20);
 		
 		JButton btnOk = new JButton("OK");
+		btnOk.setForeground(Color.DARK_GRAY);
+		btnOk.setBackground(new Color(0, 153, 255));
+		btnOk.setBounds(106, 65, 109, 25);
 		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
 			}
 		});
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblText1)
-								.addComponent(lblText2)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(128)
-							.addComponent(btnOk)))
-					.addContainerGap(135, Short.MAX_VALUE))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblText1)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblText2)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnOk)
-					.addContainerGap(18, Short.MAX_VALUE))
-		);
-		contentPane.setLayout(gl_contentPane);
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		contentPane.add(lblText1);
+		contentPane.add(lblText2);
+		contentPane.add(btnOk);
 	}
 }
