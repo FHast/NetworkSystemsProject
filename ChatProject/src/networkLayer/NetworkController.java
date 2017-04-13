@@ -9,6 +9,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class NetworkController implements Observer {
 	// former received RREPs
 	private static ArrayList<JSONObject> rcvdSSEPs = new ArrayList<>();
 	// neighbours (Hello protocol)
-	protected static HashMap<InetAddress, Long> neighbours = new HashMap<>();
+	protected static HashMap<InetAddress, LocalTime> neighbours = new HashMap<>();
 	// former received RREQs
 	private static ArrayList<JSONObject> rcvdRREQs = new ArrayList<>();
 
@@ -57,7 +58,7 @@ public class NetworkController implements Observer {
 		HELLOservice helloservice = new HELLOservice();
 		helloservice.addObserver(this);
 		Thread hello = new Thread(helloservice);
-		//hello.start();
+		hello.start();
 
 		RERRservice rerrservice = new RERRservice();
 		rerrservice.addObserver(this);
@@ -118,7 +119,7 @@ public class NetworkController implements Observer {
 		return mySeq;
 	}
 
-	public static HashMap<InetAddress, Long> getNeighbours() {
+	public static HashMap<InetAddress, LocalTime> getNeighbours() {
 		return neighbours;
 	}
 
@@ -143,7 +144,10 @@ public class NetworkController implements Observer {
 		// add to list
 		InetAddress source = p.getAddress();
 		if (!source.equals(getMyIP())) {
-			neighbours.put(source, System.nanoTime());
+			int retries = HELLOservice.HELLO_LOSS + 1;
+			int sec = HELLOservice.HELLO_INTERVAL;
+			neighbours.put(source, LocalTime.now().plusSeconds(retries * sec));
+			System.out.println("new neighbour: " + source.getHostAddress());
 		}
 	}
 
@@ -162,16 +166,17 @@ public class NetworkController implements Observer {
 				// extract data
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 				long sourceSeq = (long) json.get("sourceseq");
-				
+
+				newLog("[RERR] Received from: " + sourceIP.getHostAddress());
+
 				// get unreachable array
 				JSONArray array = (JSONArray) json.get("unreachable");
-				String[] strings = (String[])array.toArray(new String[0]);
+				String[] strings = (String[]) array.toArray(new String[0]);
 				InetAddress[] unreachable = new InetAddress[array.size()];
 				for (int i = 0; i < strings.length; i++) {
 					unreachable[i] = InetAddress.getByName(strings[i]);
 				}
-				
-				
+
 				// update ftable with source seq
 				if (ForwardingTableService.hasEntry(sourceIP)) {
 					try {
@@ -231,7 +236,8 @@ public class NetworkController implements Observer {
 					// add forwarding entry to RREP source
 					ForwardingTableService.addEntry(sourceIP, sock.getInetAddress(), sourceSeq, hopcount);
 					// add forwarding entry to RREQ source
-					ForwardingTableService.addEntry(re.sourceAddress, re.nextHopAddress, re.sourceSequenceNumber, re.hopsToSource);
+					ForwardingTableService.addEntry(re.sourceAddress, re.nextHopAddress, re.sourceSequenceNumber,
+							re.hopsToSource);
 					// continues reversePath
 					sendRREP(re.nextHopAddress, destIP, sourceIP, sourceSeq, hopcount);
 				}
