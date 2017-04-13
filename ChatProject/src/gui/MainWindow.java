@@ -299,26 +299,27 @@ public class MainWindow extends JFrame {
 		menuItemDelete = new JMenuItem("Delete");
 		optionsMenu.add(menuItemDelete);
 		menuItemDelete.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-				// MenuItem Log
-				menuItemLog = new JMenuItem("Show log");
-				menuItemLog.setFont(new Font("Tahoma", Font.PLAIN, 13));
-				menuItemLog.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						labelContactname.setText("System Log");
-						currentSelectedContact = new Contact("System Log", 0, logMessages);
-					}
+		// MenuItem Log
+		menuItemLog = new JMenuItem("Show log");
+		menuItemLog.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		menuItemLog.addActionListener(new ActionListener() {
 
-				});
-				optionsMenu.add(menuItemLog);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				labelContactname.setText("System Log");
+				currentSelectedContact = new Contact("System Log", 0, logMessages);
+				listContacts.setSelectedIndex(-1);
+			}
+
+		});
+		optionsMenu.add(menuItemLog);
 
 		// MenuItem Block
 		menuItemBlock = new JCheckBoxMenuItem("Block");
 		optionsMenu.add(menuItemBlock);
 		menuItemBlock.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
+
 		menuItemOpenFolder = new JMenuItem("Open \"received\" Folder");
 		menuItemOpenFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -394,9 +395,9 @@ public class MainWindow extends JFrame {
 			setBottomLine("Contact already added: " + found.getName());
 		}
 	}
-	
+
 	public void renameContact(String newName, int device) {
-		for(Contact c : contacts) {
+		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				c.setName(newName);
 			}
