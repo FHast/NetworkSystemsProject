@@ -101,7 +101,8 @@ public class HELLOservice extends Observable implements Runnable {
 							System.out.println("lost neighbour: " + i.getHostAddress());
 						}
 					}
-				} catch (ConcurrentModificationException e) {
+					Thread.sleep(100);
+				} catch (ConcurrentModificationException | InterruptedException e) {
 					// nothing
 				}
 			}

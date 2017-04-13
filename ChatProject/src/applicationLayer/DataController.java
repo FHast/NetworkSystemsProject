@@ -164,6 +164,7 @@ public class DataController implements Observer {
 
 				} else {
 					// send data further
+					newLog("[DATA] give further to: " + destIP.getHostAddress());
 					sendData(destIP, json);
 				}
 			}

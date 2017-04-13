@@ -146,8 +146,12 @@ public class NetworkController implements Observer {
 		if (!source.equals(getMyIP())) {
 			int retries = HELLOservice.HELLO_LOSS + 1;
 			int sec = HELLOservice.HELLO_INTERVAL;
+			
+			if (!neighbours.containsKey(source)) {
+				System.out.println("New neighbour: " + source.getHostAddress());
+			}
+			
 			neighbours.put(source, LocalTime.now().plusSeconds(retries * sec));
-			System.out.println("new neighbour: " + source.getHostAddress());
 		}
 	}
 
@@ -220,6 +224,8 @@ public class NetworkController implements Observer {
 
 			// right protocol?
 			if ((long) json.get("type") == RREP_ID) {
+				
+				
 
 				// extract data
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
@@ -227,6 +233,8 @@ public class NetworkController implements Observer {
 				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 				long hopcount = (long) json.get("hopcount");
 				hopcount++;
+				
+				newLog("[RREP] Received RREP from: " + sourceIP.getHostAddress());
 
 				// Am I the destination?
 				if (destIP.equals(myIP)) {
@@ -263,8 +271,6 @@ public class NetworkController implements Observer {
 			// extract Data
 			String msg = new String(p.getData());
 
-			Controller.mainWindow.log("[RREQ] Received " + msg);
-
 			JSONObject json = JSONservice.getJson(msg);
 
 			// right protocol?
@@ -280,6 +286,8 @@ public class NetworkController implements Observer {
 				if (receivedBefore(json) || (myIP.equals(sourceIP))) {
 					// ignore packet
 				} else {
+					Controller.mainWindow.log("[RREQ] Received " + msg);
+					
 					rcvdRREQs.add(json);
 
 					// Am I the RREQ destination?
