@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.LocalTime;
 
 import applicationLayer.DataController;
 import applicationLayer.FileService;
@@ -11,8 +12,6 @@ import gui.Message;
 import networkLayer.NetworkController;
 
 public class Controller {
-
-	private boolean shutdown = false;
 
 	public static MainWindow mainWindow;
 
@@ -26,7 +25,14 @@ public class Controller {
 
 		Controller.mainWindow.log("MY IP: " + getMyIP().getHostAddress());
 		
-		while (!shutdown) {
+		receivedMessage(3, "5", LocalTime.now().minusSeconds(3));
+		receivedMessage(3, "2", LocalTime.now().minusSeconds(30));
+		receivedMessage(3, "3", LocalTime.now().minusSeconds(10));
+		receivedMessage(3, "4", LocalTime.now().minusSeconds(5));
+		receivedMessage(3, "1", LocalTime.now().minusSeconds(80));
+		receivedMessage(4, "8", LocalTime.now().minusSeconds(7));
+		
+		while (true) {
 
 		}
 	}
@@ -35,18 +41,17 @@ public class Controller {
 		return NetworkController.myIP;
 	}
 	
-	public static void receivedMessage(int device, String s) {
-		Controller.mainWindow.addMessage(device, s,  Message.TYPE_TEXT);
-		Controller.mainWindow.refreshContactList();
+	public static void receivedMessage(int device, String s, LocalTime sendTime) {
+		Controller.mainWindow.addMessage(device, s,  Message.TYPE_TEXT, sendTime);
 	}
 
-	public static void receivedFile(int device, String path) {
+	public static void receivedFile(int device, String path, LocalTime sendTime) {
 		System.out.println(path);
 		String a = FileService.getAppendix(path);
 		if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
-			Controller.mainWindow.addMessage(device, path, Message.TYPE_IMAGE);
+			Controller.mainWindow.addMessage(device, path, Message.TYPE_IMAGE, sendTime);
 		} else {
-			Controller.mainWindow.addMessage(device, path, Message.TYPE_FILE);
+			Controller.mainWindow.addMessage(device, path, Message.TYPE_FILE, sendTime);
 		}
 	}
 	

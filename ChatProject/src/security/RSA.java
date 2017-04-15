@@ -22,33 +22,35 @@ public class RSA {
 
 	public static void generateKeyPair() {
 		try {
-			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM.split("/")[0]);
-			keyGen.initialize(KEY_SIZE_BITS);
-			final KeyPair key = keyGen.generateKeyPair();
+			if (!isKeyPairGenerated()) {
+				final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM.split("/")[0]);
+				keyGen.initialize(KEY_SIZE_BITS);
+				final KeyPair key = keyGen.generateKeyPair();
 
-			File privateKeyFile = new File(PRIVATE_KEY_FILE);
-			File publicKeyFile = new File(PUBLIC_KEY_FILE);
+				File privateKeyFile = new File(PRIVATE_KEY_FILE);
+				File publicKeyFile = new File(PUBLIC_KEY_FILE);
 
-			// Create files to store public and private key
-			if (privateKeyFile.getParentFile() != null) {
-				privateKeyFile.getParentFile().mkdirs();
+				// Create files to store public and private key
+				if (privateKeyFile.getParentFile() != null) {
+					privateKeyFile.getParentFile().mkdirs();
+				}
+				privateKeyFile.createNewFile();
+
+				if (publicKeyFile.getParentFile() != null) {
+					publicKeyFile.getParentFile().mkdirs();
+				}
+				publicKeyFile.createNewFile();
+
+				// Saving the Public key in a file
+				ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(publicKeyFile));
+				publicKeyOS.writeObject(key.getPublic());
+				publicKeyOS.close();
+
+				// Saving the Private key in a file
+				ObjectOutputStream privateKeyOS = new ObjectOutputStream(new FileOutputStream(privateKeyFile));
+				privateKeyOS.writeObject(key.getPrivate());
+				privateKeyOS.close();
 			}
-			privateKeyFile.createNewFile();
-
-			if (publicKeyFile.getParentFile() != null) {
-				publicKeyFile.getParentFile().mkdirs();
-			}
-			publicKeyFile.createNewFile();
-
-			// Saving the Public key in a file
-			ObjectOutputStream publicKeyOS = new ObjectOutputStream(new FileOutputStream(publicKeyFile));
-			publicKeyOS.writeObject(key.getPublic());
-			publicKeyOS.close();
-
-			// Saving the Private key in a file
-			ObjectOutputStream privateKeyOS = new ObjectOutputStream(new FileOutputStream(privateKeyFile));
-			privateKeyOS.writeObject(key.getPrivate());
-			privateKeyOS.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,8 +97,8 @@ public class RSA {
 		}
 		return key;
 	}
-	
-	public static PrivateKey getPrivateKey() {		
+
+	public static PrivateKey getPrivateKey() {
 		PrivateKey key = null;
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PRIVATE_KEY_FILE));
@@ -104,7 +106,7 @@ public class RSA {
 			ois.close();
 		} catch (IOException | ClassNotFoundException e) {
 		}
-		
+
 		return key;
 	}
 

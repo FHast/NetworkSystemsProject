@@ -13,15 +13,15 @@ public class Message {
 	private LocalTime timestamp;
 	private int type;
 
-	public Message(boolean sentBySelf, String text) {
-		this(sentBySelf, TYPE_TEXT, text);
+	public Message(boolean sentBySelf, String text, LocalTime sendTime) {
+		this(sentBySelf, TYPE_TEXT, text, sendTime);
 	}
 
-	public Message(boolean sentBySelf, int type, String path) {
+	public Message(boolean sentBySelf, int type, String path, LocalTime sendTime) {
 		this.isSentBySelf = sentBySelf;
 		this.text = path;
 		this.type = type;
-		this.timestamp = LocalTime.now();
+		this.timestamp = sendTime;
 	}
 
 	public boolean isSentBySelf() {
@@ -34,6 +34,10 @@ public class Message {
 
 	public int getType() {
 		return type;
+	}
+	
+	public LocalTime getTime() {
+		return timestamp;
 	}
 
 	public String toString() {

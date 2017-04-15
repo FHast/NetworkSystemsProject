@@ -1,5 +1,6 @@
 package gui;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Contact {
@@ -34,24 +35,34 @@ public class Contact {
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String n) {
 		name = n;
 	}
 
-	public void addMessage(boolean isSentBySelf, String text, int type) {
+	public void addMessage(boolean isSentBySelf, String text, int type, LocalTime sendTime) {
+		Message m = null;
 		switch (type) {
 		case Message.TYPE_TEXT:
-			messages.add(new Message(isSentBySelf, text));
+			m = new Message(isSentBySelf, text, sendTime);
 			break;
 		case Message.TYPE_IMAGE:
-			messages.add(new Message(isSentBySelf, Message.TYPE_TEXT, "Image: " + text));
-			messages.add(new Message(isSentBySelf, Message.TYPE_IMAGE, text));
+			m = new Message(isSentBySelf, Message.TYPE_TEXT, "Image: " + text, sendTime);
+			m = new Message(isSentBySelf, Message.TYPE_IMAGE, text, sendTime);
 			break;
 		case Message.TYPE_FILE:
-			messages.add(new Message(isSentBySelf, Message.TYPE_FILE, text));
+			m = new Message(isSentBySelf, Message.TYPE_FILE, text, sendTime);
 			break;
 		}
 
+		int index = 0;
+		while (index < messages.size() && messages.get(index).getTime().isBefore(sendTime)) {
+			index++;
+		}
+		if (index == messages.size()) {
+			messages.add(m);
+		} else {
+			messages.add(index, m);
+		}
 	}
 }

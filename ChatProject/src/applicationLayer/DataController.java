@@ -3,6 +3,7 @@ package applicationLayer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.InetAddress;
+import java.time.LocalTime;
 
 import org.json.simple.JSONObject;
 
@@ -21,7 +22,7 @@ public class DataController {
 		// start networking layer
 		new NetworkController();
 
-		Controller.mainWindow.log("[Thread] Application Layer started.");
+		newLog("[Thread] Application Layer started.");
 	}
 
 	public static InetAddress getMyIP() {
@@ -59,9 +60,10 @@ public class DataController {
 
 	public static void receivedMessage(JSONObject json) {
 		int device = Integer.parseInt(((String) json.get("sourceip")).split("[.]")[3]);
+		LocalTime sendAt = LocalTime.parse((String)json.get("timestamp"));
 		if (((String) json.get("datatype")).equals("" + DATA_TYPE_TEXT)) {
-			// send to controller
-			Controller.receivedMessage(device, (String) json.get("data"));
+			// send to controller7
+			Controller.receivedMessage(device, (String) json.get("data"), sendAt);
 		} else {
 			try {
 				String appendix = (String) json.get("datatype");
@@ -72,7 +74,7 @@ public class DataController {
 				newLog("[DATA] Received file (" + appendix + ") created: " + path);
 
 				// send to controller
-				Controller.receivedFile(device, path);
+				Controller.receivedFile(device, path, sendAt);
 
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();

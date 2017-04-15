@@ -9,12 +9,12 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -59,7 +59,6 @@ public class MainWindow extends JFrame {
 
 	private NewContactPopup newContactFrame = new NewContactPopup(this);
 	private JMenuItem menuItemDelete;
-	private JCheckBoxMenuItem menuItemBlock;
 	private JMenu optionsMenu;
 	private JMenuItem menuItemNewContact;
 	private JMenuBar menubar;
@@ -191,7 +190,7 @@ public class MainWindow extends JFrame {
 				String input = textfieldMessage.getText();
 				if (!input.equals("") && currentSelectedContact != null && currentSelectedContact.getDevice() != 0) {
 					controller.sendMessage(currentSelectedContact.getDevice(), input);
-					currentSelectedContact.addMessage(true, input, Message.TYPE_TEXT);
+					currentSelectedContact.addMessage(true, input, Message.TYPE_TEXT, LocalTime.now());
 					textfieldMessage.setText("");
 				}
 			}
@@ -235,9 +234,9 @@ public class MainWindow extends JFrame {
 					String a = FileService.getAppendix(file.getPath());
 
 					if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
-						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE);
+						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE, LocalTime.now());
 					} else {
-						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE);
+						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE, LocalTime.now());
 					}
 
 					controller.sendFile(device, file);
@@ -395,7 +394,7 @@ public class MainWindow extends JFrame {
 
 	public void log(String msg) {
 		setBottomLine(msg);
-		logMessages.add(new Message(false, msg));
+		logMessages.add(new Message(false, msg, LocalTime.now()));
 	}
 
 	public void setBottomLine(String txt) {
@@ -437,22 +436,25 @@ public class MainWindow extends JFrame {
 		refreshContactList();
 	}
 
-	public void addMessage(int device, String text, int type) {
+	public void addMessage(int device, String text, int type, LocalTime sendTime) {
 		// current index
 		int index = listContacts.getSelectedIndex();
 
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
-				c.addMessage(false, text, type);
+				c.addMessage(false, text, type, sendTime);
 				return;
 			}
 		}
 		ArrayList<Message> msg = new ArrayList<>();
 		Contact c = new Contact("Unknown", device, msg);
-		c.addMessage(false, text, type);
+		c.addMessage(false, text, type, sendTime);
+		refreshContactList();
 		contacts.add(c);
 
 		listContacts.setSelectedIndex(index);
+		
+		refreshContactList();
 	}
 
 	public void refreshScrollbar() {
