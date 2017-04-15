@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.security.auth.login.LoginException;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -53,8 +51,8 @@ public class NetworkController implements Observer {
 	// DATA
 	private static final int TIMEOUT_WAITING = 5;
 	private static final int TIMEOUT_ACK = 5;
-	private static HashMap<JSONObject, String> waiting;
-	private static HashMap<JSONObject, String> needAck;
+	private static HashMap<JSONObject, LocalTime> waiting;
+	private static HashMap<JSONObject, LocalTime> needAck;
 
 	static {
 		// myIP
@@ -136,7 +134,7 @@ public class NetworkController implements Observer {
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 				long hopCount = (long) json.get("hopcount");
-				// log entry 
+				// log entry
 				newLog("[RREQ] Received: " + sourceIP.getHostName() + " -> " + destIP.getHostName());
 
 				// from me?
@@ -171,7 +169,7 @@ public class NetworkController implements Observer {
 	private static void findRoute(InetAddress dest) {
 		if (!ForwardingTableService.hasEntry(dest)) {
 			// log entry
-			newLog("[RREQ] Finding route to: " + dest.getHostAddress());			
+			newLog("[RREQ] Finding route to: " + dest.getHostAddress());
 			// increment broadcastID
 			broadcastID++;
 			// get json
@@ -260,7 +258,7 @@ public class NetworkController implements Observer {
 	}
 
 	private static void sendRREP(InetAddress dest, long hopCount) {
-		// log entry 
+		// log entry
 		newLog("[RREP] Send to: " + dest.getHostAddress());
 		// get json
 		JSONObject json = JSONservice.composeRREP(dest, myIP, hopCount);
@@ -311,7 +309,7 @@ public class NetworkController implements Observer {
 				// get forwarding entry
 				FTableEntry fe = ForwardingTableService.getEntry(destIP);
 				// add to need ack
-				needAck.put(json, HashService.simpleHash(json.toJSONString()));
+				needAck.put(json, LocalTime.now());
 				// log
 
 				newLog("[DATA] Successfully send: " + (String) json.get("data"));
@@ -320,7 +318,7 @@ public class NetworkController implements Observer {
 				sendUnicastJson(fe.nextHopAddress, json);
 			} else {
 				// add to waiting
-				waiting.put(json, HashService.simpleHash(json.toJSONString()));
+				waiting.put(json, LocalTime.now());
 				// send routing request
 				findRoute(destIP);
 			}
@@ -337,17 +335,16 @@ public class NetworkController implements Observer {
 		// get hash
 		String hash = (String) json.get("data");
 		// remove from needAck
-		if (needAck.containsValue(hash)) {
-			JSONObject toRemove = null;
-			for (JSONObject j : needAck.keySet()) {
-				if (needAck.get(j).equals(hash)) {
-					toRemove = j;
-				}
+		JSONObject toRemove = null;
+		for (JSONObject j : needAck.keySet()) {
+			String jHash = HashService.simpleHash(j.toJSONString());
+			if (jHash.equals(hash)) {
+				toRemove = j;
 			}
-			// log entry
-
+		}
+		// log entry
+		if (toRemove != null) {
 			newLog("[ACK] Acknowledged: " + (String) toRemove.get("data"));
-
 			needAck.remove(toRemove);
 		}
 	}
@@ -488,8 +485,6 @@ public class NetworkController implements Observer {
 	}
 
 	private class CheckLists implements Runnable {
-
-		@SuppressWarnings("unchecked")
 		@Override
 		public void run() {
 			while (true) {
@@ -519,11 +514,11 @@ public class NetworkController implements Observer {
 							sendUnicastJson(fe.nextHopAddress, j);
 						} else {
 							// get timestamp of json
-							LocalTime timestamp = LocalTime.parse((String) j.get("timestamp"));
+							LocalTime timestamp = waiting.get(j);
 							// timed out ?
 							if (timestamp.plusSeconds(TIMEOUT_WAITING).isBefore(LocalTime.now())) {
 								// renew timestamp
-								j.put("timestamp", LocalTime.now().toString());
+								waiting.put(j, LocalTime.now());
 								// reinitiate routing
 								findRoute(destIP);
 							}
@@ -532,11 +527,11 @@ public class NetworkController implements Observer {
 					// acknowledgements
 					for (JSONObject j : needAck.keySet()) {
 						// get timestamp of json
-						LocalTime timestamp = LocalTime.parse((String) j.get("timestamp"));
+						LocalTime timestamp = needAck.get(j);
 						// timed out ?
 						if (timestamp.plusSeconds(TIMEOUT_ACK).isBefore(LocalTime.now())) {
 							// renew timestamp
-							j.put("timestamp", LocalTime.now());
+							needAck.put(j, LocalTime.now());
 							// initiate sending again
 							sendDATA(j);
 						}
