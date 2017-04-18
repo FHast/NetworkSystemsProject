@@ -10,12 +10,19 @@ import applicationLayer.FileService;
 import gui.MainWindow;
 import gui.Message;
 import networkLayer.NetworkController;
+import security.RSA;
 
 public class Controller {
 
 	public static MainWindow mainWindow;
 
-	public Controller() {		
+	public Controller() {
+		
+		// create RSA key pair if they do not exist yet
+		if (!RSA.isKeyPairGenerated()) {
+			RSA.generateKeyPair();
+		}
+		
 		// view
 		mainWindow = new MainWindow(this);
 		mainWindow.setVisible(true);

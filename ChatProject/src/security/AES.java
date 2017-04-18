@@ -11,6 +11,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
 
@@ -45,7 +46,7 @@ public class AES {
 
 	}
 
-	public static String encrypt(String plainText, SecretKey secretKey)  {
+	public static String encrypt(String plainText, SecretKey secretKey) {
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 			return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes("UTF-8")));
@@ -65,32 +66,41 @@ public class AES {
 	}
 
 	public static String decrypt(String encryptedText, SecretKey secretKey) {
-			try {
-				Cipher cipher = Cipher.getInstance(ALGORITHM);
-				cipher.init(Cipher.DECRYPT_MODE, secretKey);
-				return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)), "UTF-8");
-			} catch (InvalidKeyException e) {
-				e.printStackTrace();
-				return null;
-			} catch (IllegalBlockSizeException e) {
-				e.printStackTrace();
-				return null;
-			} catch (BadPaddingException e) {
-				e.printStackTrace();
-				return null;
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			} catch (NoSuchPaddingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-			}
+		try {
+			Cipher cipher = Cipher.getInstance(ALGORITHM);
+			cipher.init(Cipher.DECRYPT_MODE, secretKey);
+			return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)), "UTF-8");
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IllegalBlockSizeException e) {
+			e.printStackTrace();
+			return null;
+		} catch (BadPaddingException e) {
+			e.printStackTrace();
+			return null;
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static String keyToString(SecretKey sk) {
+		return Base64.getEncoder().encodeToString(sk.getEncoded());
+	}
+	
+	public static SecretKey stringToKey(String s) {
+		byte[] de = Base64.getDecoder().decode(s);
+		return new SecretKeySpec(de, 0, de.length, "AES");
+	}
 
 }
