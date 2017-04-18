@@ -9,6 +9,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.PublicKey;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -16,6 +17,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+
+import javax.crypto.SecretKey;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,6 +31,8 @@ import networkLayer.tables.ForwardingTableService;
 import networkLayer.tables.NoEntryException;
 import networkLayer.tables.RTableEntry;
 import networkLayer.tables.ReverseTableService;
+import security.AES;
+import security.RSA;
 
 public class NetworkController implements Observer {
 	public static final int TYPE_DATA = 0;
@@ -144,10 +149,17 @@ public class NetworkController implements Observer {
 
 					// for me?
 					if (myIP.equals(destIP)) {
+						// get public key
+						PublicKey publicKey = (PublicKey) json.get("publickey");
+						// Create Sessionkey
+						SecretKey sessionKey = AES.generateKey();
 						// add Forwarding entry
-						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount);
+						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount, publicKey, sessionKey);
+						// encrypt keys for reply
+						String encryptedSessionKey = RSA.decrypt(RSA.encrypt(AES.keyToString(sessionKey), publicKey),
+								RSA.getPrivateKey());
 						// send reply
-						sendRREP(sourceIP, hopCount);
+						sendRREP(sourceIP, hopCount, encryptedSessionKey);
 					} else {
 						// add reverse entry
 						ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
@@ -234,14 +246,23 @@ public class NetworkController implements Observer {
 			long hopCount = (long) json.get("hopcount");
 			// log entry
 			newLog("[RREP] Received: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
-			// add forwarding to RREP source
-			ForwardingTableService.addEntry(sourceIP, neighbour, hopCount);
-			// need to pass further?
-			if (!destIP.equals(myIP)) {
+
+			// get publikKey
+			PublicKey publicKey = (PublicKey) json.get("publickey");
+			if (destIP.equals(myIP)) {
+				// sessionKey
+				String crypto = (String) json.get("sessionkey");
+				SecretKey sessionKey = AES
+						.stringToKey(RSA.decrypt(RSA.encrypt(crypto, publicKey), RSA.getPrivateKey()));
+				// add forwarding entry with session Key
+				ForwardingTableService.addEntry(sourceIP, neighbour, hopCount, publicKey, sessionKey);
+			} else {
+				// add forwarding to RREP source
+				ForwardingTableService.addEntry(sourceIP, neighbour, hopCount, null, null);
 				try {
 					RTableEntry re = ReverseTableService.getEntry(destIP);
 					// add forwarding to RREP dest
-					ForwardingTableService.addEntry(destIP, re.nextHopAddress, re.hopsToSource);
+					ForwardingTableService.addEntry(destIP, re.nextHopAddress, re.hopsToSource, null, null);
 					// increase hopcount
 					json.put("hopcount", hopCount + 1);
 					// send further
@@ -255,11 +276,11 @@ public class NetworkController implements Observer {
 		}
 	}
 
-	private static void sendRREP(InetAddress dest, long hopCount) {
+	private static void sendRREP(InetAddress dest, long hopCount, String encryptedSessionKey) {
 		// log entry
 		newLog("[RREP] Send to: " + dest.getHostAddress());
 		// get json
-		JSONObject json = JSONservice.composeRREP(dest, myIP, hopCount);
+		JSONObject json = JSONservice.composeRREP(dest, myIP, hopCount, encryptedSessionKey);
 		try {
 			sendUnicastJson(ForwardingTableService.getEntry(dest).nextHopAddress, json);
 		} catch (NoEntryException e) {

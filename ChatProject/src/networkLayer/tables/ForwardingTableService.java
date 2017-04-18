@@ -1,29 +1,34 @@
 package networkLayer.tables;
 
 import java.net.InetAddress;
+import java.security.PublicKey;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+
+import javax.crypto.SecretKey;
 
 import controller.Controller;
 
 public class ForwardingTableService implements Runnable {
 	private static ArrayList<FTableEntry> forwardingTable = new ArrayList<>();
 
-	public static void addEntry(InetAddress dest, InetAddress nextHop, long hopCount) {
+	public static void addEntry(InetAddress dest, InetAddress nextHop, long hopCount, PublicKey pkey, SecretKey skey) {
 
 		if (hasEntry(dest)) {
 			renewEntry(dest);
 		} else {
 			Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
-			forwardingTable.add(new FTableEntry(dest, nextHop, hopCount));
+			forwardingTable.add(new FTableEntry(dest, nextHop, hopCount, pkey, skey));
 		}
 	}
 
 	public static boolean hasEntry(InetAddress dest) {
 		for (FTableEntry e : forwardingTable) {
 			if (e.destinationAddress.equals(dest)) {
-				return true;
+				if (e.sessionkey != null) {
+					return true; //TODO
+				}
 			}
 		}
 		return false;
