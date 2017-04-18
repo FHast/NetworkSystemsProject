@@ -41,7 +41,7 @@ public class ReverseTableService implements Runnable {
 			// Removing expired entries
 			try {
 				for (RTableEntry e : reverseTable) {
-					if (e.lifetime.isAfter(LocalTime.now())) {
+					if (e.lifetime.isBefore(LocalTime.now())) {
 						reverseTable.remove(e);
 						break;
 					}
