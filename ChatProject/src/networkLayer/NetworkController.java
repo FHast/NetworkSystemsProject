@@ -322,6 +322,7 @@ public class NetworkController implements Observer {
 				sendUnicastJson(fe.nextHopAddress, json);
 			} else {
 				// add to waiting
+				waiting.put(json, LocalTime.now());
 				// send routing request
 				findRoute(destIP);
 			}
