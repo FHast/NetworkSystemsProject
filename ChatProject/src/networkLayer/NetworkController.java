@@ -74,6 +74,8 @@ public class NetworkController implements Observer {
 		// start Thread
 		new Thread(new SayHello()).start();
 		new Thread(new CheckLists()).start();
+		new Thread(new ForwardingTableService()).start();
+		new Thread(new ReverseTableService()).start();
 
 		Multicast m = new Multicast();
 		m.addObserver(this);
