@@ -372,7 +372,7 @@ public class NetworkController implements Observer {
 		Unicast.send(dest, msg);
 	}
 
-	private static void receivedUnicast(Socket sock) {
+	private static synchronized void receivedUnicast(Socket sock) {
 		try {
 			// read data
 			BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -382,7 +382,6 @@ public class NetworkController implements Observer {
 			// get datatype
 			long type = (long) json.get("type");
 			// manage input
-			System.out.println("received type: " + type);
 			switch ("" + type) {
 			case "" + TYPE_DATA:
 				receivedDATA(json);
@@ -404,7 +403,7 @@ public class NetworkController implements Observer {
 		}
 	}
 
-	private static void receivedMulticast(DatagramPacket p) {
+	private static synchronized void receivedMulticast(DatagramPacket p) {
 		try {
 			// ignore own broadcasts
 			if (!p.getAddress().equals(myIP)) {

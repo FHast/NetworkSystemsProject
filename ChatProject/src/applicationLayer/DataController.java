@@ -14,8 +14,6 @@ import networkLayer.NetworkController;
 public class DataController {
 
 	public static final int DATA_TYPE_TEXT = 1;
-	public static final int DATA_TYPE_IMAGE = 2;
-	public static final int DATA_TYPE_ACK = 0;
 
 	public DataController() {
 

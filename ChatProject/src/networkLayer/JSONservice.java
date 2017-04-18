@@ -54,7 +54,7 @@ public class JSONservice {
 	}
 
 	public static JSONObject composeAck(InetAddress sourceIP, InetAddress destIP, String message) {
-		return composeData(sourceIP, destIP, message, "" + DataController.DATA_TYPE_ACK);
+		return composeData(sourceIP, destIP, message, "" + NetworkController.TYPE_ACK);
 	}
 
 	public static JSONObject composeDataFile(InetAddress sourceIP, InetAddress destIP, String data, String appendix) {
