@@ -319,7 +319,6 @@ public class NetworkController implements Observer {
 				sendUnicastJson(fe.nextHopAddress, json);
 			} else {
 				// add to waiting
-				waiting.put(json, LocalTime.now());
 				// send routing request
 				findRoute(destIP);
 			}
@@ -336,7 +335,6 @@ public class NetworkController implements Observer {
 		try {
 			InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 			if (myIP.equals(destIP)) {
-
 				// get hash
 				String hash = (String) json.get("data");
 				// remove from needAck
@@ -353,9 +351,12 @@ public class NetworkController implements Observer {
 					needAck.remove(toRemove);
 				}
 			} else {
-				sendACK(destIP, json);
+				FTableEntry fe = ForwardingTableService.getEntry(destIP);
+				sendUnicastJson(fe.nextHopAddress, json);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoEntryException e) {
 			e.printStackTrace();
 		}
 	}
