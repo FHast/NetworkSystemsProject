@@ -158,6 +158,7 @@ public class NetworkController implements Observer {
 						// encrypt keys for reply
 						String skeyString = AES.keyToString(sessionKey);
 						String stepone = RSA.encrypt(skeyString, publicKey);
+						System.out.println(stepone);
 						String encryptedSessionKey = RSA.encrypt(stepone, RSA.getPrivateKey());
 						// send reply
 						sendRREP(sourceIP, hopCount, encryptedSessionKey);
@@ -253,8 +254,9 @@ public class NetworkController implements Observer {
 			if (destIP.equals(myIP)) {
 				// sessionKey
 				String crypto = (String) json.get("sessionkey");
-				SecretKey sessionKey = AES
-						.stringToKey(RSA.decrypt(RSA.decrypt(crypto, publicKey), RSA.getPrivateKey()));
+				String stepone = RSA.decrypt(crypto, publicKey);
+				String sKeyString = RSA.decrypt(stepone, RSA.getPrivateKey());
+				SecretKey sessionKey = AES.stringToKey(sKeyString);
 				// add forwarding entry with session Key
 				ForwardingTableService.addEntry(sourceIP, neighbour, hopCount, publicKey, sessionKey);
 			} else {

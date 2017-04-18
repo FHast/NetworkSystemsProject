@@ -24,7 +24,7 @@ public class RSA {
 	public static final String ALGORITHM = "RSA/ECB/PKCS1Padding";
 	public static final String PRIVATE_KEY_FILE = "private_key";
 	public static final String PUBLIC_KEY_FILE = "public_key";
-	public static final int KEY_SIZE_BITS = 1024;
+	public static final int KEY_SIZE_BITS = 2048;
 
 	public static void generateKeyPair() {
 		try {
