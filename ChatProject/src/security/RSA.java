@@ -13,6 +13,8 @@ import java.security.PublicKey;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.codec.binary.Base64;
+
 public class RSA {
 
 	public static final String ALGORITHM = "RSA/ECB/PKCS1Padding";
@@ -61,7 +63,7 @@ public class RSA {
 		return new File(PRIVATE_KEY_FILE).exists() && new File(PUBLIC_KEY_FILE).exists();
 	}
 
-	public static byte[] encrypt(String text, PublicKey key) {
+	public static String encrypt(String text, PublicKey key) {
 		byte[] cipherText = null;
 		try {
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -70,16 +72,15 @@ public class RSA {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return cipherText;
+		return Base64.encodeBase64String(cipherText);
 	}
 
-	public static String decrypt(byte[] text, PrivateKey key) {
+	public static String decrypt(String text, PrivateKey key) {
 		byte[] decrypted = null;
 		try {
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, key);
-			decrypted = cipher.doFinal(text);
-
+			decrypted = cipher.doFinal(Base64.decodeBase64(text));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
