@@ -81,7 +81,7 @@ public class NetworkController implements Observer {
 
 		Unicast u = new Unicast();
 		u.addObserver(this);
-		new Thread(m).start();
+		new Thread(u).start();
 
 		newLog("[Thread] Network Layer started.");
 	}
