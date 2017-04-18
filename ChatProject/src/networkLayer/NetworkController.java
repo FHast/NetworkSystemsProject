@@ -150,14 +150,15 @@ public class NetworkController implements Observer {
 					// for me?
 					if (myIP.equals(destIP)) {
 						// get public key
-						PublicKey publicKey = RSA.stringToPublicKey((String)json.get("publickey"));
+						PublicKey publicKey = RSA.stringToPublicKey((String) json.get("publickey"));
 						// Create Sessionkey
 						SecretKey sessionKey = AES.generateKey();
 						// add Forwarding entry
 						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount, publicKey, sessionKey);
 						// encrypt keys for reply
-						String encryptedSessionKey = RSA.decrypt(RSA.encrypt(AES.keyToString(sessionKey), publicKey),
-								RSA.getPrivateKey());
+						String skeyString = AES.keyToString(sessionKey);
+						String stepone = RSA.encrypt(skeyString, publicKey);
+						String encryptedSessionKey = RSA.encrypt(stepone, RSA.getPrivateKey());
 						// send reply
 						sendRREP(sourceIP, hopCount, encryptedSessionKey);
 					} else {
@@ -248,12 +249,12 @@ public class NetworkController implements Observer {
 			newLog("[RREP] Received: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
 
 			// get publikKey
-			PublicKey publicKey = RSA.stringToPublicKey((String)json.get("publickey"));
+			PublicKey publicKey = RSA.stringToPublicKey((String) json.get("publickey"));
 			if (destIP.equals(myIP)) {
 				// sessionKey
 				String crypto = (String) json.get("sessionkey");
 				SecretKey sessionKey = AES
-						.stringToKey(RSA.decrypt(RSA.encrypt(crypto, publicKey), RSA.getPrivateKey()));
+						.stringToKey(RSA.decrypt(RSA.decrypt(crypto, publicKey), RSA.getPrivateKey()));
 				// add forwarding entry with session Key
 				ForwardingTableService.addEntry(sourceIP, neighbour, hopCount, publicKey, sessionKey);
 			} else {
