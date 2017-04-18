@@ -129,33 +129,37 @@ public class NetworkController implements Observer {
 	@SuppressWarnings("unchecked")
 	private static void receivedRREQ(JSONObject json, InetAddress neighbor) {
 		try {
-			if (!RREQreceivedBefore(json)) {
-				// remember json
-				receivedRREQList.add(json);
-				// extract data
-				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
-				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-				long hopCount = (long) json.get("hopcount");
+			// TODO
+			if (!neighbor.equals(InetAddress.getByName("192.168.5.3"))) {
 
-				// from me?
-				if (!myIP.equals(sourceIP)) {
+				if (!RREQreceivedBefore(json)) {
+					// remember json
+					receivedRREQList.add(json);
+					// extract data
+					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
+					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
+					long hopCount = (long) json.get("hopcount");
 
-					newLog("[RREQ] Received from: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
+					// from me?
+					if (!myIP.equals(sourceIP)) {
 
-					// for me?
-					if (myIP.equals(destIP)) {
-						// add Forwarding entry
-						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount);
-						// send reply
-						sendRREP(sourceIP, hopCount);
-					} else {
-						// add reverse entry
-						ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
-						// increment hopcount
-						json.put("hopcount", hopCount + 1);
-						// rebroadcast RREQ
-						sendMulticastJson(json);
+						newLog("[RREQ] Received from: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
 
+						// for me?
+						if (myIP.equals(destIP)) {
+							// add Forwarding entry
+							ForwardingTableService.addEntry(sourceIP, neighbor, hopCount);
+							// send reply
+							sendRREP(sourceIP, hopCount);
+						} else {
+							// add reverse entry
+							ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
+							// increment hopcount
+							json.put("hopcount", hopCount + 1);
+							// rebroadcast RREQ
+							sendMulticastJson(json);
+
+						}
 					}
 				}
 			}
@@ -332,20 +336,30 @@ public class NetworkController implements Observer {
 	// ACK
 
 	private static void receivedACK(JSONObject json) {
-		// get hash
-		String hash = (String) json.get("data");
-		// remove from needAck
-		JSONObject toRemove = null;
-		for (JSONObject j : needAck.keySet()) {
-			String jHash = HashService.simpleHash(j.toJSONString());
-			if (jHash.equals(hash)) {
-				toRemove = j;
+		try {
+			InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
+			if (myIP.equals(destIP)) {
+
+				// get hash
+				String hash = (String) json.get("data");
+				// remove from needAck
+				JSONObject toRemove = null;
+				for (JSONObject j : needAck.keySet()) {
+					String jHash = HashService.simpleHash(j.toJSONString());
+					if (jHash.equals(hash)) {
+						toRemove = j;
+					}
+				}
+				// log entry
+				if (toRemove != null) {
+					newLog("[ACK] Acknowledged: " + (String) toRemove.get("data"));
+					needAck.remove(toRemove);
+				}
+			} else {
+				sendACK(destIP, json);
 			}
-		}
-		// log entry
-		if (toRemove != null) {
-			newLog("[ACK] Acknowledged: " + (String) toRemove.get("data"));
-			needAck.remove(toRemove);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
