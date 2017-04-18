@@ -6,10 +6,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
@@ -97,6 +101,19 @@ public class RSA {
 		} catch (ClassNotFoundException | IOException e) {
 		}
 		return key;
+	}
+
+	public static String publicKeyToString(PublicKey pk) {
+		return Base64.encodeBase64String(pk.getEncoded());
+	}
+
+	public static PublicKey stringToPublicKey(String s) {
+		try {
+			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(s));
+			return KeyFactory.getInstance("RSA").generatePublic(keySpec);
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+			return null;
+		}
 	}
 
 	public static PrivateKey getPrivateKey() {
