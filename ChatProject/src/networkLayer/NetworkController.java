@@ -134,8 +134,6 @@ public class NetworkController implements Observer {
 				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
 				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
 				long hopCount = (long) json.get("hopcount");
-				// log entry
-				newLog("[RREQ] Received: " + sourceIP.getHostName() + " -> " + destIP.getHostName());
 
 				// from me?
 				if (!myIP.equals(sourceIP)) {
@@ -384,6 +382,7 @@ public class NetworkController implements Observer {
 			// get datatype
 			long type = (long) json.get("type");
 			// manage input
+			System.out.println("received type: " + type);
 			switch ("" + type) {
 			case "" + TYPE_DATA:
 				receivedDATA(json);
