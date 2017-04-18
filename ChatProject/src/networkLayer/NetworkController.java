@@ -535,7 +535,7 @@ public class NetworkController implements Observer {
 						}
 					}
 
-				} catch (ConcurrentModificationException e) {
+				} catch (ConcurrentModificationException | NullPointerException e) {
 					// nothing
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
