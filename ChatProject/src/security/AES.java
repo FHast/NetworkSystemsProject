@@ -59,7 +59,6 @@ public class AES {
 			e.printStackTrace();
 			return null;
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -67,6 +66,7 @@ public class AES {
 
 	public static String decrypt(String encryptedText, SecretKey secretKey) {
 			try {
+				Cipher cipher = Cipher.getInstance(ALGORITHM);
 				cipher.init(Cipher.DECRYPT_MODE, secretKey);
 				return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)), "UTF-8");
 			} catch (InvalidKeyException e) {
@@ -82,9 +82,15 @@ public class AES {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return null;
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			} catch (NoSuchPaddingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
 			}
-			
-		
-	}
+			}
 
 }

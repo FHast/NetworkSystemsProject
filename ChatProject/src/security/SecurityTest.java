@@ -26,7 +26,7 @@ public class SecurityTest {
 		// AES Test
 		SecretKey key = AES.generateKey();
 		String encrypted2 = AES.encrypt(plainText, key);
-		String decrypted2 = AES.decrypt(encrypted, key);
+		String decrypted2 = AES.decrypt(encrypted2, key);
 		
 		System.out.println("AES Test");
 		System.out.println("Encrypted : " + encrypted2);
