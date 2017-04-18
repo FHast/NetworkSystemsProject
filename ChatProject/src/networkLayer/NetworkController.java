@@ -310,7 +310,7 @@ public class NetworkController implements Observer {
 				needAck.put(json, LocalTime.now());
 				// log
 
-				newLog("[DATA] Successfully send: " + (String) json.get("data"));
+				newLog("[DATA] Successfully send to: " + destIP.getHostAddress());
 
 				// send data
 				sendUnicastJson(fe.nextHopAddress, json);
@@ -360,7 +360,7 @@ public class NetworkController implements Observer {
 	}
 
 	private static void sendACK(InetAddress dest, JSONObject json) {
-		newLog("[ACK] Acknowledging: " + (String) json.get("data"));
+		newLog("[ACK] Acknowledging to: " + dest.getHostAddress());
 		// get ack text
 		String hash = HashService.simpleHash(json.toJSONString());
 		// to json
