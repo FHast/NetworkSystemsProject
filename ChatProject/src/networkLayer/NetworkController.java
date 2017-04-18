@@ -129,7 +129,6 @@ public class NetworkController implements Observer {
 	@SuppressWarnings("unchecked")
 	private static void receivedRREQ(JSONObject json, InetAddress neighbor) {
 		try {
-
 			if (!RREQreceivedBefore(json)) {
 				// remember json
 				receivedRREQList.add(json);
@@ -160,9 +159,7 @@ public class NetworkController implements Observer {
 					}
 				}
 			}
-		} catch (
-
-		IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
