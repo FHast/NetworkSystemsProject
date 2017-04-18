@@ -49,8 +49,8 @@ public class NetworkController implements Observer {
 	// RERR
 	private static ArrayList<JSONObject> receivedRERRList;
 	// DATA
-	private static final int TIMEOUT_WAITING = 5;
-	private static final int TIMEOUT_ACK = 5;
+	private static final int TIMEOUT_WAITING = 10;
+	private static final int TIMEOUT_ACK = 10;
 	private static HashMap<JSONObject, LocalTime> waiting;
 	private static HashMap<JSONObject, LocalTime> needAck;
 

@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.time.LocalTime;
 
 public class RTableEntry {
-	private static final int offset = 5;
+	private static final int offset = 10;
 
 	public InetAddress sourceAddress;
 	public InetAddress nextHopAddress;
