@@ -79,11 +79,11 @@ public class JSONservice {
 	@SuppressWarnings("unchecked")
 	private static JSONObject composeData(InetAddress sourceIP, InetAddress destIP, String message, String datatype, int type) {
 		JSONObject data = new JSONObject();
-		data.put("type", datatype);
+		data.put("type", type);
 		data.put("sourceip", sourceIP.getHostAddress());
 		data.put("destip", destIP.getHostAddress());
 		data.put("timestamp", LocalTime.now().toString());
-		data.put("datatype", type);
+		data.put("datatype", datatype);
 		data.put("data", message);
 		return data;
 	}
