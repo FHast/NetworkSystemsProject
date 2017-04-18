@@ -1,6 +1,7 @@
 package networkLayer;
 
 import java.net.InetAddress;
+import java.security.PublicKey;
 import java.time.LocalTime;
 
 import org.json.simple.JSONArray;
@@ -29,23 +30,26 @@ public class JSONservice {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject composeRREP(InetAddress dest, InetAddress source, long hopcount) {
+	public static JSONObject composeRREP(InetAddress dest, InetAddress source, long hopcount, PublicKey publicKey, String sessionKey) {
 		JSONObject rrep = new JSONObject();
 		rrep.put("type", NetworkController.TYPE_RREP);
 		rrep.put("destip", dest.getHostAddress());
 		rrep.put("sourceip", source.getHostAddress());
 		rrep.put("hopcount", hopcount);
+		rrep.put("publickey", publicKey);
+		rrep.put("sessionkey", sessionKey);
 		return rrep;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject composeRREQ(InetAddress sourceip, long broadcastid, InetAddress dest, long hopcount) {
+	public static JSONObject composeRREQ(InetAddress sourceip, long broadcastid, InetAddress dest, long hopcount, PublicKey publicKey) {
 		JSONObject rreq = new JSONObject();
 		rreq.put("type", (int) NetworkController.TYPE_RREQ);
 		rreq.put("sourceip", sourceip.getHostAddress());
 		rreq.put("broadcastid", broadcastid);
 		rreq.put("destip", dest.getHostAddress());
 		rreq.put("hopcount", hopcount);
+		rreq.put("publickey", publicKey);
 		return rreq;
 	}
 
