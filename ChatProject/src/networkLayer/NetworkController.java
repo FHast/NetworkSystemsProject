@@ -155,13 +155,12 @@ public class NetworkController implements Observer {
 						SecretKey sessionKey = AES.generateKey();
 						// add Forwarding entry
 						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount, publicKey, sessionKey);
+						
 						// encrypt keys for reply
 						String skeyString = AES.keyToString(sessionKey);
-						System.out.println(skeyString.getBytes().length + " | " + skeyString);
 						String stepone = RSA.encrypt(skeyString, publicKey);
 						String firsthalf = stepone.substring(0, stepone.length() / 2);
 						String secondhalf = stepone.substring(stepone.length() / 2, stepone.length());
-						System.out.println(stepone.getBytes().length);
 						String encryptedSessionKey = RSA.encrypt(firsthalf, RSA.getPrivateKey())
 								+ RSA.encrypt(secondhalf, RSA.getPrivateKey());
 						// send reply
@@ -563,6 +562,9 @@ public class NetworkController implements Observer {
 							FTableEntry fe = ForwardingTableService.getEntry(destIP);
 							// remove from waiting
 							waiting.remove(j);
+							// encrypt message
+							String data = (String) j.get("data");
+							j.put("data", AES.encrypt(data, fe.sessionkey));
 							// send json
 							sendUnicastJson(fe.nextHopAddress, j);
 						} else {
