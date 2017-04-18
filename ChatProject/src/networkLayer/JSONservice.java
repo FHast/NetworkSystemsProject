@@ -1,7 +1,6 @@
 package networkLayer;
 
 import java.net.InetAddress;
-import java.security.PublicKey;
 import java.time.LocalTime;
 
 import org.json.simple.JSONArray;

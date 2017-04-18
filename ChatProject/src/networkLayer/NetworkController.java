@@ -290,6 +290,7 @@ public class NetworkController implements Observer {
 
 	// DATA
 
+	@SuppressWarnings("unchecked")
 	private static void receivedDATA(JSONObject json) {
 		try {
 			InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
@@ -301,6 +302,14 @@ public class NetworkController implements Observer {
 			if (destIP.equals(myIP)) {
 				// send Ack
 				sendACK(sourceIP, json);
+				// decrypt message
+				try {
+					String crypto = (String) json.get("data");
+					FTableEntry fe = ForwardingTableService.getEntry(sourceIP);
+					json.put("data", AES.decrypt(crypto, fe.sessionkey));
+				} catch (NoEntryException e) {
+					e.printStackTrace();
+				}
 				// give to Application layer
 				DataController.receivedMessage(json);
 			} else {
@@ -319,6 +328,7 @@ public class NetworkController implements Observer {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void sendDATA(JSONObject json) {
 		try {
 			// get destination of data
@@ -327,6 +337,9 @@ public class NetworkController implements Observer {
 			if (ForwardingTableService.hasEntry(destIP)) {
 				// get forwarding entry
 				FTableEntry fe = ForwardingTableService.getEntry(destIP);
+				// encrypt message
+				String data = (String) json.get("data");
+				json.put("data", AES.encrypt(data, fe.sessionkey));
 				// add to need ack
 				needAck.put(json, LocalTime.now());
 				// log
