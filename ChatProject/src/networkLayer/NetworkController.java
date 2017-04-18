@@ -150,7 +150,7 @@ public class NetworkController implements Observer {
 					// for me?
 					if (myIP.equals(destIP)) {
 						// get public key
-						PublicKey publicKey = (PublicKey) json.get("publickey");
+						PublicKey publicKey = RSA.stringToPublicKey((String)json.get("publickey"));
 						// Create Sessionkey
 						SecretKey sessionKey = AES.generateKey();
 						// add Forwarding entry
@@ -248,7 +248,7 @@ public class NetworkController implements Observer {
 			newLog("[RREP] Received: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
 
 			// get publikKey
-			PublicKey publicKey = (PublicKey) json.get("publickey");
+			PublicKey publicKey = RSA.stringToPublicKey((String)json.get("publickey"));
 			if (destIP.equals(myIP)) {
 				// sessionKey
 				String crypto = (String) json.get("sessionkey");

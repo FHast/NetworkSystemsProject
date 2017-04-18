@@ -36,7 +36,7 @@ public class JSONservice {
 		rrep.put("destip", dest.getHostAddress());
 		rrep.put("sourceip", source.getHostAddress());
 		rrep.put("hopcount", hopcount);
-		rrep.put("publickey", RSA.getPublicKey());
+		rrep.put("publickey", RSA.publicKeyToString(RSA.getPublicKey()));
 		rrep.put("sessionkey", sessionKey);
 		return rrep;
 	}
@@ -49,7 +49,7 @@ public class JSONservice {
 		rreq.put("broadcastid", broadcastid);
 		rreq.put("destip", dest.getHostAddress());
 		rreq.put("hopcount", hopcount);
-		rreq.put("publickey", RSA.getPublicKey());
+		rreq.put("publickey", RSA.publicKeyToString(RSA.getPublicKey()));
 		return rreq;
 	}
 
