@@ -25,12 +25,12 @@ public class Controller {
 
 		Controller.mainWindow.log("MY IP: " + getMyIP().getHostAddress());
 		
-		receivedMessage(3, "5", LocalTime.now().minusSeconds(3));
-		receivedMessage(3, "2", LocalTime.now().minusSeconds(30));
-		receivedMessage(3, "3", LocalTime.now().minusSeconds(10));
-		receivedMessage(3, "4", LocalTime.now().minusSeconds(5));
-		receivedMessage(3, "1", LocalTime.now().minusSeconds(80));
-		receivedMessage(4, "8", LocalTime.now().minusSeconds(7));
+		// receivedMessage(3, "5", LocalTime.now().minusSeconds(3));
+		// receivedMessage(3, "2", LocalTime.now().minusSeconds(30));
+		// receivedMessage(3, "3", LocalTime.now().minusSeconds(10));
+		// receivedMessage(3, "4", LocalTime.now().minusSeconds(5));
+		// receivedMessage(3, "1", LocalTime.now().minusSeconds(80));
+		// receivedMessage(4, "8", LocalTime.now().minusSeconds(7));
 		
 		while (true) {
 
