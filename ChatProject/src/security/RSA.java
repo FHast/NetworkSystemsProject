@@ -78,7 +78,32 @@ public class RSA {
 		}
 		return Base64.encodeBase64String(cipherText);
 	}
+	
+	public static String encrypt(String text, PrivateKey key) {
+		byte[] cipherText = null;
+		try {
+			Cipher cipher = Cipher.getInstance(ALGORITHM);
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+			cipherText = cipher.doFinal(text.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Base64.encodeBase64String(cipherText);
+	}
 
+	public static String decrypt(String text, PublicKey key) {
+		byte[] decrypted = null;
+		try {
+			Cipher cipher = Cipher.getInstance(ALGORITHM);
+			cipher.init(Cipher.DECRYPT_MODE, key);
+			decrypted = cipher.doFinal(Base64.decodeBase64(text));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return new String(decrypted);
+	}
+	
 	public static String decrypt(String text, PrivateKey key) {
 		byte[] decrypted = null;
 		try {
