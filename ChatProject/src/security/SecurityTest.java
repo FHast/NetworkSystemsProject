@@ -6,7 +6,7 @@ public class SecurityTest {
 
 	public static void main(String[] args) {
 		
-		String plainText = "sackseuche";
+		String plainText = "sackseuchesackseuchesackseuchesackseuchesackseuche";
 		System.out.println("Plain text: " + plainText);
 		
 		// RSA Test
