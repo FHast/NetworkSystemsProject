@@ -129,37 +129,34 @@ public class NetworkController implements Observer {
 	@SuppressWarnings("unchecked")
 	private static void receivedRREQ(JSONObject json, InetAddress neighbor) {
 		try {
-			// TODO
-			if (!neighbor.equals(InetAddress.getByName("192.168.5.3"))) {
 
-				if (!RREQreceivedBefore(json)) {
-					// remember json
-					receivedRREQList.add(json);
-					// extract data
-					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
-					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-					long hopCount = (long) json.get("hopcount");
+			if (!RREQreceivedBefore(json)) {
+				// remember json
+				receivedRREQList.add(json);
+				// extract data
+				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
+				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
+				long hopCount = (long) json.get("hopcount");
 
-					// from me?
-					if (!myIP.equals(sourceIP)) {
+				// from me?
+				if (!myIP.equals(sourceIP)) {
 
-						newLog("[RREQ] Received from: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
+					newLog("[RREQ] Received from: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
 
-						// for me?
-						if (myIP.equals(destIP)) {
-							// add Forwarding entry
-							ForwardingTableService.addEntry(sourceIP, neighbor, hopCount);
-							// send reply
-							sendRREP(sourceIP, hopCount);
-						} else {
-							// add reverse entry
-							ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
-							// increment hopcount
-							json.put("hopcount", hopCount + 1);
-							// rebroadcast RREQ
-							sendMulticastJson(json);
+					// for me?
+					if (myIP.equals(destIP)) {
+						// add Forwarding entry
+						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount);
+						// send reply
+						sendRREP(sourceIP, hopCount);
+					} else {
+						// add reverse entry
+						ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
+						// increment hopcount
+						json.put("hopcount", hopCount + 1);
+						// rebroadcast RREQ
+						sendMulticastJson(json);
 
-						}
 					}
 				}
 			}
