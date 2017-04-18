@@ -23,7 +23,7 @@ public class Unicast extends Observable implements Runnable {
 		try {
 			// create socket
 			Socket sock = new Socket(dest, PORT);
-			sock.setSendBufferSize(1000000000);
+			sock.setSendBufferSize(2000000);
 			// send data
 			PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
 			out.println(msg);
@@ -41,8 +41,8 @@ public class Unicast extends Observable implements Runnable {
 			try {
 				// accept Connections
 				Socket sock = ssock.accept();
-				ssock.setReceiveBufferSize(1000000000);
-				sock.setReceiveBufferSize(1000000000);
+				ssock.setReceiveBufferSize(2000000);
+				sock.setReceiveBufferSize(2000000);
 				// notify observers
 				setChanged();
 				notifyObservers(sock);

@@ -49,8 +49,8 @@ public class NetworkController implements Observer {
 	// RERR
 	private static ArrayList<JSONObject> receivedRERRList;
 	// DATA
-	private static final int TIMEOUT_WAITING = 5;
-	private static final int TIMEOUT_ACK = 5;
+	private static final int TIMEOUT_WAITING = 10;
+	private static final int TIMEOUT_ACK = 10;
 	private static HashMap<JSONObject, LocalTime> waiting;
 	private static HashMap<JSONObject, LocalTime> needAck;
 
@@ -310,7 +310,7 @@ public class NetworkController implements Observer {
 				needAck.put(json, LocalTime.now());
 				// log
 
-				newLog("[DATA] Successfully send: " + (String) json.get("data"));
+				newLog("[DATA] Successfully send to: " + destIP.getHostAddress());
 
 				// send data
 				sendUnicastJson(fe.nextHopAddress, json);
@@ -360,7 +360,7 @@ public class NetworkController implements Observer {
 	}
 
 	private static void sendACK(InetAddress dest, JSONObject json) {
-		newLog("[ACK] Acknowledging: " + (String) json.get("data"));
+		newLog("[ACK] Acknowledging to: " + dest.getHostAddress());
 		// get ack text
 		String hash = HashService.simpleHash(json.toJSONString());
 		// to json
