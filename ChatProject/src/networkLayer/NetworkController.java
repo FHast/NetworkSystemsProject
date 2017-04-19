@@ -336,7 +336,6 @@ public class NetworkController implements Observer {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void sendDATA(JSONObject json) {
 		try {
 			// get destination of data
@@ -521,6 +520,7 @@ public class NetworkController implements Observer {
 	}
 
 	private class CheckLists implements Runnable {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void run() {
 			while (true) {
