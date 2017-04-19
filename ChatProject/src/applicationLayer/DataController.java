@@ -102,19 +102,20 @@ public class DataController {
 			// get filehash
 			String filehash = (String) json.get("filehash");
 
-			newLog("[DATA] New Fragment for file: " + filehash);
-
 			// put into hashMap
 			if (!receivedFragments.containsKey(filehash)) {
 				receivedFragments.put(filehash, new ArrayList<JSONObject>());
 			}
 			if (!receivedFragments.get(filehash).contains(json)) {
 				receivedFragments.get(filehash).add(json);
-			}
-			// check if complete
-			long fragtotal = (long) json.get("fragtotal");
-			if (receivedFragments.get(filehash).size() == fragtotal) {
-				combineFragments(filehash, fragtotal);
+				// check if complete
+				long fragtotal = (long) json.get("fragtotal");
+				long fragnumber = (long) json.get("fragnumber");
+				newLog("[DATA] New Fragment: (" + fragnumber + "/" + fragtotal + ")");
+
+				if (receivedFragments.get(filehash).size() == fragtotal) {
+					combineFragments(filehash, fragtotal);
+				}
 			}
 		}
 	}
