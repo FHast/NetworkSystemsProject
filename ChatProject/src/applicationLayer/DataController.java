@@ -17,7 +17,7 @@ import networkLayer.NetworkController;
 public class DataController {
 
 	public static final int DATA_TYPE_TEXT = 1;
-	private static final int MAX_DATA_BYTES = 20000;
+	private static final int MAX_DATA_BYTES = 95000;
 
 	private static HashMap<String, ArrayList<JSONObject>> receivedFragments = new HashMap<>();
 
