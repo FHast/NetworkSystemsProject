@@ -132,7 +132,7 @@ public class MainWindow extends JFrame {
 						t.setRows(countLines(t));
 
 						// wraps words only instead ofcharacters
-						t.setWrapStyleWord(true);
+						t.setWrapStyleWord(false);
 
 						return t;
 					} else if (value.getType() == Message.TYPE_IMAGE) {
