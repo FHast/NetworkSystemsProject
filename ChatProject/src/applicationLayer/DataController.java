@@ -174,7 +174,7 @@ public class DataController {
 							receivedFragments.remove(s);
 						}
 					}
-				} catch (ConcurrentModificationException e) {
+				} catch (ConcurrentModificationException | IndexOutOfBoundsException ex) {
 
 				}
 			}
