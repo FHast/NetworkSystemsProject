@@ -1,22 +1,27 @@
 package gui;
 
 import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -41,6 +46,8 @@ import applicationLayer.FileService;
 import controller.Controller;
 import networkLayer.tables.FTableEntry;
 import networkLayer.tables.ForwardingTableService;
+
+import sun.audio.*;
 
 public class MainWindow extends JFrame {
 
@@ -138,7 +145,42 @@ public class MainWindow extends JFrame {
 						return l;
 
 					} else if (value.getType() == Message.TYPE_AUDIO) {
-						return new JLabel();
+						// init panel
+						JPanel p = new JPanel((LayoutManager) new FlowLayout(FlowLayout.LEFT));
+						p.setBackground(Color.WHITE);
+						
+						// label for timestamp + description
+						JLabel l = new JLabel(value.toString().split("[|]")[0] + "| AUDIO FILE");
+						if (value.isSentBySelf()) {
+							l.setForeground(Color.GRAY);
+						}
+						else {
+							l.setForeground(Color.BLUE);
+						}
+						p.add(l);
+						
+						// button for playing the audio
+						JButton b = new JButton("Play");
+						b.addActionListener(new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								System.out.println("Play button clicked");
+								try {
+									AudioStream audioStream;
+									audioStream = new AudioStream(new FileInputStream(value.getText()));
+								    AudioPlayer.player.start(audioStream);
+								} catch (IOException ex) {
+									// does not work, forget about that
+									ex.printStackTrace();
+								}
+							}
+							
+						});
+						p.add(b);
+						
+						// return panel
+						return p;
 					} else {
 
 						JLabel l = new JLabel("[FILE]" + value.getText());
@@ -244,6 +286,8 @@ public class MainWindow extends JFrame {
 					if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
 						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE,
 								LocalTime.now());
+					} else if (a.equals("wav")) {
+						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_AUDIO, LocalTime.now());
 					} else {
 						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE,
 								LocalTime.now());

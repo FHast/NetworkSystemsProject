@@ -53,6 +53,9 @@ public class Contact {
 		case Message.TYPE_FILE:
 			m = new Message(isSentBySelf, Message.TYPE_FILE, text, sendTime);
 			break;
+		case Message.TYPE_AUDIO:
+			m = new Message(isSentBySelf, Message.TYPE_AUDIO, text, sendTime);
+			break;
 		}
 
 		int index = 0;

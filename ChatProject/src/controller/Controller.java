@@ -54,6 +54,9 @@ public class Controller {
 		String a = FileService.getAppendix(path);
 		if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
 			Controller.mainWindow.addMessage(device, path, Message.TYPE_IMAGE, sendTime);
+		}
+		else if (a.equals("wav")) {
+			Controller.mainWindow.addMessage(device, path, Message.TYPE_AUDIO, sendTime);
 		} else {
 			Controller.mainWindow.addMessage(device, path, Message.TYPE_FILE, sendTime);
 		}
