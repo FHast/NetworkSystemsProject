@@ -127,17 +127,20 @@ public class MainWindow extends JFrame {
 					} else if (value.getType() == Message.TYPE_IMAGE) {
 
 						JLabel l = null;
-						
+
 						try {
 							BufferedImage img = ImageIO.read(new File(value.getText()));
-							img = (BufferedImage) getScaledImage(img,400,300);
+							img = (BufferedImage) getScaledImage(img, 400, 300);
 							l = new JLabel(new ImageIcon(img));
 						} catch (IOException e) {
 							// file does not exist
 						}
 						return l;
-						
+
+					} else if (value.getType() == Message.TYPE_AUDIO) {
+						return new JLabel();
 					} else {
+
 						JLabel l = new JLabel("[FILE]" + value.getText());
 
 						// formatting
@@ -239,9 +242,11 @@ public class MainWindow extends JFrame {
 					String a = FileService.getAppendix(file.getPath());
 
 					if (a.equals("gif") || a.equals("png") || a.equals("jpeg") || a.equals("jpg")) {
-						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE, LocalTime.now());
+						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_IMAGE,
+								LocalTime.now());
 					} else {
-						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE, LocalTime.now());
+						currentSelectedContact.addMessage(true, file.getAbsolutePath(), Message.TYPE_FILE,
+								LocalTime.now());
 					}
 
 					controller.sendFile(device, file);
@@ -286,8 +291,7 @@ public class MainWindow extends JFrame {
 					newContactFrame.setDevice(String.valueOf(listContacts.getSelectedValue().getDevice()));
 					newContactFrame.setName("");
 					newContactFrame.setVisible(true);
-				}
-				else {
+				} else {
 					setBottomLine("Please select a contact first!");
 				}
 			}
@@ -298,18 +302,17 @@ public class MainWindow extends JFrame {
 		menuItemDelete = new JMenuItem("Delete");
 		optionsMenu.add(menuItemDelete);
 		menuItemDelete.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		menuItemDelete.addActionListener( new ActionListener() {
+		menuItemDelete.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!listContacts.isSelectionEmpty()) {
-					deleteContact( listContacts.getSelectedValue().getDevice() );
-				}
-				else {
+					deleteContact(listContacts.getSelectedValue().getDevice());
+				} else {
 					setBottomLine("Please select a contact first!");
 				}
 			}
-			
+
 		});
 
 		// MenuItem Log
@@ -348,7 +351,7 @@ public class MainWindow extends JFrame {
 		});
 		menuItemOpenFolder.setFont(new Font("Dialog", Font.PLAIN, 13));
 		optionsMenu.add(menuItemOpenFolder);
-		
+
 		// debug
 		JMenuItem showFT = new JMenuItem("Add FT to log");
 		showFT.addActionListener(new ActionListener() {
@@ -357,15 +360,15 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				log("====================");
 				log("Current forwarding Table:");
-				for(FTableEntry ex : ForwardingTableService.getEntries()) {
+				for (FTableEntry ex : ForwardingTableService.getEntries()) {
 					log(ex.destinationAddress.toString() + " -> " + ex.nextHopAddress.toString());
 				}
 				log("====================");
 			}
-			
+
 		});
 		optionsMenu.add(showFT);
-		
+
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(listContacts);
@@ -388,16 +391,16 @@ public class MainWindow extends JFrame {
 	public void refreshContactList() {
 		listContacts.setListData(contacts.toArray(new Contact[0]));
 	}
-	
-	private static Image getScaledImage(Image srcImg, int w, int h){
-	    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D g2 = resizedImg.createGraphics();
 
-	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-	    g2.drawImage(srcImg, 0, 0, w, h, null);
-	    g2.dispose();
+	private static Image getScaledImage(Image srcImg, int w, int h) {
+		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = resizedImg.createGraphics();
 
-	    return resizedImg;
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2.drawImage(srcImg, 0, 0, w, h, null);
+		g2.dispose();
+
+		return resizedImg;
 	}
 
 	public void refreshMessages() {
@@ -440,10 +443,10 @@ public class MainWindow extends JFrame {
 		}
 		refreshContactList();
 	}
-	
+
 	public void deleteContact(int device) {
 		ArrayList<Contact> newList = new ArrayList<>();
-		for(Contact c : contacts) {
+		for (Contact c : contacts) {
 			if (c.getDevice() != device) {
 				newList.add(c);
 			}
@@ -469,13 +472,13 @@ public class MainWindow extends JFrame {
 		contacts.add(c);
 
 		listContacts.setSelectedIndex(index);
-		
+
 		refreshContactList();
 	}
-	
+
 	public void setContactFocus(int device) {
 		int i = 0;
-		for(Contact c : contacts) {
+		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				listContacts.setSelectedIndex(i);
 				return;
