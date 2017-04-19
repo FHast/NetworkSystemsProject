@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -123,15 +127,16 @@ public class MainWindow extends JFrame {
 					} else if (value.getType() == Message.TYPE_IMAGE) {
 
 						JLabel l = null;
+						
 						try {
-							// create empty label with the Image as the icon
 							BufferedImage img = ImageIO.read(new File(value.getText()));
+							img = (BufferedImage) getScaledImage(img,400,300);
 							l = new JLabel(new ImageIcon(img));
-
 						} catch (IOException e) {
-							e.printStackTrace();
+							// file does not exist
 						}
 						return l;
+						
 					} else {
 						JLabel l = new JLabel("[FILE]" + value.getText());
 
@@ -382,6 +387,17 @@ public class MainWindow extends JFrame {
 
 	public void refreshContactList() {
 		listContacts.setListData(contacts.toArray(new Contact[0]));
+	}
+	
+	private static Image getScaledImage(Image srcImg, int w, int h){
+	    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2 = resizedImg.createGraphics();
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g2.drawImage(srcImg, 0, 0, w, h, null);
+	    g2.dispose();
+
+	    return resizedImg;
 	}
 
 	public void refreshMessages() {

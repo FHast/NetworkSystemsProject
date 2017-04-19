@@ -70,25 +70,7 @@ public class AES {
 			Cipher cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, secretKey);
 			return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)), "UTF-8");
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-			return null;
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-			return null;
-		} catch (BadPaddingException e) {
-			e.printStackTrace();
-			return null;
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
