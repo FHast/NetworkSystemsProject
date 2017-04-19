@@ -54,15 +54,15 @@ public class JSONservice {
 	}
 
 	public static JSONObject composeDataText(InetAddress sourceIP, InetAddress destIP, String message) {
-		return composeData(sourceIP, destIP, message, "" + DataController.DATA_TYPE_TEXT, NetworkController.TYPE_DATA);
+		return composeData(sourceIP, destIP, message, "" + DataController.DATA_TYPE_TEXT, NetworkController.TYPE_DATA, 0, 0, "");
 	}
 
 	public static JSONObject composeAck(InetAddress sourceIP, InetAddress destIP, String message) {
-		return composeData(sourceIP, destIP, message, "", NetworkController.TYPE_ACK);
+		return composeData(sourceIP, destIP, message, "", NetworkController.TYPE_ACK, 0, 0, "");
 	}
 
-	public static JSONObject composeDataFile(InetAddress sourceIP, InetAddress destIP, String data, String appendix) {
-		return composeData(sourceIP, destIP, data, appendix, NetworkController.TYPE_DATA);
+	public static JSONObject composeDataFile(InetAddress sourceIP, InetAddress destIP, String data, String appendix, int fragnumber, int fragtotal, String filehash) {
+		return composeData(sourceIP, destIP, data, appendix, NetworkController.TYPE_DATA, fragnumber, fragtotal, filehash);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -81,7 +81,7 @@ public class JSONservice {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static JSONObject composeData(InetAddress sourceIP, InetAddress destIP, String message, String datatype, int type) {
+	private static JSONObject composeData(InetAddress sourceIP, InetAddress destIP, String message, String datatype, int type, int fragnumber, int fragtotal, String filehash) {
 		JSONObject data = new JSONObject();
 		data.put("type", type);
 		data.put("sourceip", sourceIP.getHostAddress());
@@ -89,6 +89,10 @@ public class JSONservice {
 		data.put("timestamp", LocalTime.now().toString());
 		data.put("datatype", datatype);
 		data.put("data", message);
+		// fragmentation
+		data.put("fragnumber", fragnumber);
+		data.put("fragtotal", fragtotal);
+		data.put("filehash", filehash);
 		return data;
 	}
 	
