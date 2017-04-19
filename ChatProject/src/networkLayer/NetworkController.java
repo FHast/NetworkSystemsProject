@@ -134,45 +134,47 @@ public class NetworkController implements Observer {
 	@SuppressWarnings("unchecked")
 	private static void receivedRREQ(JSONObject json, InetAddress neighbor) {
 		try {
-			if (!RREQreceivedBefore(json)) {
-				// remember json
-				receivedRREQList.add(json);
-				// extract data
-				InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
-				InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-				long hopCount = (long) json.get("hopcount");
+			if (!neighbor.equals(InetAddress.getByName("192.168.5.3"))) {
+				if (!RREQreceivedBefore(json)) {
+					// remember json
+					receivedRREQList.add(json);
+					// extract data
+					InetAddress sourceIP = InetAddress.getByName((String) json.get("sourceip"));
+					InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
+					long hopCount = (long) json.get("hopcount");
 
-				// from me?
-				if (!myIP.equals(sourceIP)) {
+					// from me?
+					if (!myIP.equals(sourceIP)) {
 
-					newLog("[RREQ] Received from: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
+						newLog("[RREQ] Received from: " + sourceIP.getHostAddress() + " -> " + destIP.getHostAddress());
 
-					// for me?
-					if (myIP.equals(destIP)) {
-						// get public key
-						PublicKey publicKey = RSA.stringToPublicKey((String) json.get("publickey"));
-						// Create Sessionkey
-						SecretKey sessionKey = AES.generateKey();
-						// add Forwarding entry
-						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount, publicKey, sessionKey);
+						// for me?
+						if (myIP.equals(destIP)) {
+							// get public key
+							PublicKey publicKey = RSA.stringToPublicKey((String) json.get("publickey"));
+							// Create Sessionkey
+							SecretKey sessionKey = AES.generateKey();
+							// add Forwarding entry
+							ForwardingTableService.addEntry(sourceIP, neighbor, hopCount, publicKey, sessionKey);
 
-						// encrypt keys for reply
-						String skeyString = AES.keyToString(sessionKey);
-						String stepone = RSA.encrypt(skeyString, publicKey);
-						String firsthalf = stepone.substring(0, stepone.length() / 2);
-						String secondhalf = stepone.substring(stepone.length() / 2, stepone.length());
-						String encryptedSessionKey = RSA.encrypt(firsthalf, RSA.getPrivateKey())
-								+ RSA.encrypt(secondhalf, RSA.getPrivateKey());
-						// send reply
-						sendRREP(sourceIP, hopCount, encryptedSessionKey);
-					} else {
-						// add reverse entry
-						ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
-						// increment hopcount
-						json.put("hopcount", hopCount + 1);
-						// rebroadcast RREQ
-						sendMulticastJson(json);
+							// encrypt keys for reply
+							String skeyString = AES.keyToString(sessionKey);
+							String stepone = RSA.encrypt(skeyString, publicKey);
+							String firsthalf = stepone.substring(0, stepone.length() / 2);
+							String secondhalf = stepone.substring(stepone.length() / 2, stepone.length());
+							String encryptedSessionKey = RSA.encrypt(firsthalf, RSA.getPrivateKey())
+									+ RSA.encrypt(secondhalf, RSA.getPrivateKey());
+							// send reply
+							sendRREP(sourceIP, hopCount, encryptedSessionKey);
+						} else {
+							// add reverse entry
+							ReverseTableService.addEntry(sourceIP, neighbor, hopCount);
+							// increment hopcount
+							json.put("hopcount", hopCount + 1);
+							// rebroadcast RREQ
+							sendMulticastJson(json);
 
+						}
 					}
 				}
 			}
@@ -361,7 +363,7 @@ public class NetworkController implements Observer {
 				// get hash
 				String hash = (String) json.get("data");
 				// remove from needAck
-				
+
 				JSONObject[] temp = needAck.keySet().toArray(new JSONObject[0]);
 				JSONObject toRemove = null;
 				for (int i = 0; i < temp.length; i++) {

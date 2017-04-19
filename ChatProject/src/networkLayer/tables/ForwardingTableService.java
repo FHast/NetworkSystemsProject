@@ -18,6 +18,7 @@ public class ForwardingTableService implements Runnable {
 		if (hasEntry(dest)) {
 			renewEntry(dest);
 		} else {
+			removeEntry(dest);
 			Controller.mainWindow.log("[FTable] Add Entry for: " + dest.getHostAddress());
 			forwardingTable.add(new FTableEntry(dest, nextHop, hopCount, pkey, skey));
 		}
@@ -27,7 +28,7 @@ public class ForwardingTableService implements Runnable {
 		for (FTableEntry e : forwardingTable) {
 			if (e.destinationAddress.equals(dest)) {
 				if (e.sessionkey != null) {
-					return true; //TODO
+					return true; 
 				}
 			}
 		}
