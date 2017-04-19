@@ -1,54 +1,75 @@
 package gui.test;
 
-import org.junit.After;
-import org.junit.AfterClass;
+import java.time.LocalTime;
+import java.util.ArrayList;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import applicationLayer.DataController;
- 
+import gui.Contact;
+import gui.Message;
+
 public class ContactTest {
-    
-   private static DataController myDataController;
-    
-   @BeforeClass
-   public static void create() {
-      // Test-Objekt erschaffen mit den Testwerten (Länge: 10 und Breite: 20)
-	   myDataController = new DataController();
-      System.out.println("Start!");
-   }
-    
-   @Before
-   public void vor() {
-      // Diese Methode wird vor jedem Testfall ausgeführt
-      System.out.println("vor Test");
-   }
-    
-   @Test
-   public void derTest1() {
-      // Testfall 1: Prüfung ob Umfangsberechnung stimmt
-      System.out.println("Test1");
-      Assert.assertTrue(true);      
-   }
-    
-   @Test
-   public void derTest2() {
-      // Testfall 2: Prüfung ob Flächeninhaltsberechnung stimmt
-      System.out.println("Test2");
-      Assert.assertNotNull(null);   
-   }
-    
-   @After
-   public void nach() {
-      // Diese Methode wird nach jedem Testfall ausgeführt z.B. um einen bestimmten Zustand zu erreichen
-      System.out.println("nach Test");
-   }
-    
-   @AfterClass
-   public static void delete() {
-      // Diese Methode wird am Ende der Test-Klasse ausgeführt z.B. zum aufräumen oder löschen von Rückständen
-      System.out.println("Test Ende!");
-   }
+
+	private static String name;
+	private static String nameChanged;
+	private static int device;
+	private static ArrayList<Message> messages;
+	private static Contact myContact;
+
+	@BeforeClass
+	public static void create() {
+		// Initialize test object and variables.
+		name = "Fritz";
+		nameChanged = "Hast";
+		device = 1;
+		messages = new ArrayList<>();
+		messages.add(new Message(true, "hello", LocalTime.MIDNIGHT));
+		messages.add(new Message(false, "bye", LocalTime.NOON));
+		myContact = new Contact(name, device, messages);
+	}
+
+	@Test
+	public void getDeviceTest() {
+		// Test if getDevice returns device.
+		Assert.assertEquals(device, myContact.getDevice());
+	}
+
+	@Test
+	public void getMessagesTest() {
+		// Test if getMessages returns messages.
+		Assert.assertEquals(messages, myContact.getMessages());
+	}
+	
+	@Test
+	public void getMessagesRawTest() {
+		// Test if getMessagesRaw returns something.
+		Assert.assertNotNull(myContact.getMessagesRaw());
+	}
+	
+	@Test
+	public void nameTest() {
+		// Test if getName returns the right name and if setName changes the name.
+		Assert.assertEquals(name, myContact.getName());
+		myContact.setName(nameChanged);
+		Assert.assertEquals(nameChanged, myContact.getName());
+	}
+	
+	@Test
+	public void unreadMessagesTest() {
+		// Test if unread messages can be set and checked.
+		myContact.setUnreadMessages(true);
+		Assert.assertTrue(myContact.hasUnreadMessages());
+		myContact.setUnreadMessages(false);
+		Assert.assertFalse(myContact.hasUnreadMessages());
+	}
+	
+	@Test
+	public void addMessageTest() {
+		// Test if addMessage adds Messages.
+		Assert.assertEquals(2 ,myContact.getMessages().size());
+		myContact.addMessage(true, name, Message.TYPE_TEXT, LocalTime.NOON);
+		Assert.assertEquals(3 ,myContact.getMessages().size());
+	}
 }

@@ -1,54 +1,60 @@
 package gui.test;
 
-import org.junit.After;
-import org.junit.AfterClass;
+import java.time.LocalTime;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import applicationLayer.DataController;
- 
+import gui.Message;
+
 public class MessageTest {
-    
-   private static DataController myDataController;
-    
-   @BeforeClass
-   public static void create() {
-      // Test-Objekt erschaffen mit den Testwerten (Länge: 10 und Breite: 20)
-	   myDataController = new DataController();
-      System.out.println("Start!");
-   }
-    
-   @Before
-   public void vor() {
-      // Diese Methode wird vor jedem Testfall ausgeführt
-      System.out.println("vor Test");
-   }
-    
-   @Test
-   public void derTest1() {
-      // Testfall 1: Prüfung ob Umfangsberechnung stimmt
-      System.out.println("Test1");
-      Assert.assertTrue(true);      
-   }
-    
-   @Test
-   public void derTest2() {
-      // Testfall 2: Prüfung ob Flächeninhaltsberechnung stimmt
-      System.out.println("Test2");
-      Assert.assertNotNull(null);   
-   }
-    
-   @After
-   public void nach() {
-      // Diese Methode wird nach jedem Testfall ausgeführt z.B. um einen bestimmten Zustand zu erreichen
-      System.out.println("nach Test");
-   }
-    
-   @AfterClass
-   public static void delete() {
-      // Diese Methode wird am Ende der Test-Klasse ausgeführt z.B. zum aufräumen oder löschen von Rückständen
-      System.out.println("Test Ende!");
-   }
+
+	private static boolean sentBySelf;
+	private static String text;
+	private static int type;
+	private static LocalTime sendTime;
+	private static String timeSimplified;
+	private static Message myMessage;
+
+	@BeforeClass
+	public static void create() {
+		// Initialize test object and variables.
+		sentBySelf = true;
+		text = "hello";
+		type = Message.TYPE_TEXT;
+		sendTime = LocalTime.MIDNIGHT;
+		timeSimplified = "00:00";
+		myMessage = new Message(sentBySelf, type, text, sendTime);
+	}
+
+	@Test
+	public void isSentBySelfTest() {
+		// Test if isSentBySelf returns sentBySelf.
+		Assert.assertEquals(sentBySelf, myMessage.isSentBySelf());
+	}
+	
+	@Test
+	public void getTextTest() {
+		// Test if getText returns text.
+		Assert.assertEquals(text, myMessage.getText());
+	}
+	
+	@Test
+	public void getTypeTest() {
+		// Test if getType returns type.
+		Assert.assertEquals(type, myMessage.getType());
+	}
+	
+	@Test
+	public void getTimeSimplifiedTest() {
+		// Test if getTimeSimplified returns timeSimplified.
+		Assert.assertEquals(timeSimplified, myMessage.getTimeSimplified());
+	}
+	
+	@Test
+	public void toStringTest() {
+		// Test if toString returns the correct string.
+		Assert.assertEquals(timeSimplified + " | " + text, myMessage.toString());
+	}
 }
