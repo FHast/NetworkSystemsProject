@@ -66,6 +66,8 @@ public class NewContactPopup extends JFrame {
 							window.addContact(txtName.getText(), Integer.parseInt(txtDevice.getText()));
 						}
 						window.refreshContactList();
+						window.setContactFocus(Integer.parseInt(txtDevice.getText()));
+						// reset frame
 						txtName.setText("");
 						txtDevice.setText("");
 						setVisible(false);

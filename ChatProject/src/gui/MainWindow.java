@@ -472,6 +472,17 @@ public class MainWindow extends JFrame {
 		
 		refreshContactList();
 	}
+	
+	public void setContactFocus(int device) {
+		int i = 0;
+		for(Contact c : contacts) {
+			if (c.getDevice() == device) {
+				listContacts.setSelectedIndex(i);
+				return;
+			}
+			i++;
+		}
+	}
 
 	public void refreshScrollbar() {
 		JScrollBar vertical = scrollpanelChat.getVerticalScrollBar();
