@@ -112,20 +112,20 @@ public class DataController {
 				receivedFragments.get(filehash).add(json);
 			}
 			// check if complete
-			int fragtotal = (int) json.get("fragtotal");
+			long fragtotal = (long) json.get("fragtotal");
 			if (receivedFragments.get(filehash).size() == fragtotal) {
 				combineFragments(filehash, fragtotal);
 			}
 		}
 	}
 
-	private static void combineFragments(String filehash, int fragtotal) {
+	private static void combineFragments(String filehash, long fragtotal) {
 		ArrayList<JSONObject> fragments = receivedFragments.get(filehash);
 		// get total data string
 		String data = "";
 		for (int i = 0; i < fragtotal; i++) {
 			for (JSONObject j : fragments) {
-				int fragnumber = (int) j.get("fragnumber");
+				long fragnumber = (long) j.get("fragnumber");
 				if (fragnumber == i) {
 					data += (String) j.get("data");
 				}
