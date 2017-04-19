@@ -379,12 +379,14 @@ public class NetworkController implements Observer {
 					needAck.remove(toRemove);
 				}
 			} else {
-				FTableEntry fe = ForwardingTableService.getEntry(destIP);
-				sendUnicastJson(fe.nextHopAddress, json);
+				try {
+					FTableEntry fe = ForwardingTableService.getEntry(destIP);
+					sendUnicastJson(fe.nextHopAddress, json);
+				} catch (NoEntryException e) {
+					//
+				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NoEntryException e) {
 			e.printStackTrace();
 		}
 	}
