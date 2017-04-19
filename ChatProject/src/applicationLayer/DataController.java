@@ -110,8 +110,7 @@ public class DataController {
 				receivedFragments.get(filehash).add(json);
 				// check if complete
 				long fragtotal = (long) json.get("fragtotal");
-				long fragnumber = (long) json.get("fragnumber");
-				newLog("[DATA] New Fragment: (" + fragnumber + "/" + fragtotal + ")");
+				newLog("[DATA] New Fragment: (" + receivedFragments.get(filehash).size() + "/" + fragtotal + ")");
 
 				if (receivedFragments.get(filehash).size() == fragtotal) {
 					combineFragments(filehash, fragtotal);
