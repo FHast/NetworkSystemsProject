@@ -7,6 +7,7 @@ public class Message {
 	public static final int TYPE_TEXT = 0;
 	public static final int TYPE_IMAGE = 1;
 	public static final int TYPE_FILE = 2;
+	public static final int TYPE_AUDIO = 3;
 
 	private boolean isSentBySelf;
 	private String text;
