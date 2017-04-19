@@ -8,6 +8,7 @@ public class Contact {
 	private String name;
 	private int device;
 	private ArrayList<Message> messages;
+	private boolean unreadMessages = false;
 
 	public Contact(String name, int device, ArrayList<Message> messages) {
 		this.name = name;
@@ -40,7 +41,17 @@ public class Contact {
 		name = n;
 	}
 
+	public void setUnreadMessages(boolean b) {
+		unreadMessages = b;
+	}
+	
+	public boolean hasUnreadMessages() {
+		return unreadMessages;
+	}
+	
 	public void addMessage(boolean isSentBySelf, String text, int type, LocalTime sendTime) {
+		unreadMessages = true;
+		
 		Message m = null;
 		switch (type) {
 		case Message.TYPE_TEXT:

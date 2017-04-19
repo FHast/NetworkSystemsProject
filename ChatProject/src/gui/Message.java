@@ -39,8 +39,8 @@ public class Message {
 	public LocalTime getTime() {
 		return timestamp;
 	}
-
-	public String toString() {
+	
+	public String getTimeSimplified() {
 		int minute = timestamp.getMinute();
 		String minutes = "";
 
@@ -59,7 +59,11 @@ public class Message {
 			hours = "" + hour;
 		}
 
-		return hours + ":" + minutes + " | " + text;
+		return hours + ":" + minutes;
+	}
+
+	public String toString() {
+		return getTimeSimplified() + " | " + text;
 	}
 
 }
