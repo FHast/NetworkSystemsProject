@@ -318,7 +318,7 @@ public class NetworkController implements Observer {
 					FTableEntry fe = ForwardingTableService.getEntry(sourceIP);
 					json.put("data", AES.decrypt(crypto, fe.sessionkey));
 				} catch (NoEntryException e) {
-					e.printStackTrace();
+					// nothing
 				}
 				// give to Application layer
 				DataController.receivedMessage(json);
