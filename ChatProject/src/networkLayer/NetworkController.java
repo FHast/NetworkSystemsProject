@@ -155,7 +155,7 @@ public class NetworkController implements Observer {
 						SecretKey sessionKey = AES.generateKey();
 						// add Forwarding entry
 						ForwardingTableService.addEntry(sourceIP, neighbor, hopCount, publicKey, sessionKey);
-						
+
 						// encrypt keys for reply
 						String skeyString = AES.keyToString(sessionKey);
 						String stepone = RSA.encrypt(skeyString, publicKey);
@@ -257,8 +257,8 @@ public class NetworkController implements Observer {
 			if (destIP.equals(myIP)) {
 				// sessionKey
 				String crypto = (String) json.get("sessionkey");
-				String firsthalf = crypto.substring(0, crypto.length()/2);
-				String secondhalf = crypto.substring(crypto.length()/2, crypto.length());
+				String firsthalf = crypto.substring(0, crypto.length() / 2);
+				String secondhalf = crypto.substring(crypto.length() / 2, crypto.length());
 				String stepone = RSA.decrypt(firsthalf, publicKey) + RSA.decrypt(secondhalf, publicKey);
 				String sKeyString = RSA.decrypt(stepone, RSA.getPrivateKey());
 				SecretKey sessionKey = AES.stringToKey(sKeyString);
@@ -341,30 +341,14 @@ public class NetworkController implements Observer {
 		try {
 			// get destination of data
 			InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
-
-			if (ForwardingTableService.hasEntry(destIP)) {
-				// get forwarding entry
-				FTableEntry fe = ForwardingTableService.getEntry(destIP);
-				// encrypt message
-				String data = (String) json.get("data");
-				json.put("data", AES.encrypt(data, fe.sessionkey));
-				// add to need ack
-				needAck.put(json, LocalTime.now());
-				// log
-
-				newLog("[DATA] Successfully send to: " + destIP.getHostAddress());
-
-				// send data
-				sendUnicastJson(fe.nextHopAddress, json);
-			} else {
-				// add to waiting
-				waiting.put(json, LocalTime.now());
+			// put in waiting
+			waiting.put(json, LocalTime.now());
+			// find route if neccessary
+			if (!ForwardingTableService.hasEntry(destIP)) {
 				// send routing request
 				findRoute(destIP);
 			}
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (NoEntryException e) {
 			e.printStackTrace();
 		}
 	}
@@ -565,6 +549,8 @@ public class NetworkController implements Observer {
 							// encrypt message
 							String data = (String) j.get("data");
 							j.put("data", AES.encrypt(data, fe.sessionkey));
+							// add to needAck
+							needAck.put(j, LocalTime.now());
 							// send json
 							sendUnicastJson(fe.nextHopAddress, j);
 						} else {
