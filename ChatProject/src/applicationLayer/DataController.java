@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
 import org.json.simple.JSONObject;
@@ -25,6 +26,8 @@ public class DataController {
 
 		// start networking layer
 		new NetworkController();
+
+		new Thread(new removeFragments()).start();
 
 		newLog("[Thread] Application Layer started.");
 	}
@@ -62,7 +65,7 @@ public class DataController {
 		// compute total frag count
 		int fragtotal = (int) Math.ceil(data.length() / (double) MAX_DATA_BYTES);
 		// compute hash
-		String filehash = HashService.simpleHash(data);
+		String filehash = HashService.simpleHash(data + LocalTime.now());
 
 		// get fragments
 		int i = 0;
@@ -106,7 +109,8 @@ public class DataController {
 			if (!receivedFragments.containsKey(filehash)) {
 				receivedFragments.put(filehash, new ArrayList<JSONObject>());
 			}
-			if (!receivedFragments.get(filehash).contains(json)) {
+			long fragnumber = (long) json.get("fragnumber");
+			if (isNewFragment(filehash, fragnumber)) {
 				receivedFragments.get(filehash).add(json);
 				// check if complete
 				long fragtotal = (long) json.get("fragtotal");
@@ -117,6 +121,16 @@ public class DataController {
 				}
 			}
 		}
+	}
+
+	private static boolean isNewFragment(String filehash, long fragnumber) {
+		for (JSONObject j : receivedFragments.get(filehash)) {
+			long currentNumber = (long) j.get("fragnumber");
+			if (currentNumber == fragnumber) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void combineFragments(String filehash, long fragtotal) {
@@ -146,7 +160,25 @@ public class DataController {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		receivedFragments.remove(filehash);
+	}
+
+	private class removeFragments implements Runnable {
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					for (String s : receivedFragments.keySet()) {
+						ArrayList<JSONObject> list = receivedFragments.get(s);
+						LocalTime time = LocalTime.parse((String) list.get(0).get("timestamp"));
+						if (time.plusMinutes(15).isBefore(LocalTime.now())) {
+							receivedFragments.remove(s);
+						}
+					}
+				} catch (ConcurrentModificationException e) {
+
+				}
+			}
+		}
 	}
 
 	public static void newLog(String s) {
