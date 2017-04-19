@@ -81,17 +81,17 @@ public class MainWindow extends JFrame {
 
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
-		
+
 		/*
-		//TODO remove ===========================
-		ArrayList<Message> msg = new ArrayList<>();
-		msg.add(new Message(true, "askjhfassadadhjfgkh", LocalTime.now()));
-		msg.add(new Message(false, "askjhfasjgfashjfgkh", LocalTime.now()));
-		msg.add(new Message(true, "askjhfasjgfashjfgkh", LocalTime.now()));
-		contacts.add(new Contact("Sample1", 1,msg));
-		contacts.add(new Contact("Sample2", 1,msg));
-		contacts.get(1).addMessage(false, "daskljsdfakjfh",  Message.TYPE_TEXT, LocalTime.now());
-		// TODO remove ==========================
+		 * //TODO remove =========================== ArrayList<Message> msg =
+		 * new ArrayList<>(); msg.add(new Message(true, "askjhfassadadhjfgkh",
+		 * LocalTime.now())); msg.add(new Message(false, "askjhfasjgfashjfgkh",
+		 * LocalTime.now())); msg.add(new Message(true, "askjhfasjgfashjfgkh",
+		 * LocalTime.now())); contacts.add(new Contact("Sample1", 1,msg));
+		 * contacts.add(new Contact("Sample2", 1,msg));
+		 * contacts.get(1).addMessage(false, "daskljsdfakjfh",
+		 * Message.TYPE_TEXT, LocalTime.now()); // TODO remove
+		 * ==========================
 		 */
 		controller = c;
 
@@ -216,8 +216,7 @@ public class MainWindow extends JFrame {
 					l.setOpaque(true);
 					if (value.equals(currentSelectedContact)) {
 						l.setBackground(Color.LIGHT_GRAY);
-					}
-					else {
+					} else {
 						l.setBackground(Color.WHITE);
 					}
 
@@ -229,9 +228,9 @@ public class MainWindow extends JFrame {
 			}
 
 		});
-		
+
 		refreshContactList(); // TODO remove
-		
+
 		// Send button
 		buttonSend = new JButton("Send");
 		buttonSend.setForeground(Color.DARK_GRAY);
@@ -244,9 +243,13 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textfieldMessage.getText();
 				if (!input.equals("") && currentSelectedContact != null && currentSelectedContact.getDevice() != 0) {
-					controller.sendMessage(currentSelectedContact.getDevice(), input);
-					currentSelectedContact.addMessage(true, input, Message.TYPE_TEXT, LocalTime.now());
-					textfieldMessage.setText("");
+					if (input.length() < 10000) {
+						controller.sendMessage(currentSelectedContact.getDevice(), input);
+						currentSelectedContact.addMessage(true, input, Message.TYPE_TEXT, LocalTime.now());
+						textfieldMessage.setText("");
+					} else {
+						currentSelectedContact.addMessage(true, "Message too long!", Message.TYPE_TEXT, LocalTime.now());
+					}
 				}
 			}
 
