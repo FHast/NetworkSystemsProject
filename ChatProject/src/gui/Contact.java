@@ -47,7 +47,7 @@ public class Contact {
 			m = new Message(isSentBySelf, text, sendTime);
 			break;
 		case Message.TYPE_IMAGE:
-			m = new Message(isSentBySelf, Message.TYPE_TEXT, "Image: " + text, sendTime);
+			addMessage(isSentBySelf, text, Message.TYPE_TEXT, sendTime);
 			m = new Message(isSentBySelf, Message.TYPE_IMAGE, text, sendTime);
 			break;
 		case Message.TYPE_FILE:

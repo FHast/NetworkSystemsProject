@@ -137,9 +137,6 @@ public class MainWindow extends JFrame {
 							// file does not exist
 						}
 						
-						// set description
-						l.setText(value.toString());
-						
 						return l;
 						
 					} else {

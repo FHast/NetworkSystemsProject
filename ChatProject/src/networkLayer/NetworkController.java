@@ -399,6 +399,7 @@ public class NetworkController implements Observer {
 			FTableEntry fe = ForwardingTableService.getEntry(dest);
 			sendUnicastJson(fe.nextHopAddress, ack);
 		} catch (NoEntryException e) {
+			findRoute(dest);
 			e.printStackTrace();
 		}
 	}
