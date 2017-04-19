@@ -362,7 +362,6 @@ public class NetworkController implements Observer {
 				String hash = (String) json.get("data");
 				// remove from needAck
 				
-				// TODO
 				JSONObject[] temp = needAck.keySet().toArray(new JSONObject[0]);
 				JSONObject toRemove = null;
 				for (int i = 0; i < temp.length; i++) {
