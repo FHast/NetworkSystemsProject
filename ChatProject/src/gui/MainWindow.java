@@ -128,6 +128,7 @@ public class MainWindow extends JFrame {
 
 						JLabel l = null;
 						
+						// load image
 						try {
 							BufferedImage img = ImageIO.read(new File(value.getText()));
 							img = (BufferedImage) getScaledImage(img,400,300);
@@ -135,6 +136,10 @@ public class MainWindow extends JFrame {
 						} catch (IOException e) {
 							// file does not exist
 						}
+						
+						// set description
+						l.setText(value.toString());
+						
 						return l;
 						
 					} else {
