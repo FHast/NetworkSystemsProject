@@ -16,6 +16,7 @@ import javax.swing.JTextField;
  */
 public class NewContactPopup extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtDevice;
 	private JTextField txtName;
