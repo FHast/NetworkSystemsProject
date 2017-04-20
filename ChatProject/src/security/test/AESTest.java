@@ -1,54 +1,64 @@
 package security.test;
 
-import org.junit.After;
-import org.junit.AfterClass;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import applicationLayer.DataController;
- 
+import security.AES;
+
 public class AESTest {
-    
-   private static DataController myDataController;
-    
-   @BeforeClass
-   public static void create() {
-      // Test-Objekt erschaffen mit den Testwerten (Länge: 10 und Breite: 20)
-	   myDataController = new DataController();
-      System.out.println("Start!");
-   }
-    
-   @Before
-   public void vor() {
-      // Diese Methode wird vor jedem Testfall ausgeführt
-      System.out.println("vor Test");
-   }
-    
-   @Test
-   public void derTest1() {
-      // Testfall 1: Prüfung ob Umfangsberechnung stimmt
-      System.out.println("Test1");
-      Assert.assertTrue(true);      
-   }
-    
-   @Test
-   public void derTest2() {
-      // Testfall 2: Prüfung ob Flächeninhaltsberechnung stimmt
-      System.out.println("Test2");
-      Assert.assertNotNull(null);   
-   }
-    
-   @After
-   public void nach() {
-      // Diese Methode wird nach jedem Testfall ausgeführt z.B. um einen bestimmten Zustand zu erreichen
-      System.out.println("nach Test");
-   }
-    
-   @AfterClass
-   public static void delete() {
-      // Diese Methode wird am Ende der Test-Klasse ausgeführt z.B. zum aufräumen oder löschen von Rückständen
-      System.out.println("Test Ende!");
-   }
+
+	private static String plainText;
+	private static String encryptedText;
+	private static KeyGenerator keyGenerator;
+	private static SecretKey secretKey;
+
+	@BeforeClass
+	public static void create() {
+		// Initialize variables.
+		plainText = "afseafsafseafs";		
+		try {
+			keyGenerator = KeyGenerator.getInstance("AES/ECB/PKCS5Padding".split("/")[0]);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		keyGenerator.init(128);
+		secretKey = keyGenerator.generateKey();
+		encryptedText = AES.encrypt(plainText, secretKey);
+	}
+
+	@Test
+	public void generateKeyTest() {
+		// Test if generateKey does not throw a NoSuchAlgorithmException.
+		Assert.assertNotNull(AES.generateKey());
+	}
+	
+	@Test
+	public void encryptTest() {
+		// Test if encrypt does not throw a exception.
+		Assert.assertNotNull(AES.encrypt(plainText, secretKey));
+	}
+	
+	@Test
+	public void decryptTest() {
+		// Test if decrypt does not throw a exception.
+		Assert.assertNotNull(AES.decrypt(encryptedText, secretKey));
+	}
+	
+	@Test
+	public void keyToStringTest() {
+		// Test if keyToString returns something.
+		Assert.assertNotNull(AES.keyToString(secretKey));
+	}
+	
+	@Test
+	public void stringToKeyTest() {
+		// Test if keyToString returns something.
+		Assert.assertNotNull(AES.stringToKey(plainText));
+	}
 }
