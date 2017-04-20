@@ -14,19 +14,18 @@ public class Unicast extends Observable implements Runnable {
 	private static final int PORT = 4242;
 	private static ServerSocket ssock;
 
-	static {
-		try {
-			ssock = new ServerSocket(PORT);
-			ssock.setReceiveBufferSize(50000);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void init() throws IOException {
+		ssock = new ServerSocket(PORT);
+		ssock.setReceiveBufferSize(50000);
 	}
 
 	/**
 	 * Sends a packet to the given destination.
-	 * @param dest The destination InetAddress
-	 * @param msg The packet as a String representation of the JSON object
+	 * 
+	 * @param dest
+	 *            The destination InetAddress
+	 * @param msg
+	 *            The packet as a String representation of the JSON object
 	 */
 	public static void send(InetAddress dest, String msg) {
 		try {

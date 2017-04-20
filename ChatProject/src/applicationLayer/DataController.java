@@ -2,6 +2,7 @@ package applicationLayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -29,8 +30,9 @@ public class DataController {
 	/**
 	 * Creates the DataController which starts the NetworkController, and
 	 * starts the Thread to remove received, outdated fragments.
+	 * @throws IOException 
 	 */
-	public DataController() {
+	public DataController() throws IOException {
 
 		// start networking layer
 		new NetworkController();

@@ -75,8 +75,9 @@ public class NetworkController implements Observer {
 	/**
 	 * Initializes the NetworkController and starts all the other threads that
 	 * are listening for incoming data.
+	 * @throws IOException 
 	 */
-	public NetworkController() {
+	public NetworkController() throws IOException {
 		// initialize
 		neighbours = new HashMap<>();
 		receivedRREQList = new ArrayList<>();
@@ -95,6 +96,7 @@ public class NetworkController implements Observer {
 		new Thread(m).start();
 
 		Unicast u = new Unicast();
+		u.init();
 		u.addObserver(this);
 		new Thread(u).start();
 
