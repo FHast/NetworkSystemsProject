@@ -221,7 +221,9 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Find route to the given destination by sending RREQ packets.
-	 * @param dest The InetAddress of the destination
+	 * 
+	 * @param dest
+	 *            The InetAddress of the destination
 	 */
 	private static void findRoute(InetAddress dest) {
 		if (!ForwardingTableService.hasEntry(dest)) {
@@ -240,7 +242,9 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Executed when a RERR is received.
-	 * @param json The RERR packet.
+	 * 
+	 * @param json
+	 *            The RERR packet.
 	 */
 	@SuppressWarnings("unchecked")
 	public static void receivedRERR(JSONObject json) {
@@ -276,7 +280,9 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Sends an RERR packet in the case of a link break.
-	 * @param failedLink The link that failed
+	 * 
+	 * @param failedLink
+	 *            The link that failed
 	 */
 	private static void sendRERR(InetAddress failedLink) {
 		// log entry
@@ -296,8 +302,11 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Executed if a RREP has been received.
-	 * @param neighbour The neighbour that sent/forwarded the packet.
-	 * @param json The packet.
+	 * 
+	 * @param neighbour
+	 *            The neighbour that sent/forwarded the packet.
+	 * @param json
+	 *            The packet.
 	 */
 	@SuppressWarnings("unchecked")
 	private static void receivedRREP(InetAddress neighbour, JSONObject json) {
@@ -342,9 +351,13 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Send a routing reply to the given destination using unicast.
-	 * @param dest The destination InetAddress
-	 * @param hopCount Hop count
-	 * @param encryptedSessionKey The session key encrypted with the public key of the recipient
+	 * 
+	 * @param dest
+	 *            The destination InetAddress
+	 * @param hopCount
+	 *            Hop count
+	 * @param encryptedSessionKey
+	 *            The session key encrypted with the public key of the recipient
 	 */
 	private static void sendRREP(InetAddress dest, long hopCount, String encryptedSessionKey) {
 		// log entry
@@ -362,7 +375,9 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Executed when receiving a DATA packet
-	 * @param json The packet
+	 * 
+	 * @param json
+	 *            The packet
 	 */
 	@SuppressWarnings("unchecked")
 	private static void receivedDATA(JSONObject json) {
@@ -403,8 +418,11 @@ public class NetworkController implements Observer {
 	}
 
 	/**
-	 * Sends a DATA packet (note: the destination is not given as a parameter, but in the packet itself).
-	 * @param json The packet
+	 * Sends a DATA packet (note: the destination is not given as a parameter,
+	 * but in the packet itself).
+	 * 
+	 * @param json
+	 *            The packet
 	 */
 	public static void sendDATA(JSONObject json) {
 		try {
@@ -426,7 +444,9 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Executed when receiving an ACK packet.
-	 * @param json The received packet
+	 * 
+	 * @param json
+	 *            The received packet
 	 */
 	private static void receivedACK(JSONObject json) {
 		try {
@@ -465,8 +485,11 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Sends an ACK to the given destination.
-	 * @param dest The destination InetAddress
-	 * @param json The packet
+	 * 
+	 * @param dest
+	 *            The destination InetAddress
+	 * @param json
+	 *            The packet
 	 */
 	private static void sendACK(InetAddress dest, JSONObject json) {
 		newLog("[ACK] Acknowledging to: " + dest.getHostAddress());
@@ -484,10 +507,11 @@ public class NetworkController implements Observer {
 		}
 	}
 
-	
 	/**
 	 * Broadcasts a packet to all neighbours.
-	 * @param json The packet
+	 * 
+	 * @param json
+	 *            The packet
 	 */
 	public static void sendMulticastJson(JSONObject json) {
 		String msg = json.toJSONString();
@@ -496,8 +520,11 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Sends a packet to one destination.
-	 * @param dest The destination InetAddress
-	 * @param json The packet
+	 * 
+	 * @param dest
+	 *            The destination InetAddress
+	 * @param json
+	 *            The packet
 	 */
 	public static void sendUnicastJson(InetAddress dest, JSONObject json) {
 		String msg = json.toJSONString();
@@ -505,9 +532,10 @@ public class NetworkController implements Observer {
 	}
 
 	/**
-	 * Executed when receiving a Unicast Message. Passes the packets further to the
-	 * other methods.
-	 * @param sock 
+	 * Executed when receiving a Unicast Message. Passes the packets further to
+	 * the other methods.
+	 * 
+	 * @param sock
 	 */
 	private static synchronized void receivedUnicast(Socket sock) {
 		try {
@@ -542,7 +570,9 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Executed when receiving a broadcasted message from a neighbor.
-	 * @param p The received Datagram packet
+	 * 
+	 * @param p
+	 *            The received Datagram packet
 	 */
 	private static synchronized void receivedMulticast(DatagramPacket p) {
 		try {
@@ -574,8 +604,8 @@ public class NetworkController implements Observer {
 	}
 
 	/**
-	 * Executed when receiving data. Distinguishes between Uni- and Multicast and passes this data on to
-	 * the corresponding methods.
+	 * Executed when receiving data. Distinguishes between Uni- and Multicast
+	 * and passes this data on to the corresponding methods.
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
@@ -588,6 +618,7 @@ public class NetworkController implements Observer {
 
 	/**
 	 * Small helper function to get an address out of a String.
+	 * 
 	 * @param s
 	 * @return
 	 */
@@ -636,73 +667,88 @@ public class NetworkController implements Observer {
 	}
 
 	/**
-	 * This Runnable checks the lists (ACKs, Neighbours, waiting) and removes any expired entries.
+	 * This Runnable checks the lists (ACKs, Neighbours, waiting) and removes
+	 * any expired entries.
 	 */
 	private class CheckLists implements Runnable {
+
+		private void checkNeighbors() {
+			for (InetAddress i : neighbours.keySet()) {
+				LocalTime expire = neighbours.get(i);
+				if (expire.isBefore(LocalTime.now())) {
+					// Entry expired! send RERR
+					sendRERR(i);
+					// remove from list
+					neighbours.remove(i);
+					newLog("[HELLO] lost connection to: " + i.getHostAddress());
+				}
+			}
+		}
+
 		@SuppressWarnings("unchecked")
+		private void checkWaiting() {
+			try {
+				for (JSONObject j : waiting.keySet()) {
+					// get destination
+					InetAddress destIP = InetAddress.getByName((String) j.get("destip"));
+					// route has been found?
+					if (ForwardingTableService.hasEntry(destIP)) {
+						// get forwarding entry
+						FTableEntry fe = ForwardingTableService.getEntry(destIP);
+						// remove from waiting
+						waiting.remove(j);
+						// encrypt message
+						String data = (String) j.get("data");
+						j.put("data", AES.encrypt(data, fe.sessionkey));
+						// add to needAck
+						needAck.put(j, LocalTime.now());
+						// send json
+						sendUnicastJson(fe.nextHopAddress, j);
+					} else {
+						// get timestamp of json
+						LocalTime timestamp = waiting.get(j);
+						// timed out ?
+						if (timestamp.plusSeconds(TIMEOUT_WAITING).isBefore(LocalTime.now())) {
+							// renew timestamp
+							waiting.put(j, LocalTime.now());
+							// reinitiate routing
+							findRoute(destIP);
+						}
+					}
+				}
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (NoEntryException e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void checkNeedAck() {
+			for (JSONObject j : needAck.keySet()) {
+				// get timestamp of json
+				LocalTime timestamp = needAck.get(j);
+				// timed out ?
+				if (timestamp.plusSeconds(TIMEOUT_ACK).isBefore(LocalTime.now())) {
+					// renew timestamp
+					needAck.put(j, LocalTime.now());
+					// initiate sending again
+					sendDATA(j);
+				}
+			}
+		}
+
 		@Override
 		public void run() {
 			while (true) {
 				try {
 					// Neighbours
-					for (InetAddress i : neighbours.keySet()) {
-						LocalTime expire = neighbours.get(i);
-						if (expire.isBefore(LocalTime.now())) {
-							// Entry expired! send RERR
-							sendRERR(i);
-							// remove from list
-							neighbours.remove(i);
-							newLog("[HELLO] lost connection to: " + i.getHostAddress());
-						}
-					}
+					checkNeighbors();
 					// waiting
-					for (JSONObject j : waiting.keySet()) {
-						// get destination
-						InetAddress destIP = InetAddress.getByName((String) j.get("destip"));
-						// route has been found?
-						if (ForwardingTableService.hasEntry(destIP)) {
-							// get forwarding entry
-							FTableEntry fe = ForwardingTableService.getEntry(destIP);
-							// remove from waiting
-							waiting.remove(j);
-							// encrypt message
-							String data = (String) j.get("data");
-							j.put("data", AES.encrypt(data, fe.sessionkey));
-							// add to needAck
-							needAck.put(j, LocalTime.now());
-							// send json
-							sendUnicastJson(fe.nextHopAddress, j);
-						} else {
-							// get timestamp of json
-							LocalTime timestamp = waiting.get(j);
-							// timed out ?
-							if (timestamp.plusSeconds(TIMEOUT_WAITING).isBefore(LocalTime.now())) {
-								// renew timestamp
-								waiting.put(j, LocalTime.now());
-								// reinitiate routing
-								findRoute(destIP);
-							}
-						}
-					}
+					checkWaiting();
 					// acknowledgements
-					for (JSONObject j : needAck.keySet()) {
-						// get timestamp of json
-						LocalTime timestamp = needAck.get(j);
-						// timed out ?
-						if (timestamp.plusSeconds(TIMEOUT_ACK).isBefore(LocalTime.now())) {
-							// renew timestamp
-							needAck.put(j, LocalTime.now());
-							// initiate sending again
-							sendDATA(j);
-						}
-					}
-
+					checkNeedAck();
 				} catch (ConcurrentModificationException | NullPointerException e) {
 					// nothing
-				} catch (UnknownHostException e) {
-					e.printStackTrace();
-				} catch (NoEntryException e) {
-					e.printStackTrace();
 				}
 			}
 		}
