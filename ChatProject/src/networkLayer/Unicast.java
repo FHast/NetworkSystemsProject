@@ -8,6 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Observable;
 
+/**
+ * This service is used to receive and send unicast packets.
+ */
 public class Unicast extends Observable implements Runnable {
 	private static final int PORT = 4242;
 	private static ServerSocket ssock;
@@ -21,6 +24,11 @@ public class Unicast extends Observable implements Runnable {
 		}
 	}
 
+	/**
+	 * Sends a packet to the given destination.
+	 * @param dest The destination InetAddress
+	 * @param msg The packet as a String representation of the JSON object
+	 */
 	public static void send(InetAddress dest, String msg) {
 		try {
 			// create socket
@@ -37,6 +45,9 @@ public class Unicast extends Observable implements Runnable {
 		}
 	}
 
+	/**
+	 * Waiting for incoming packets.
+	 */
 	@Override
 	public void run() {
 		while (true) {

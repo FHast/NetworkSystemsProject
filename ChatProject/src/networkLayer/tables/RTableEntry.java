@@ -3,6 +3,9 @@ package networkLayer.tables;
 import java.net.InetAddress;
 import java.time.LocalTime;
 
+/**
+ * This class models an entry in the Reverse Table.
+ */
 public class RTableEntry {
 	private static final int offset = 10;
 

@@ -34,6 +34,10 @@ import networkLayer.tables.ReverseTableService;
 import security.AES;
 import security.RSA;
 
+/**
+ * Controller for all the things that are concerning the Networking part, e.g.
+ * routing or sending data.
+ */
 public class NetworkController implements Observer {
 	public static final int TYPE_DATA = 0;
 	public static final int TYPE_HELLO = 1;
@@ -68,6 +72,10 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Initializes the NetworkController and starts all the other threads that
+	 * are listening for incoming data.
+	 */
 	public NetworkController() {
 		// initialize
 		neighbours = new HashMap<>();
@@ -93,12 +101,24 @@ public class NetworkController implements Observer {
 		newLog("[Thread] Network Layer started.");
 	}
 
+	/**
+	 * Helper function for logging (also possible: Controller.mainWindow.log)
+	 * 
+	 * @param s
+	 *            The message to be added to the log
+	 */
 	public static void newLog(String s) {
 		Controller.mainWindow.log(s);
 	}
 
 	// HELLO
 
+	/**
+	 * Executed when receiving a HELLO message.
+	 * 
+	 * @param json
+	 *            The packet
+	 */
 	private static void receivedHELLO(JSONObject json) {
 		try {
 			InetAddress source = InetAddress.getByName((String) json.get("sourceip"));
@@ -118,9 +138,19 @@ public class NetworkController implements Observer {
 
 	// RREQ
 
+	/**
+	 * Checks whether the given RREQ packet has been received before.
+	 * 
+	 * @param json
+	 *            The packet
+	 * @return
+	 */
 	private static boolean RREQreceivedBefore(JSONObject json) {
+		// determine source IP and broadcast ID which uniquely identify the
+		// packet
 		String sourceIP = (String) json.get("sourceip");
 		long broadcastID = (long) json.get("broadcastid");
+		// search for packet in the receivedRREQList
 		for (JSONObject current : receivedRREQList) {
 			String currentsourceIP = (String) current.get("sourceip");
 			long currentbroadcastID = (long) current.get("broadcastid");
@@ -131,10 +161,17 @@ public class NetworkController implements Observer {
 		return false;
 	}
 
+	/**
+	 * Executed when a RREQ packet is received.
+	 * 
+	 * @param json
+	 *            The RREQ packet
+	 * @param neighbor
+	 *            The neighbour that sent/forwarded the packet
+	 */
 	@SuppressWarnings("unchecked")
 	private static void receivedRREQ(JSONObject json, InetAddress neighbor) {
 		try {
-			// if (!neighbor.equals(InetAddress.getByName("192.168.5.3"))) {
 			if (!RREQreceivedBefore(json)) {
 				// remember json
 				receivedRREQList.add(json);
@@ -176,13 +213,16 @@ public class NetworkController implements Observer {
 
 					}
 				}
-				// }
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Find route to the given destination by sending RREQ packets.
+	 * @param dest The InetAddress of the destination
+	 */
 	private static void findRoute(InetAddress dest) {
 		if (!ForwardingTableService.hasEntry(dest)) {
 			// log entry
@@ -198,9 +238,14 @@ public class NetworkController implements Observer {
 
 	// RERR
 
+	/**
+	 * Executed when a RERR is received.
+	 * @param json The RERR packet.
+	 */
 	@SuppressWarnings("unchecked")
 	public static void receivedRERR(JSONObject json) {
 		try {
+			// only continue if the RERR has not been received before
 			if (!receivedRERRList.contains(json)) {
 				receivedRERRList.add(json);
 
@@ -229,6 +274,10 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Sends an RERR packet in the case of a link break.
+	 * @param failedLink The link that failed
+	 */
 	private static void sendRERR(InetAddress failedLink) {
 		// log entry
 		newLog("[RERR] Send");
@@ -245,6 +294,11 @@ public class NetworkController implements Observer {
 
 	// RREP
 
+	/**
+	 * Executed if a RREP has been received.
+	 * @param neighbour The neighbour that sent/forwarded the packet.
+	 * @param json The packet.
+	 */
 	@SuppressWarnings("unchecked")
 	private static void receivedRREP(InetAddress neighbour, JSONObject json) {
 		try {
@@ -286,6 +340,12 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Send a routing reply to the given destination using unicast.
+	 * @param dest The destination InetAddress
+	 * @param hopCount Hop count
+	 * @param encryptedSessionKey The session key encrypted with the public key of the recipient
+	 */
 	private static void sendRREP(InetAddress dest, long hopCount, String encryptedSessionKey) {
 		// log entry
 		newLog("[RREP] Send to: " + dest.getHostAddress());
@@ -300,6 +360,10 @@ public class NetworkController implements Observer {
 
 	// DATA
 
+	/**
+	 * Executed when receiving a DATA packet
+	 * @param json The packet
+	 */
 	@SuppressWarnings("unchecked")
 	private static void receivedDATA(JSONObject json) {
 		try {
@@ -338,6 +402,10 @@ public class NetworkController implements Observer {
 
 	}
 
+	/**
+	 * Sends a DATA packet (note: the destination is not given as a parameter, but in the packet itself).
+	 * @param json The packet
+	 */
 	public static void sendDATA(JSONObject json) {
 		try {
 			// get destination of data
@@ -356,6 +424,10 @@ public class NetworkController implements Observer {
 
 	// ACK
 
+	/**
+	 * Executed when receiving an ACK packet.
+	 * @param json The received packet
+	 */
 	private static void receivedACK(JSONObject json) {
 		try {
 			InetAddress destIP = InetAddress.getByName((String) json.get("destip"));
@@ -391,6 +463,11 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Sends an ACK to the given destination.
+	 * @param dest The destination InetAddress
+	 * @param json The packet
+	 */
 	private static void sendACK(InetAddress dest, JSONObject json) {
 		newLog("[ACK] Acknowledging to: " + dest.getHostAddress());
 		// get ack text
@@ -407,16 +484,31 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	
+	/**
+	 * Broadcasts a packet to all neighbours.
+	 * @param json The packet
+	 */
 	public static void sendMulticastJson(JSONObject json) {
 		String msg = json.toJSONString();
 		Multicast.send(msg);
 	}
 
+	/**
+	 * Sends a packet to one destination.
+	 * @param dest The destination InetAddress
+	 * @param json The packet
+	 */
 	public static void sendUnicastJson(InetAddress dest, JSONObject json) {
 		String msg = json.toJSONString();
 		Unicast.send(dest, msg);
 	}
 
+	/**
+	 * Executed when receiving a Unicast Message. Passes the packets further to the
+	 * other methods.
+	 * @param sock 
+	 */
 	private static synchronized void receivedUnicast(Socket sock) {
 		try {
 			// read data
@@ -448,6 +540,10 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Executed when receiving a broadcasted message from a neighbor.
+	 * @param p The received Datagram packet
+	 */
 	private static synchronized void receivedMulticast(DatagramPacket p) {
 		try {
 			// ignore own broadcasts
@@ -477,6 +573,10 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Executed when receiving data. Distinguishes between Uni- and Multicast and passes this data on to
+	 * the corresponding methods.
+	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 instanceof Multicast) {
@@ -486,6 +586,11 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * Small helper function to get an address out of a String.
+	 * @param s
+	 * @return
+	 */
 	@SuppressWarnings("rawtypes")
 	public static String getAddress(String s) {
 		Enumeration e = null;
@@ -508,6 +613,9 @@ public class NetworkController implements Observer {
 		return null;
 	}
 
+	/**
+	 * This runnable periodically sends the HELLO messages.
+	 */
 	private class SayHello implements Runnable {
 
 		@Override
@@ -527,6 +635,9 @@ public class NetworkController implements Observer {
 		}
 	}
 
+	/**
+	 * This Runnable checks the lists (ACKs, Neighbours, waiting) and removes any expired entries.
+	 */
 	private class CheckLists implements Runnable {
 		@SuppressWarnings("unchecked")
 		@Override

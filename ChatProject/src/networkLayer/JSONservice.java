@@ -11,8 +11,18 @@ import org.json.simple.parser.ParseException;
 import applicationLayer.DataController;
 import security.RSA;
 
+/**
+ * This service is used to compose packets and additionally, it provides basic JSON functionalities,
+ * e.g. parsing a String into a JSON object and vice-versa.
+ */
 public class JSONservice {
 
+	/**
+	 * Parse a String that represents an JSONObject and construct that object.
+	 * @param s The String to be parsed
+	 * @return The constructed JSON object
+	 * @throws ParseException Not a valid String
+	 */
 	public static JSONObject getJson(String s) throws ParseException {
 		// format string into jsonarray
 		String formatted = "";
@@ -29,6 +39,14 @@ public class JSONservice {
 		return json;
 	}
 
+	/**
+	 * Composes a RREP packet as a JSON object
+	 * @param dest The destination InetAddress
+	 * @param source The source InetAddress
+	 * @param hopcount The hopcount
+	 * @param sessionKey The base64 encoded session key
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static JSONObject composeRREP(InetAddress dest, InetAddress source, long hopcount, String sessionKey) {
 		JSONObject rrep = new JSONObject();
@@ -41,6 +59,14 @@ public class JSONservice {
 		return rrep;
 	}
 
+	/**
+	 * Composes a RREQ packet as a JSON object
+	 * @param sourceip The source InetAddress
+	 * @param broadcastid The broadcast ID
+	 * @param dest The destination InetAddress
+	 * @param hopcount The hopcount
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static JSONObject composeRREQ(InetAddress sourceip, long broadcastid, InetAddress dest, long hopcount) {
 		JSONObject rreq = new JSONObject();
@@ -53,18 +79,49 @@ public class JSONservice {
 		return rreq;
 	}
 
+	/**
+	 * Composes a data packet of type TEXT and returns it as a JSON object
+	 * @param sourceIP The source InetAddress
+	 * @param destIP The destination InetAddress
+	 * @param message The message text
+	 * @return
+	 */
 	public static JSONObject composeDataText(InetAddress sourceIP, InetAddress destIP, String message) {
 		return composeData(sourceIP, destIP, message, "" + DataController.DATA_TYPE_TEXT, NetworkController.TYPE_DATA, 0, 0, "");
 	}
 
+	/**
+	 * Composes an ACK packet and returns it as a JSON object
+	 * @param sourceIP The source InetAddress 
+	 * @param destIP The destination InetAddress
+	 * @param message The message text
+	 * @return
+	 */
 	public static JSONObject composeAck(InetAddress sourceIP, InetAddress destIP, String message) {
 		return composeData(sourceIP, destIP, message, "", NetworkController.TYPE_ACK, 0, 0, "");
 	}
 
+	/**
+	 * Composes a data packet which contains a file and returns it as a JSON object.
+	 * @param sourceIP The source InetAddress
+	 * @param destIP The destination InetAddress
+	 * @param data The base64 encoded data
+	 * @param appendix The file extension
+	 * @param fragnumber The current fragment sequence number
+	 * @param fragtotal The total amount of fragments of this file
+	 * @param filehash The hash of the file as an identifier of the file
+	 * @return
+	 */
 	public static JSONObject composeDataFile(InetAddress sourceIP, InetAddress destIP, String data, String appendix, int fragnumber, int fragtotal, String filehash) {
 		return composeData(sourceIP, destIP, data, appendix, NetworkController.TYPE_DATA, fragnumber, fragtotal, filehash);
 	}
 
+	/**
+	 * Composes a RERR packet and returns it as a JSON object.
+	 * @param sourceIP The source InetAddress
+	 * @param unreachable The InetAddress that are not reachable anymore
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static JSONObject composeRERR(InetAddress sourceIP, InetAddress[] unreachable) {
 
@@ -80,6 +137,18 @@ public class JSONservice {
 		return rerr;
 	}
 
+	/**
+	 * Composes a data packet of the given type and returns it as a JSON object
+	 * @param sourceIP The source InetAddress
+	 * @param destIP The destination InetAddress
+	 * @param message The message text/data
+	 * @param datatype Type of data
+	 * @param type The message type
+	 * @param fragnumber The current fragment sequence number
+	 * @param fragtotal The total amount of fragments belonging to this file
+	 * @param filehash The hash of the file which serves as an unique identifier
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private static JSONObject composeData(InetAddress sourceIP, InetAddress destIP, String message, String datatype, int type, int fragnumber, int fragtotal, String filehash) {
 		JSONObject data = new JSONObject();
@@ -96,6 +165,11 @@ public class JSONservice {
 		return data;
 	}
 	
+	/**
+	 * Compose a HELLO packet and return it as a JSON object
+	 * @param sourceIP The source InetAddress
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static JSONObject composeHello(InetAddress sourceIP) {
 		JSONObject hello = new JSONObject();

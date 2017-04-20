@@ -15,12 +15,21 @@ import controller.Controller;
 import java.awt.Window.Type;
 import java.awt.Color;
 
+/**
+ * Popup shown at the start to show error messages (e.g. if the program is already running).
+ */
 public class StartPopup extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	
 
+	/**
+	 * Show frame.
+	 * @param title Title of the frame
+	 * @param t1 Text for the label at the top
+	 * @param t2 Text for the label at the bottom
+	 */
 	public StartPopup(String title, String t1, String t2) {
 		setType(Type.UTILITY);
 		
@@ -42,6 +51,7 @@ public class StartPopup extends JFrame {
 		btnOk.setBackground(new Color(0, 153, 255));
 		btnOk.setBounds(106, 65, 109, 25);
 		btnOk.addActionListener(new ActionListener() {
+			// exit program since errors occurred
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
 			}

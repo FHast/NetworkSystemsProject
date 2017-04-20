@@ -6,6 +6,9 @@ import java.time.LocalTime;
 
 import javax.crypto.SecretKey;
 
+/**
+ * This class models an entry in the Forwarding Table.
+ */
 public class FTableEntry {
 	public static final int OFFSET = 10;
 	

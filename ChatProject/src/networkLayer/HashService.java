@@ -59,6 +59,11 @@ public class HashService {
 		return DigestUtils.sha256Hex(password + salt) + ":" + salt;
 	}
 
+	/**
+	 * Create hash without using a salt.
+	 * @param password
+	 * @return
+	 */
 	public static String simpleHash(String password) {
 		return DigestUtils.sha256Hex(password);
 	}

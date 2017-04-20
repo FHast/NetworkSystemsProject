@@ -11,6 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * Popup for creating another contact, or renaming an existing contact.
+ */
 public class NewContactPopup extends JFrame {
 
 	private JPanel contentPane;
@@ -99,6 +102,10 @@ public class NewContactPopup extends JFrame {
 		contentPane.add(lblErrorMsg);
 	}
 
+	/**
+	 * Sets whether the frame should be opened in rename mode or not. If so, the device textfield is locked.
+	 * @param rename
+	 */
 	public void setRename(boolean rename) {
 		this.rename = rename;
 		if (rename) {
@@ -108,10 +115,17 @@ public class NewContactPopup extends JFrame {
 		}
 	}
 
+	/**
+	 * Sets the textfield of the device
+	 * @param device
+	 */
 	public void setDevice(String device) {
 		txtDevice.setText(device);
 	}
 
+	/**
+	 * Sets the textfield for the name.
+	 */
 	public void setName(String name) {
 		txtName.setText(name);
 	}

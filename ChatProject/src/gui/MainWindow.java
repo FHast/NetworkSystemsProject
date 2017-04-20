@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -42,6 +41,9 @@ import controller.Controller;
 import networkLayer.tables.FTableEntry;
 import networkLayer.tables.ForwardingTableService;
 
+/**
+ * The main GUI frame from which all other actions are done.
+ */
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L; // just so that eclipse
@@ -70,6 +72,10 @@ public class MainWindow extends JFrame {
 	private JMenuItem menuItemLog;
 	private JMenuItem menuItemOpenFolder;
 
+	/**
+	 * Creates and initializes the main window.
+	 * @param c The controller (needed to have any functionality)
+	 */
 	public MainWindow(Controller c) {
 		setResizable(false);
 		// settings of the frame
@@ -82,17 +88,6 @@ public class MainWindow extends JFrame {
 		logMessages = new ArrayList<>();
 		contacts = new ArrayList<>();
 
-		/*
-		 * //TODO remove =========================== ArrayList<Message> msg =
-		 * new ArrayList<>(); msg.add(new Message(true, "askjhfassadadhjfgkh",
-		 * LocalTime.now())); msg.add(new Message(false, "askjhfasjgfashjfgkh",
-		 * LocalTime.now())); msg.add(new Message(true, "askjhfasjgfashjfgkh",
-		 * LocalTime.now())); contacts.add(new Contact("Sample1", 1,msg));
-		 * contacts.add(new Contact("Sample2", 1,msg));
-		 * contacts.get(1).addMessage(false, "daskljsdfakjfh",
-		 * Message.TYPE_TEXT, LocalTime.now()); // TODO remove
-		 * ==========================
-		 */
 		controller = c;
 
 		// Messages list
@@ -101,6 +96,11 @@ public class MainWindow extends JFrame {
 
 		listMessages.setCellRenderer(new ListCellRenderer<Message>() {
 
+			/**
+			 * Helper function for the cell renderer
+			 * @param t
+			 * @return
+			 */
 			public int countLines(JTextArea t) {
 				int i = (int) (t.getText().length() / t.getPreferredSize().getWidth());
 				if (t.getText().length() % t.getPreferredSize().getWidth() != 0) {
@@ -109,6 +109,9 @@ public class MainWindow extends JFrame {
 				return i;
 			}
 
+			/**
+			 * The cell renderer.
+			 */
 			@Override
 			public Component getListCellRendererComponent(JList<? extends Message> list, Message value, int index,
 					boolean isSelected, boolean cellHasFocus) {
@@ -163,7 +166,8 @@ public class MainWindow extends JFrame {
 						return l;
 					}
 				} else {
-					return new JLabel("hehe");
+					// invisible label
+					return new JLabel("");
 				}
 			}
 
@@ -438,10 +442,20 @@ public class MainWindow extends JFrame {
 		new Thread(new RefreshMessageRunnable()).start();
 	}
 
+	/**
+	 * Refreshes the contact list.
+	 */
 	public void refreshContactList() {
 		listContacts.setListData(contacts.toArray(new Contact[0]));
 	}
 
+	/**
+	 * Helper function to re-scale images (used for rendering the message list)
+	 * @param srcImg The image to be scaled
+	 * @param w New width of the image
+	 * @param h New height of the image
+	 * @return New, scaled image
+	 */
 	private static Image getScaledImage(Image srcImg, int w, int h) {
 		BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = resizedImg.createGraphics();
@@ -453,26 +467,45 @@ public class MainWindow extends JFrame {
 		return resizedImg;
 	}
 
+	/**
+	 * Refreshes the message list.
+	 */
 	public void refreshMessages() {
 		if (currentSelectedContact == null) {
+			// empty the list if no contact is selected
 			listMessages.setListData(new Message[0]);
 		} else {
+			// set list data
 			listMessages.setListData(currentSelectedContact.getMessagesRaw());
 			currentSelectedContact.setUnreadMessages(false);
 		}
 	}
 
+	/**
+	 * Add a log message.
+	 * @param msg Message to be added
+	 */
 	public void log(String msg) {
 		setBottomLine(msg);
 		logMessages.add(new Message(false, msg, LocalTime.now()));
 	}
 
+	/**
+	 * Sets the bottom line text.
+	 * @param txt The text
+	 */
 	public void setBottomLine(String txt) {
 		labelErrorMessage.setText(txt);
 	}
 
+	/**
+	 * Adds a contact to the contact list.
+	 * @param name The name of the contact
+	 * @param device The last digit of the IP
+	 */
 	public void addContact(String name, int device) {
 		Contact found = null;
+		// search for the contact by the unique identifier which is the device
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				found = c;
@@ -480,21 +513,35 @@ public class MainWindow extends JFrame {
 		}
 
 		if (found == null) {
+			// no contact found? add to list
 			contacts.add(new Contact(name, device, new ArrayList<Message>()));
 		} else {
+			// already in list, notify user
 			setBottomLine("Contact already added: " + found.getName());
 		}
 	}
 
+	/**
+	 * Renames a contact.
+	 * @param newName New name
+	 * @param device Last digit of the IP (used as identifier)
+	 */
 	public void renameContact(String newName, int device) {
+		// search for contact by device
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
+				// found? rename
 				c.setName(newName);
 			}
 		}
+		// refresh
 		refreshContactList();
 	}
 
+	/**
+	 * Remove contact from list
+	 * @param device Last digit of the IP
+	 */
 	public void deleteContact(int device) {
 		ArrayList<Contact> newList = new ArrayList<>();
 		for (Contact c : contacts) {
@@ -506,18 +553,27 @@ public class MainWindow extends JFrame {
 		refreshContactList();
 	}
 
+	/**
+	 * Add a message to a contact
+	 * @param device Last digit of the IP
+	 * @param text The message text
+	 * @param type Type of message (defined in Message)
+	 * @param sendTime Time of sending
+	 */
 	public void addMessage(int device, String text, int type, LocalTime sendTime) {
 		// current index
 		int index = listContacts.getSelectedIndex();
 
+		// search for contact by device
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
+				// found? add message and stop
 				c.addMessage(false, text, type, sendTime);
 				return;
 			}
 		}
 
-		// contact not in list
+		// contact not in list -> create new contact called "Unknown"
 		ArrayList<Message> msg = new ArrayList<>();
 		Contact c = new Contact("Unknown", device, msg);
 		c.addMessage(false, text, type, sendTime);
@@ -528,24 +584,35 @@ public class MainWindow extends JFrame {
 		refreshContactList();
 	}
 
+	/**
+	 * Set focus to specific contact
+	 * @param device
+	 */
 	public void setContactFocus(int device) {
+		// index variable
 		int i = 0;
+		// search by device
 		for (Contact c : contacts) {
 			if (c.getDevice() == device) {
 				listContacts.setSelectedIndex(i);
 				return;
 			}
+			// increment index
 			i++;
 		}
 	}
 
+	/**
+	 * Sets the scroll bar of the messages to the bottom.
+	 */
 	public void refreshScrollbar() {
 		JScrollBar vertical = scrollpanelChat.getVerticalScrollBar();
 		vertical.setValue(vertical.getMaximum());
-
-		// TODO
 	}
 
+	/**
+	 * Runnable that refreshes the message list.
+	 */
 	public class RefreshMessageRunnable implements Runnable {
 
 		@Override

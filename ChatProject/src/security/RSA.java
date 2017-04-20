@@ -19,6 +19,9 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 
+/**
+ * This class provides basic functionality for RSA encryption.
+ */
 public class RSA {
 
 	public static final String ALGORITHM = "RSA/ECB/PKCS1Padding";
@@ -26,6 +29,9 @@ public class RSA {
 	public static final String PUBLIC_KEY_FILE = "public_key";
 	public static final int KEY_SIZE_BITS = 2048;
 
+	/**
+	 * Generates a Key Pair and save it to files.
+	 */
 	public static void generateKeyPair() {
 		try {
 			if (!isKeyPairGenerated()) {
@@ -63,10 +69,20 @@ public class RSA {
 
 	}
 
+	/**
+	 * Checks whether a Key Pair is already generated.
+	 * @return
+	 */
 	public static boolean isKeyPairGenerated() {
 		return new File(PRIVATE_KEY_FILE).exists() && new File(PUBLIC_KEY_FILE).exists();
 	}
 
+	/**
+	 * Encrypts the given plain text using the PublicKey.
+	 * @param text The plain text
+	 * @param key The PublicKey
+	 * @return
+	 */
 	public static String encrypt(String text, PublicKey key) {
 		byte[] cipherText = null;
 		try {
@@ -79,6 +95,12 @@ public class RSA {
 		return Base64.encodeBase64String(cipherText);
 	}
 	
+	/**
+	 * Encrypts the given plain text using the PrivateKey.
+	 * @param text The plain text
+	 * @param key The PrivateKey
+	 * @return
+	 */
 	public static String encrypt(String text, PrivateKey key) {
 		byte[] cipherText = null;
 		try {
@@ -91,6 +113,12 @@ public class RSA {
 		return Base64.encodeBase64String(cipherText);
 	}
 
+	/**
+	 * Decrypts the cipher text using the PublicKey.
+	 * @param text The cipher text
+	 * @param key The public key
+	 * @return
+	 */
 	public static String decrypt(String text, PublicKey key) {
 		byte[] decrypted = null;
 		try {
@@ -104,6 +132,12 @@ public class RSA {
 		return new String(decrypted);
 	}
 	
+	/**
+	 * Decrypt the cipher text using the PrivateKey.
+	 * @param text The cipher text
+	 * @param key The private key
+	 * @return
+	 */
 	public static String decrypt(String text, PrivateKey key) {
 		byte[] decrypted = null;
 		try {
@@ -117,6 +151,10 @@ public class RSA {
 		return new String(decrypted);
 	}
 
+	/**
+	 * Reads the PublicKey from the file and returns it.
+	 * @return
+	 */
 	public static PublicKey getPublicKey() {
 		PublicKey key = null;
 		try {
@@ -128,10 +166,20 @@ public class RSA {
 		return key;
 	}
 
+	/**
+	 * Encodes the PublicKey to a base64 String representation.
+	 * @param pk
+	 * @return
+	 */
 	public static String publicKeyToString(PublicKey pk) {
 		return Base64.encodeBase64String(pk.getEncoded());
 	}
 
+	/**
+	 * Decodes a String to a PublicKey.
+	 * @param s
+	 * @return
+	 */
 	public static PublicKey stringToPublicKey(String s) {
 		try {
 			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(s));
@@ -141,6 +189,10 @@ public class RSA {
 		}
 	}
 
+	/**
+	 * Reads the PrivateKey from a file and returns it.
+	 * @return
+	 */
 	public static PrivateKey getPrivateKey() {
 		PrivateKey key = null;
 		try {
